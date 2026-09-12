@@ -1,0 +1,20 @@
+{
+  "name": "spec-speaker-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/generate-contracts.js --check",
+    "contracts:generate": "node scripts/generate-contracts.js",
+    "contracts:check": "node scripts/generate-contracts.js --check",
+    "format:check": "node scripts/check-format.js",
+    "lint": "node scripts/lint.js",
+    "policy:check": "node scripts/check-direct-mutation.js",
+    "schemas:check": "node scripts/validate-fixtures.js",
+    "test": "node --test",
+    "ci": "npm run format:check && npm run lint && npm run schemas:check && npm run contracts:check && npm run policy:check && npm test"
+  }
+}

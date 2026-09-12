@@ -1,0 +1,52 @@
+{
+  "$id": "https://spec-speaker.local/schemas/v1/TraceRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "cursor": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "type": "string"
+    },
+    "depth": {
+      "maximum": 5,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "direction": {
+      "enum": [
+        "upstream",
+        "downstream",
+        "both"
+      ]
+    },
+    "id": {
+      "pattern": "^(BR|SR)-[0-9]{6}$",
+      "type": "string"
+    },
+    "relationshipTypes": {
+      "items": {
+        "maxLength": 64,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "id",
+    "direction"
+  ],
+  "title": "TraceRequest",
+  "type": "object"
+}

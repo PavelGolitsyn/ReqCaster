@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec-speaker.local/schemas/v1/authorization-policy.schema.json",
+  "title": "Requirements engine authorization policy",
+  "type": "object",
+  "required": ["schemaVersion", "scope", "roles"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": "1.0.0" },
+    "scope": { "const": "repository" },
+    "roles": { "type": "object" }
+  },
+  "additionalProperties": false
+}

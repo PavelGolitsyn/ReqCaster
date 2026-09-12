@@ -1,0 +1,7 @@
+{
+  "fixtureType": "corrupted",
+  "expectedFailure": "checksum mismatch",
+  "schemaVersion": "1.0.0",
+  "declaredChecksum": "0000000000000000000000000000000000000000000000000000000000000000",
+  "actualContent": "changed after checksum"
+}

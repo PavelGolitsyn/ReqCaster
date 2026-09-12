@@ -1,0 +1,37 @@
+{
+  "$id": "https://spec-speaker.local/schemas/v1/ReportRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baselineId": {
+      "maxLength": 128,
+      "type": "string"
+    },
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "reportId": {
+      "maxLength": 128,
+      "type": "string"
+    },
+    "reportType": {
+      "enum": [
+        "traceability",
+        "coverage",
+        "history",
+        "readiness"
+      ]
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "reportType"
+  ],
+  "title": "ReportRequest",
+  "type": "object"
+}

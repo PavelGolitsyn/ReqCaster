@@ -1,0 +1,7 @@
+{
+  "fixtureType": "valid",
+  "schemaVersion": "1.0.0",
+  "business": [{ "id": "BR-000001", "version": 1, "statement": "The service shall retain an attributable decision record." }],
+  "software": [{ "id": "SR-000001", "version": 1, "statement": "The engine shall return a correlation identifier with every response." }],
+  "relationships": [{ "id": "RL-000001", "type": "derives_from", "source": "SR-000001", "target": "BR-000001" }]
+}

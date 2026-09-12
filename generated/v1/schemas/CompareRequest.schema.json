@@ -1,0 +1,41 @@
+{
+  "$id": "https://spec-speaker.local/schemas/v1/CompareRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "left": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "projection": {
+      "items": {
+        "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
+        "type": "string"
+      },
+      "maxItems": 32,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "right": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "left",
+    "right"
+  ],
+  "title": "CompareRequest",
+  "type": "object"
+}

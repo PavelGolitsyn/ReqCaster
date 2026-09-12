@@ -1,0 +1,39 @@
+{
+  "$schema": "../schemas/v1/policy.schema.json",
+  "schemaVersion": "1.0.0",
+  "configurationVersion": "1",
+  "requirements": {
+    "categories": ["functional", "quality", "interface", "constraint", "safety", "regulatory"],
+    "statuses": ["draft", "in-review", "approved", "implemented", "verified", "retired"],
+    "priorities": ["low", "medium", "high", "critical"],
+    "criticalities": ["none", "low", "medium", "high", "safety-critical"],
+    "verificationMethods": ["test", "demonstration", "inspection", "analysis"]
+  },
+  "transitions": [
+    { "from": "draft", "to": "in-review", "permission": "requirements:mutate" },
+    { "from": "in-review", "to": "approved", "permission": "requirements:decide" },
+    { "from": "in-review", "to": "draft", "permission": "requirements:mutate" },
+    { "from": "approved", "to": "implemented", "permission": "requirements:mutate" },
+    { "from": "implemented", "to": "verified", "permission": "requirements:decide" },
+    { "from": "draft", "to": "retired", "permission": "requirements:mutate" },
+    { "from": "approved", "to": "retired", "permission": "requirements:decide" }
+  ],
+  "relationships": [
+    { "type": "derives_from", "direction": "source-to-target", "sourceKinds": ["software"], "targetKinds": ["business"], "maxTargets": 64, "suspectOn": ["target-content-change", "target-retirement"] },
+    { "type": "verifies", "direction": "source-to-target", "sourceKinds": ["external:test"], "targetKinds": ["business", "software"], "maxTargets": 1000, "suspectOn": ["target-content-change", "target-retirement"] },
+    { "type": "allocated_to", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:component"], "maxTargets": 64, "suspectOn": ["target-version-change"] },
+    { "type": "supersedes", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 1, "suspectOn": ["source-content-change", "target-content-change"] }
+  ],
+  "requiredMetadata": [
+    { "level": "business", "status": "approved", "fields": ["rationale", "owner", "sourceReferences", "acceptanceCriteria"] },
+    { "level": "software", "status": "approved", "fields": ["rationale", "owner", "sourceReferences", "acceptanceCriteria", "verificationMethods"] }
+  ],
+  "coverageRules": [
+    { "level": "business", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["derives_from"] },
+    { "level": "software", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["verifies"] }
+  ],
+  "baselineReadiness": { "allowedStatuses": ["approved", "implemented", "verified"], "blockSuspectLinks": true, "blockMissingRequiredMetadata": true },
+  "authorizedDecisionTypes": ["approve", "reject", "waive", "close"],
+  "limits": { "searchDefault": 20, "searchMaximum": 100, "graphDepthMaximum": 5, "graphNodeMaximum": 1000, "bulkMaximum": 500, "timeoutMilliseconds": 30000 },
+  "qualityRules": { "structuralValidation": "blocking", "languageQuality": "advisory", "advisorySeverities": ["info", "warning"] }
+}

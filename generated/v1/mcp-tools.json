@@ -1,0 +1,3810 @@
+{
+  "schemaVersion": "1.0.0",
+  "tools": [
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "baselineId": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "projection": {
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.get",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "GetRequirementService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "cursor": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "filters": {
+            "additionalProperties": false,
+            "properties": {
+              "allocation": {
+                "items": {
+                  "maxLength": 160,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "level": {
+                "items": {
+                  "enum": [
+                    "business",
+                    "software"
+                  ]
+                },
+                "maxItems": 2,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "status": {
+                "items": {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                "maxItems": 32,
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [],
+            "type": "object"
+          },
+          "limit": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "projection": {
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "query": {
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.search",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "SearchRequirementsService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "cursor": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "filters": {
+            "additionalProperties": false,
+            "properties": {
+              "level": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "status": {
+                "maxLength": 64,
+                "type": "string"
+              }
+            },
+            "required": [],
+            "type": "object"
+          },
+          "limit": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "projection": {
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.list",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "ListRequirementsService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "cursor": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "depth": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "direction": {
+            "enum": [
+              "upstream",
+              "downstream",
+              "both"
+            ]
+          },
+          "id": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "relationshipTypes": {
+            "items": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "id",
+          "direction"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.trace",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "TraceRequirementsService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "cursor": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "gap": {
+            "enum": [
+              "missing",
+              "stale",
+              "failed",
+              "waived",
+              "not-applicable"
+            ]
+          },
+          "level": {
+            "enum": [
+              "business",
+              "software"
+            ]
+          },
+          "limit": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "gap"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.coverage",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CoverageService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "left": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "projection": {
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "right": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "left",
+          "right"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.compare",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CompareRequirementsService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "cursor": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.history",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "HistoryService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "baselineId": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "reportId": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "reportType": {
+            "enum": [
+              "traceability",
+              "coverage",
+              "history",
+              "readiness"
+            ]
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "reportType"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.report",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "ReportService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "draft": {
+            "additionalProperties": false,
+            "properties": {
+              "acceptanceCriteria": {
+                "items": {
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 128,
+                "type": "array"
+              },
+              "allocation": {
+                "items": {
+                  "maxLength": 160,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "category": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "level": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "shortLabel": {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              "statement": {
+                "maxLength": 10000,
+                "minLength": 1,
+                "type": "string"
+              },
+              "status": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "level",
+              "statement",
+              "category"
+            ],
+            "type": "object"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "draft"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.validateDraft",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "ValidateDraftService",
+      "permission": "requirements:validate-draft"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "draft": {
+            "additionalProperties": false,
+            "properties": {
+              "acceptanceCriteria": {
+                "items": {
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 128,
+                "type": "array"
+              },
+              "allocation": {
+                "items": {
+                  "maxLength": 160,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "category": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "level": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "shortLabel": {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              "statement": {
+                "maxLength": 10000,
+                "minLength": 1,
+                "type": "string"
+              },
+              "status": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "level",
+              "statement",
+              "category"
+            ],
+            "type": "object"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "draft"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.create",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CreateRequirementService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "patch": {
+            "additionalProperties": false,
+            "properties": {
+              "category": {
+                "maxLength": 64,
+                "type": "string"
+              },
+              "shortLabel": {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              "statement": {
+                "maxLength": 10000,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [],
+            "type": "object"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "patch"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.update",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "UpdateRequirementService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.retire",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "RetireRequirementService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "relationshipType": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          },
+          "sourceId": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "targetId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "sourceId",
+          "targetId",
+          "relationshipType",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.link",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "LinkRequirementService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.unlink",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "UnlinkRequirementService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "operations": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "operation": {
+                  "enum": [
+                    "create",
+                    "update",
+                    "retire",
+                    "link",
+                    "unlink",
+                    "transition"
+                  ]
+                },
+                "subjectId": {
+                  "maxLength": 128,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "operation"
+              ],
+              "type": "object"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "type": "array"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "operations"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.bulkPreview",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "BulkPreviewService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR",
+        "PREVIEW_EXPIRED"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "diffHash": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "previewToken": {
+            "maxLength": 2048,
+            "minLength": 32,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "previewToken",
+          "diffHash"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.bulkCommit",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "BulkCommitService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          },
+          "toStatus": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "toStatus",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "requirements.transition",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "TransitionRequirementService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "affectedRequirementIds": {
+            "items": {
+              "pattern": "^(BR|SR)-[0-9]{6}$",
+              "type": "string"
+            },
+            "maxItems": 500,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "title",
+          "rationale",
+          "affectedRequirementIds"
+        ],
+        "type": "object"
+      },
+      "name": "changes.create",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CreateChangeService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "changes.analyze",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "AnalyzeChangeService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "approve",
+              "reject",
+              "waive",
+              "abstain",
+              "close"
+            ]
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "decision",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "changes.decide",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "DecideChangeService",
+      "permission": "requirements:decide"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "changes.implement",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "ImplementChangeService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "approve",
+              "reject",
+              "waive",
+              "abstain",
+              "close"
+            ]
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "decision",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "changes.close",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CloseChangeService",
+      "permission": "requirements:decide"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "requirementIds": {
+            "items": {
+              "pattern": "^(BR|SR)-[0-9]{6}$",
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "reviewType": {
+            "enum": [
+              "informal",
+              "formal"
+            ]
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "title",
+          "requirementIds",
+          "reviewType"
+        ],
+        "type": "object"
+      },
+      "name": "reviews.create",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CreateReviewService",
+      "permission": "requirements:mutate"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "approve",
+              "reject",
+              "waive",
+              "abstain",
+              "close"
+            ]
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expectedVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "id",
+          "expectedVersion",
+          "decision",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "reviews.recordDecision",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "RecordReviewDecisionService",
+      "permission": "requirements:decide"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "requirementIds": {
+            "items": {
+              "pattern": "^(BR|SR)-[0-9]{6}$",
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "requirementIds"
+        ],
+        "type": "object"
+      },
+      "name": "baselines.checkReadiness",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CheckBaselineReadinessService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "requirementIds": {
+            "items": {
+              "pattern": "^(BR|SR)-[0-9]{6}$",
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "name",
+          "requirementIds",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "baselines.create",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CreateBaselineService",
+      "permission": "requirements:baseline"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "baselineId": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "projection": {
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "baselineId"
+        ],
+        "type": "object"
+      },
+      "name": "baselines.get",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "GetBaselineService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "left": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "projection": {
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "right": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "left",
+          "right"
+        ],
+        "type": "object"
+      },
+      "name": "baselines.compare",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CompareBaselineService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "maxLength": 5000000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "format": {
+            "enum": [
+              "json",
+              "csv",
+              "reqif"
+            ]
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "mappingVersion": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "format",
+          "content",
+          "mappingVersion"
+        ],
+        "type": "object"
+      },
+      "name": "imports.preview",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "PreviewImportService",
+      "permission": "requirements:import"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR",
+        "PREVIEW_EXPIRED"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "diffHash": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "previewToken": {
+            "maxLength": 2048,
+            "minLength": 32,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "previewToken",
+          "diffHash"
+        ],
+        "type": "object"
+      },
+      "name": "imports.commit",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "CommitImportService",
+      "permission": "requirements:import"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "NOT_FOUND",
+        "FORBIDDEN",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "configurationVersion": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId"
+        ],
+        "type": "object"
+      },
+      "name": "configuration.get",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "GetConfigurationService",
+      "permission": "requirements:read"
+    },
+    {
+      "errors": [
+        "INVALID_ARGUMENT",
+        "SCHEMA_VIOLATION",
+        "FORBIDDEN",
+        "VERSION_CONFLICT",
+        "REPOSITORY_BUSY",
+        "INTEGRITY_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "currentConfigurationVersion": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "expectedRepositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "maxLength": 128,
+            "minLength": 8,
+            "type": "string"
+          },
+          "policy": {
+            "additionalProperties": false,
+            "properties": {
+              "authorizedDecisionTypes": {
+                "items": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 32,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "baselineReadiness": {
+                "additionalProperties": false,
+                "properties": {
+                  "allowedStatuses": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "blockMissingRequiredMetadata": {
+                    "type": "boolean"
+                  },
+                  "blockSuspectLinks": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "allowedStatuses",
+                  "blockSuspectLinks",
+                  "blockMissingRequiredMetadata"
+                ],
+                "type": "object"
+              },
+              "coverageRules": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "level": {
+                      "enum": [
+                        "business",
+                        "software"
+                      ]
+                    },
+                    "requiredRelationshipTypes": {
+                      "items": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "maxItems": 64,
+                      "minItems": 1,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "statuses": {
+                      "items": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "maxItems": 64,
+                      "minItems": 1,
+                      "type": "array",
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "level",
+                    "statuses",
+                    "requiredRelationshipTypes"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 256,
+                "type": "array"
+              },
+              "limits": {
+                "additionalProperties": false,
+                "properties": {
+                  "bulkMaximum": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "graphDepthMaximum": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "graphNodeMaximum": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "searchDefault": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "searchMaximum": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "timeoutMilliseconds": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "searchDefault",
+                  "searchMaximum",
+                  "graphDepthMaximum",
+                  "graphNodeMaximum",
+                  "bulkMaximum",
+                  "timeoutMilliseconds"
+                ],
+                "type": "object"
+              },
+              "qualityRules": {
+                "additionalProperties": false,
+                "properties": {
+                  "advisorySeverities": {
+                    "items": {
+                      "enum": [
+                        "info",
+                        "warning"
+                      ]
+                    },
+                    "maxItems": 2,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "languageQuality": {
+                    "const": "advisory"
+                  },
+                  "structuralValidation": {
+                    "const": "blocking"
+                  }
+                },
+                "required": [
+                  "structuralValidation",
+                  "languageQuality",
+                  "advisorySeverities"
+                ],
+                "type": "object"
+              },
+              "relationships": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "direction": {
+                      "const": "source-to-target"
+                    },
+                    "maxTargets": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "sourceKinds": {
+                      "items": {
+                        "maxLength": 64,
+                        "type": "string"
+                      },
+                      "maxItems": 32,
+                      "minItems": 1,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "suspectOn": {
+                      "items": {
+                        "maxLength": 64,
+                        "type": "string"
+                      },
+                      "maxItems": 16,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "targetKinds": {
+                      "items": {
+                        "maxLength": 64,
+                        "type": "string"
+                      },
+                      "maxItems": 32,
+                      "minItems": 1,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "type": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "direction",
+                    "sourceKinds",
+                    "targetKinds",
+                    "maxTargets",
+                    "suspectOn"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 256,
+                "type": "array"
+              },
+              "requiredMetadata": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fields": {
+                      "items": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "maxItems": 64,
+                      "minItems": 1,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "level": {
+                      "enum": [
+                        "business",
+                        "software"
+                      ]
+                    },
+                    "status": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "level",
+                    "status",
+                    "fields"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 256,
+                "type": "array"
+              },
+              "requirements": {
+                "additionalProperties": false,
+                "properties": {
+                  "categories": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "criticalities": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "priorities": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "statuses": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "verificationMethods": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "categories",
+                  "statuses",
+                  "priorities",
+                  "criticalities",
+                  "verificationMethods"
+                ],
+                "type": "object"
+              },
+              "transitions": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "from": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "permission": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "to": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "from",
+                    "to",
+                    "permission"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 256,
+                "type": "array"
+              }
+            },
+            "required": [
+              "requirements",
+              "transitions",
+              "relationships",
+              "requiredMetadata",
+              "coverageRules",
+              "baselineReadiness",
+              "authorizedDecisionTypes",
+              "limits",
+              "qualityRules"
+            ],
+            "type": "object"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "correlationId",
+          "idempotencyKey",
+          "expectedRepositoryRevision",
+          "currentConfigurationVersion",
+          "policy",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "configuration.update",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "correlationId": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+            "type": "string"
+          },
+          "data": {},
+          "page": {
+            "additionalProperties": false,
+            "properties": {
+              "nextCursor": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "returnedCount": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "returnedCount",
+              "truncated"
+            ],
+            "type": "object"
+          },
+          "repositoryRevision": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0.0"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "repositoryRevision",
+          "correlationId",
+          "data"
+        ],
+        "type": "object"
+      },
+      "owningService": "UpdateConfigurationService",
+      "permission": "requirements:configure"
+    }
+  ]
+}
