@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseRequirementId } from "../../src/domain/identifiers.js";
+import { formatRelationshipId, formatRequirementId, parseRelationshipId, parseRequirementId } from "../../src/domain/identifiers.js";
 
 test("canonical identifier properties hold across the full six-digit shape", () => {
   let state = 0x12345678;
@@ -26,4 +26,12 @@ test("title-bearing and ambiguous identifiers are rejected", () => {
 
 test("non-string identifier values are rejected", () => {
   for (const value of [null, undefined, 1, {}, []]) assert.equal(parseRequirementId(value), null);
+});
+
+test("allocatable identifiers format exactly and overflow explicitly", () => {
+  assert.equal(formatRequirementId("business", 1), "BR-000001");
+  assert.equal(formatRequirementId("software", 999999), "SR-999999");
+  assert.deepEqual(parseRelationshipId(formatRelationshipId(42)), { value: "RL-000042", number: 42 });
+  assert.throws(() => formatRequirementId("business", 1000000), RangeError);
+  assert.throws(() => formatRelationshipId(0), RangeError);
 });

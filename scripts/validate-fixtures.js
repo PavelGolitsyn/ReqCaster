@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { validatePolicy } from "../src/domain/policy.js";
 import { POLICY_DOCUMENT_SCHEMA } from "../src/contracts/definitions.js";
 import { validate } from "../src/contracts/validator.js";
+import { parseStrictJson, validateRepositoryDocuments } from "../src/adapters/repository/index.js";
 
 const policy = JSON.parse(await readFile("config/policy.v1.json", "utf8"));
 const issues = validatePolicy(policy);
@@ -16,4 +17,8 @@ for (const file of ["test/fixtures/repositories/invalid/repository.json", "test/
   const fixture = JSON.parse(await readFile(file, "utf8"));
   if (!fixture.expectedFailure) throw new Error(`${file} must identify its expected failure`);
 }
+const business = parseStrictJson(await readFile("test/fixtures/repositories/canonical-v1/business-requirements.json"));
+const software = parseStrictJson(await readFile("test/fixtures/repositories/canonical-v1/software-requirements.json"));
+const canonicalIssues = validateRepositoryDocuments(business, software, policy);
+if (canonicalIssues.length) throw new Error(`Canonical fixture violation: ${JSON.stringify(canonicalIssues)}`);
 console.log("Schemas and fixtures are internally consistent");

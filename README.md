@@ -5,8 +5,9 @@ engine intended primarily for AI-agent access.
 
 ## Engine development
 
-Stage 0 establishes the architecture and executable contracts. It intentionally
-contains application and adapter boundaries, not repository persistence.
+Stage 0 establishes the architecture and executable contracts. Stage 1 adds the
+strict, transactional two-file canonical JSON repository under
+`src/adapters/repository`.
 
 ```sh
 npm run contracts:generate

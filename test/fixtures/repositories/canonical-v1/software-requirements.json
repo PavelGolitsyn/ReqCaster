@@ -1,0 +1,51 @@
+{
+  "$schema": ".engine/schemas/v1/software-requirements.schema.json",
+  "documentType": "software",
+  "nextRelationshipNumber": 2,
+  "nextRequirementNumber": 2,
+  "relationships": [
+    {
+      "customAttributes": {
+        "review.ticket": "REV-42"
+      },
+      "id": "RL-000001",
+      "provenance": {
+        "createdAt": "2026-02-01T00:00:00.000Z",
+        "createdBy": "requirements-manager",
+        "updatedAt": "2026-02-01T00:00:00.000Z",
+        "updatedBy": "requirements-manager"
+      },
+      "rationale": "Implements the source business need.",
+      "source": {
+        "id": "SR-000001",
+        "kind": "requirement",
+        "version": 1
+      },
+      "suspect": false,
+      "target": {
+        "id": "BR-000001",
+        "kind": "requirement",
+        "version": 2
+      },
+      "type": "derives_from",
+      "version": 1
+    }
+  ],
+  "repositoryRevision": 7,
+  "requirements": [
+    {
+      "category": "quality",
+      "criticality": "medium",
+      "id": "SR-000001",
+      "level": "software",
+      "priority": "high",
+      "statement": "The service shall durably persist user settings before acknowledging an update.",
+      "status": "draft",
+      "verificationMethods": [
+        "test"
+      ],
+      "version": 1
+    }
+  ],
+  "schemaVersion": "1.0.0"
+}
