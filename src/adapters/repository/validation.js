@@ -18,6 +18,7 @@ export const DOCUMENT_LIMITS = Object.freeze({
 
 const envelopeFields = new Set(["$schema", "schemaVersion", "documentType", "repositoryRevision", "nextRequirementNumber", "nextRelationshipNumber", "requirements", "relationships"]);
 envelopeFields.add("changeControl");
+envelopeFields.add("qualityControl");
 const requirementFields = new Set(["id", "level", "version", "statement", "shortLabel", "category", "status", "priority", "criticality", "owner", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences", "provenance", "retirement", "customAttributes", "lifecycleHistory"]);
 const relationshipFields = new Set(["id", "version", "type", "source", "target", "status", "suspect", "rationale", "provenance", "retirement", "history", "customAttributes"]);
 const endpointFields = new Set(["kind", "id", "version", "system", "artifactType", "externalId", "externalVersion", "uri", "systemOfRecord"]);
@@ -162,6 +163,49 @@ function validateChangeControl(value, path, issues) {
     positiveVersion(membership.version, `${child}/version`, issues);
     boundedJson(membership, child, issues);
   });
+}
+
+function validateQualityControl(value, path, issues) {
+  if (!object(value)) { issue(issues, path, "must be an object"); return; }
+  const allowed = new Set(["schemaVersion", "nextReviewNumber", "nextFindingNumber", "nextPlanNumber", "nextEvidenceNumber", "reviews", "verificationPlans", "evidence"]);
+  for (const field of Object.keys(value)) if (!allowed.has(field)) issue(issues, `${path}/${field}`, "is not allowed");
+  required(value, [...allowed], path, issues);
+  if (value.schemaVersion !== CURRENT_SCHEMA_VERSION) issue(issues, `${path}/schemaVersion`, `must equal ${CURRENT_SCHEMA_VERSION}`);
+  for (const field of ["nextReviewNumber", "nextFindingNumber", "nextPlanNumber", "nextEvidenceNumber"]) positiveVersion(value[field], `${path}/${field}`, issues);
+  const collections = [
+    ["reviews", "RV", 100_000],
+    ["verificationPlans", "VP", 200_000],
+    ["evidence", "EV", 200_000],
+  ];
+  for (const [name, prefix, maximum] of collections) {
+    if (!Array.isArray(value[name]) || value[name].length > maximum) { issue(issues, `${path}/${name}`, "must be a bounded array"); continue; }
+    const ids = new Set();
+    value[name].forEach((record, index) => {
+      const child = `${path}/${name}/${index}`;
+      if (!object(record)) { issue(issues, child, "must be an object"); return; }
+      required(record, ["id", "version"], child, issues);
+      if (!new RegExp(`^${prefix}-(?!000000)[0-9]{6}$`, "u").test(record.id ?? "")) issue(issues, `${child}/id`, `must be a canonical ${prefix} ID`);
+      if (ids.has(record.id)) issue(issues, `${child}/id`, "is duplicated");
+      ids.add(record.id);
+      positiveVersion(record.version, `${child}/version`, issues);
+      boundedJson(record, child, issues);
+    });
+    const counter = prefix === "RV" ? "nextReviewNumber" : prefix === "VP" ? "nextPlanNumber" : "nextEvidenceNumber";
+    const largest = Math.max(0, ...value[name].map((record) => Number(record?.id?.slice(3))).filter(Number.isInteger));
+    if (Number.isInteger(value[counter]) && value[counter] <= largest) issue(issues, `${path}/${counter}`, `must be greater than every allocated ${prefix} number`);
+  }
+  for (const [index, review] of (value.reviews ?? []).entries()) {
+    if (!Array.isArray(review.findings) || review.findings.length > 10_000) { issue(issues, `${path}/reviews/${index}/findings`, "must be a bounded array"); continue; }
+    const ids = new Set();
+    for (const [findingIndex, finding] of review.findings.entries()) {
+      const child = `${path}/reviews/${index}/findings/${findingIndex}`;
+      if (!/^FN-(?!000000)[0-9]{6}$/u.test(finding?.id ?? "")) issue(issues, `${child}/id`, "must be a canonical finding ID");
+      if (ids.has(finding?.id)) issue(issues, `${child}/id`, "is duplicated within the review");
+      ids.add(finding?.id);
+    }
+  }
+  const largestFinding = Math.max(0, ...(value.reviews ?? []).flatMap((review) => review.findings ?? []).map((finding) => Number(finding?.id?.slice(3))).filter(Number.isInteger));
+  if (Number.isInteger(value.nextFindingNumber) && value.nextFindingNumber <= largestFinding) issue(issues, `${path}/nextFindingNumber`, "must be greater than every allocated FN number");
 }
 
 function provenance(value, path, issues) {
@@ -317,7 +361,7 @@ function validateRelationship(record, path, policy, issues) {
 function validateEnvelope(document, level, policy, issues) {
   const path = `/${level}`;
   if (!exactFields(document, envelopeFields, path, issues)) return;
-  required(document, [...envelopeFields].filter((field) => field !== "changeControl"), path, issues);
+  required(document, [...envelopeFields].filter((field) => field !== "changeControl" && field !== "qualityControl"), path, issues);
   if (document.$schema !== `.engine/schemas/v1/${level}-requirements.schema.json`) issue(issues, `${path}/$schema`, "does not name the canonical versioned schema");
   if (document.schemaVersion !== CURRENT_SCHEMA_VERSION) issue(issues, `${path}/schemaVersion`, `must equal ${CURRENT_SCHEMA_VERSION}`);
   if (document.documentType !== level) issue(issues, `${path}/documentType`, `must equal ${level}`);
@@ -330,6 +374,10 @@ function validateEnvelope(document, level, policy, issues) {
   if ("changeControl" in document) {
     if (level !== "business") issue(issues, `${path}/changeControl`, "is stored only in the business canonical document");
     else validateChangeControl(document.changeControl, `${path}/changeControl`, issues);
+  }
+  if ("qualityControl" in document) {
+    if (level !== "business") issue(issues, `${path}/qualityControl`, "is stored only in the business canonical document");
+    else validateQualityControl(document.qualityControl, `${path}/qualityControl`, issues);
   }
 }
 

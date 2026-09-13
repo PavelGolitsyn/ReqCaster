@@ -599,6 +599,34 @@
           },
           "maxItems": 256,
           "type": "array"
+        },
+        "verification": {
+          "additionalProperties": false,
+          "properties": {
+            "requireNonSuspectRelationship": {
+              "type": "boolean"
+            },
+            "requirePlansForReadiness": {
+              "type": "boolean"
+            },
+            "staleOnFields": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 32,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "staleOnFields",
+            "requireNonSuspectRelationship",
+            "requirePlansForReadiness"
+          ],
+          "type": "object"
         }
       },
       "required": [

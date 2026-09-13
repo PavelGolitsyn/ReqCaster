@@ -22,6 +22,10 @@ const expectedVersion = integer({ minimum: 1 });
 const requirementIds = array(requirementId, { minItems: 1, maxItems: 50, uniqueItems: true });
 const relationshipId = string({ pattern: "^RL-[0-9]{6}$" });
 const changeId = string({ pattern: "^CH-[0-9]{6}$" });
+const reviewId = string({ pattern: "^RV-[0-9]{6}$" });
+const findingId = string({ pattern: "^FN-[0-9]{6}$" });
+const verificationPlanId = string({ pattern: "^VP-[0-9]{6}$" });
+const verificationEvidenceId = string({ pattern: "^EV-[0-9]{6}$" });
 const baselineException = object({
   code: string({ minLength: 1, maxLength: 64 }),
   requirementId,
@@ -219,6 +223,11 @@ export const POLICY_BODY_SCHEMA = object({
     advisorySeverities: array({ enum: ["info", "warning"] }, { minItems: 1, maxItems: 2, uniqueItems: true }),
     promotedRuleIds: array(string({ pattern: "^REQ-[A-Z]+-[0-9]{3}$" }), { maxItems: 64, uniqueItems: true }),
   }, ["structuralValidation", "languageQuality", "advisorySeverities"]),
+  verification: object({
+    staleOnFields: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
+    requireNonSuspectRelationship: { type: "boolean" },
+    requirePlansForReadiness: { type: "boolean" },
+  }, ["staleOnFields", "requireNonSuspectRelationship", "requirePlansForReadiness"]),
 }, ["traceabilityModelVersion", "requirements", "authoringRules", "transitions", "relationships", "requiredMetadata", "coverageRules", "baselineReadiness", "retirementRules", "authorizedDecisionTypes", "limits", "qualityRules"]);
 
 export const POLICY_DOCUMENT_SCHEMA = object({
@@ -323,7 +332,14 @@ export const SCHEMAS = Object.freeze({
   }, ["direction"]),
   CompareRequest: query({ left: string({ minLength: 1, maxLength: 128 }), right: string({ minLength: 1, maxLength: 128 }), projection, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }, ["left", "right"]),
   HistoryRequest: query({ id: requirementId, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }, ["id"]),
-  ReportRequest: query({ reportType: { enum: ["traceability", "coverage", "history", "readiness"] }, baselineId: string({ maxLength: 128 }), reportId: string({ maxLength: 128 }) }, ["reportType"]),
+  ReportRequest: query({
+    reportType: { enum: ["business-requirements", "software-requirements", "traceability", "coverage", "orphans", "reviews", "changes", "baseline", "baseline-comparison", "verification", "readiness", "audit", "history"] },
+    baselineId: string({ maxLength: 128 }),
+    compareBaselineId: string({ maxLength: 128 }),
+    reportId: string({ maxLength: 128 }),
+    templateVersion: string({ minLength: 1, maxLength: 64 }),
+    filters: object({}, [], { additionalProperties: true, maxProperties: 32 }),
+  }, ["reportType"]),
   ValidateDraftRequest: query({ draft: requirementDraft }, ["draft"]),
   CreateRequest: command({ draft: requirementDraft }, ["draft"]),
   UpdateRequest: command({ id: requirementId, expectedVersion, patch, reason: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "patch"]),
@@ -359,7 +375,12 @@ export const SCHEMAS = Object.freeze({
     evidenceReferences: array(evidenceReference, { maxItems: 128 }),
     exception: transitionException,
   }, ["id", "expectedVersion", "expectedPolicyVersion", "toStatus", "rationale"]),
-  DecisionRequest: command({ id: string({ minLength: 1, maxLength: 128 }), expectedVersion, decision: { enum: ["approve", "reject", "waive", "abstain", "close"] }, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "decision", "rationale"]),
+  DecisionRequest: command({
+    id: string({ minLength: 1, maxLength: 128 }), expectedVersion,
+    decision: { enum: ["approve", "reject", "waive", "abstain", "close"] },
+    rationale: string({ minLength: 1, maxLength: 4000 }),
+    exception: object({ rationale: string({ minLength: 1, maxLength: 4000 }), authority: string({ minLength: 1, maxLength: 256 }), expiresAt: string({ minLength: 20, maxLength: 32 }), reviewAt: string({ minLength: 20, maxLength: 32 }) }, ["rationale", "authority"]),
+  }, ["id", "expectedVersion", "decision", "rationale"]),
   ChangeCreateRequest: command({
     title: string({ minLength: 1, maxLength: 200 }),
     rationale: string({ minLength: 1, maxLength: 4000 }),
@@ -382,7 +403,47 @@ export const SCHEMAS = Object.freeze({
   ChangeCloseRequest: command({ changeId, expectedVersion, authority: string({ minLength: 1, maxLength: 256 }), rationale: string({ minLength: 1, maxLength: 4000 }), evidenceReferences: array(evidenceReference, { maxItems: 256 }), residualExceptions: array(transitionException, { maxItems: 64 }) }, ["changeId", "expectedVersion", "authority", "rationale", "evidenceReferences"]),
   ChangeGetRequest: query({ changeId }, ["changeId"]),
   WorkflowDashboardRequest: query({ owner: string({ minLength: 1, maxLength: 256 }), includeClosed: { type: "boolean" } }),
-  ReviewCreateRequest: command({ title: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), reviewType: { enum: ["informal", "formal"] } }, ["title", "requirementIds", "reviewType"]),
+  ReviewCreateRequest: command({
+    title: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }),
+    relationshipIds: array(relationshipId, { maxItems: 1000, uniqueItems: true }), reviewType: { enum: ["informal", "formal"] },
+    purpose: string({ minLength: 1, maxLength: 4000 }), participants: array(string({ minLength: 1, maxLength: 256 }), { maxItems: 128, uniqueItems: true }),
+    scope: object({}, [], { additionalProperties: true, maxProperties: 32 }),
+  }, ["title", "requirementIds", "reviewType", "purpose"]),
+  ReviewGetRequest: query({ reviewId }, ["reviewId"]),
+  ReviewFindingRequest: command({
+    reviewId, expectedVersion, severity: { enum: ["info", "minor", "major", "blocking"] },
+    summary: string({ minLength: 1, maxLength: 1000 }), comment: string({ minLength: 1, maxLength: 4000 }),
+    requirementId, relationshipId,
+    origin: { enum: ["human", "ai", "imported"] }, author: string({ minLength: 1, maxLength: 256 }),
+    aiProvenance: object({ provider: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }), suggestionId: string({ minLength: 1, maxLength: 256 }) }, ["provider", "model", "suggestionId"]),
+  }, ["reviewId", "expectedVersion", "severity", "summary", "origin", "author"]),
+  ReviewFindingDispositionRequest: command({
+    reviewId, findingId, expectedVersion, disposition: { enum: ["accepted", "resolved", "rejected", "deferred", "waived"] },
+    rationale: string({ minLength: 1, maxLength: 4000 }), evidenceReferences: array(evidenceReference, { maxItems: 128 }),
+  }, ["reviewId", "findingId", "expectedVersion", "disposition", "rationale"]),
+  ReviewReopenRequest: command({ reviewId, expectedVersion, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["reviewId", "expectedVersion", "rationale"]),
+  VerificationPlanRecordRequest: command({
+    requirementId, requirementVersion: expectedVersion,
+    methods: array({ enum: ["test", "demonstration", "inspection", "analysis"] }, { minItems: 1, maxItems: 4, uniqueItems: true }),
+    acceptanceCriteria: array(object({ parameter: string({ minLength: 1, maxLength: 256 }), measurementMethod: string({ minLength: 1, maxLength: 1000 }), threshold: string({ minLength: 1, maxLength: 1000 }), conditions: string({ minLength: 1, maxLength: 2000 }) }, ["parameter", "measurementMethod", "threshold", "conditions"]), { minItems: 1, maxItems: 128 }),
+    procedure: object({ id: string({ minLength: 1, maxLength: 256 }), version: string({ minLength: 1, maxLength: 128 }), uri: string({ minLength: 1, maxLength: 2048 }) }, ["id", "version"]),
+    owner: string({ minLength: 1, maxLength: 256 }), environment: string({ minLength: 1, maxLength: 256 }), configuration: string({ minLength: 1, maxLength: 256 }), dataset: string({ minLength: 1, maxLength: 256 }), equipment: string({ minLength: 1, maxLength: 256 }), release: string({ minLength: 1, maxLength: 160 }), variant: string({ minLength: 1, maxLength: 160 }), rationale: string({ minLength: 1, maxLength: 4000 }),
+  }, ["requirementId", "requirementVersion", "methods", "acceptanceCriteria", "procedure", "owner", "configuration"]),
+  VerificationEvidenceRecordRequest: command({
+    evidenceId: verificationEvidenceId, externalId: string({ minLength: 1, maxLength: 256 }), externalVersion: string({ minLength: 1, maxLength: 128 }),
+    requirementVersions: array(object({ id: requirementId, version: expectedVersion }, ["id", "version"]), { minItems: 1, maxItems: 500 }),
+    planId: verificationPlanId, relationshipId, caseId: string({ minLength: 1, maxLength: 256 }), caseVersion: string({ minLength: 1, maxLength: 128 }),
+    environment: string({ minLength: 1, maxLength: 256 }), configuration: string({ minLength: 1, maxLength: 256 }), dataset: string({ minLength: 1, maxLength: 256 }), executor: string({ minLength: 1, maxLength: 256 }), executedAt: string({ minLength: 20, maxLength: 32 }), release: string({ minLength: 1, maxLength: 160 }), variant: string({ minLength: 1, maxLength: 160 }),
+    expectedResult: string({ minLength: 1, maxLength: 4000 }), actualResult: string({ minLength: 1, maxLength: 4000 }),
+    status: { enum: ["not_run", "passed", "failed", "blocked", "waived", "not_applicable", "superseded"] },
+    artifactUri: string({ minLength: 1, maxLength: 2048 }), artifactChecksum: string({ pattern: "^[a-f0-9]{64}$" }), sourceSystem: string({ minLength: 1, maxLength: 128 }),
+    defectReferences: array(string({ minLength: 1, maxLength: 256 }), { maxItems: 128, uniqueItems: true }), disposition: string({ minLength: 1, maxLength: 4000 }), rationale: string({ minLength: 1, maxLength: 4000 }), authority: string({ minLength: 1, maxLength: 256 }),
+    origin: { enum: ["human", "ai", "imported", "integration"] },
+    aiProvenance: object({ provider: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }), runId: string({ minLength: 1, maxLength: 256 }) }, ["provider", "model", "runId"]),
+    acceptanceDecision: { enum: ["accept", "record-only"] },
+  }, ["externalId", "externalVersion", "requirementVersions", "caseId", "caseVersion", "environment", "configuration", "executor", "executedAt", "expectedResult", "actualResult", "status", "artifactUri", "artifactChecksum", "sourceSystem", "origin", "acceptanceDecision"]),
+  VerificationStatusRequest: query({ requirementIds: array(requirementId, { maxItems: 500, uniqueItems: true }), baselineId: string({ minLength: 1, maxLength: 128 }), release: string({ minLength: 1, maxLength: 160 }), variant: string({ minLength: 1, maxLength: 160 }), configuration: string({ minLength: 1, maxLength: 256 }) }),
+  MetricsDashboardRequest: query({ groupBy: { enum: ["type", "level", "owner", "priority", "criticality", "release", "status", "verification-status"] }, requirementIds: array(requirementId, { maxItems: 500, uniqueItems: true }), baselineId: string({ minLength: 1, maxLength: 128 }) }, ["groupBy"]),
   BaselineReadinessRequest: query({ requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), scope: object({}, [], { additionalProperties: true, maxProperties: 32 }), exclusions: array(string({ minLength: 1, maxLength: 512 }), { maxItems: 128 }), exceptions: array(baselineException, { maxItems: 128 }) }, ["requirementIds"]),
   BaselineCreateRequest: command({ name: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), rationale: string({ minLength: 1, maxLength: 4000 }), purpose: string({ minLength: 1, maxLength: 4000 }), readinessToken: string({ minLength: 32, maxLength: 4096 }), approvalReferences: array({}, { minItems: 1, maxItems: 128 }), exclusions: array(string({ minLength: 1, maxLength: 512 }), { maxItems: 128 }), project: string({ minLength: 1, maxLength: 256 }), release: string({ minLength: 1, maxLength: 160 }), variant: string({ minLength: 1, maxLength: 160 }), configuration: object({}, [], { additionalProperties: true, maxProperties: 64 }), sourceRepositoryRevision: string({ minLength: 1, maxLength: 256 }), reportTemplateVersions: array(string({ minLength: 1, maxLength: 64 }), { maxItems: 32, uniqueItems: true }) }, ["name", "requirementIds", "readinessToken", "approvalReferences"]),
   BaselineGetRequest: query({ baselineId: string({ minLength: 1, maxLength: 128 }), projection }, ["baselineId"]),

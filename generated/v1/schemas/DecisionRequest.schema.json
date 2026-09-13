@@ -16,6 +16,36 @@
         "close"
       ]
     },
+    "exception": {
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "expiresAt": {
+          "maxLength": 32,
+          "minLength": 20,
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reviewAt": {
+          "maxLength": 32,
+          "minLength": 20,
+          "type": "string"
+        }
+      },
+      "required": [
+        "rationale",
+        "authority"
+      ],
+      "type": "object"
+    },
     "expectedRepositoryRevision": {
       "minimum": 0,
       "type": "integer"

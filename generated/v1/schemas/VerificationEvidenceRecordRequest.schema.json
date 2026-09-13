@@ -1,0 +1,238 @@
+{
+  "$id": "https://spec-speaker.local/schemas/v1/VerificationEvidenceRecordRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acceptanceDecision": {
+      "enum": [
+        "accept",
+        "record-only"
+      ]
+    },
+    "actualResult": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "aiProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "runId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "runId"
+      ],
+      "type": "object"
+    },
+    "artifactChecksum": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "artifactUri": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "type": "string"
+    },
+    "authority": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "caseId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "caseVersion": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "configuration": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "dataset": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "defectReferences": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 128,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "disposition": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "environment": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "evidenceId": {
+      "pattern": "^EV-[0-9]{6}$",
+      "type": "string"
+    },
+    "executedAt": {
+      "maxLength": 32,
+      "minLength": 20,
+      "type": "string"
+    },
+    "executor": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "expectedResult": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "externalId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "externalVersion": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "origin": {
+      "enum": [
+        "human",
+        "ai",
+        "imported",
+        "integration"
+      ]
+    },
+    "planId": {
+      "pattern": "^VP-[0-9]{6}$",
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "relationshipId": {
+      "pattern": "^RL-[0-9]{6}$",
+      "type": "string"
+    },
+    "release": {
+      "maxLength": 160,
+      "minLength": 1,
+      "type": "string"
+    },
+    "requirementVersions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "type": "object"
+      },
+      "maxItems": 500,
+      "minItems": 1,
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "sourceSystem": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "not_run",
+        "passed",
+        "failed",
+        "blocked",
+        "waived",
+        "not_applicable",
+        "superseded"
+      ]
+    },
+    "variant": {
+      "maxLength": 160,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "idempotencyKey",
+    "expectedRepositoryRevision",
+    "externalId",
+    "externalVersion",
+    "requirementVersions",
+    "caseId",
+    "caseVersion",
+    "environment",
+    "configuration",
+    "executor",
+    "executedAt",
+    "expectedResult",
+    "actualResult",
+    "status",
+    "artifactUri",
+    "artifactChecksum",
+    "sourceSystem",
+    "origin",
+    "acceptanceDecision"
+  ],
+  "title": "VerificationEvidenceRecordRequest",
+  "type": "object"
+}

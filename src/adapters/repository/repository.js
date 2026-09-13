@@ -213,6 +213,24 @@ function assertMonotonicTransition(before, after, allocated) {
     const newMemberships = new Set(newControl.baselineMemberships.map((entry) => canonicalHash(entry)));
     for (const entry of oldControl.baselineMemberships) if (!newMemberships.has(canonicalHash(entry))) issues.push({ path: "/business/changeControl/baselineMemberships", reason: "baseline membership must not be removed" });
   }
+  const oldQuality = before.business.value.qualityControl;
+  const newQuality = after.business.qualityControl;
+  if (oldQuality && !newQuality) issues.push({ path: "/business/qualityControl", reason: "governed quality records must not be removed" });
+  if (oldQuality && newQuality) {
+    for (const field of ["nextReviewNumber", "nextFindingNumber", "nextPlanNumber", "nextEvidenceNumber"]) if (newQuality[field] < oldQuality[field]) issues.push({ path: `/business/qualityControl/${field}`, reason: "must never decrement" });
+    for (const collection of ["reviews", "verificationPlans", "evidence"]) {
+      const oldRecords = new Map(oldQuality[collection].map((record) => [record.id, record]));
+      const newRecords = new Map(newQuality[collection].map((record) => [record.id, record]));
+      for (const [id, oldRecord] of oldRecords) {
+        const newRecord = newRecords.get(id);
+        if (!newRecord) { issues.push({ path: `/business/qualityControl/${collection}/${id}`, reason: "governed records must not be deleted" }); continue; }
+        const changed = canonicalHash(withoutVersion(oldRecord)) !== canonicalHash(withoutVersion(newRecord));
+        if (changed && newRecord.version !== oldRecord.version + 1) issues.push({ path: `/business/qualityControl/${collection}/${id}/version`, reason: "must increase by exactly one when a record changes" });
+        if (!changed && newRecord.version !== oldRecord.version) issues.push({ path: `/business/qualityControl/${collection}/${id}/version`, reason: "must remain unchanged when content is unchanged" });
+      }
+      for (const [id, record] of newRecords) if (!oldRecords.has(id) && record.version !== 1) issues.push({ path: `/business/qualityControl/${collection}/${id}/version`, reason: "new records must start at version 1" });
+    }
+  }
   if (issues.length) throw new ValidationError(issues);
 }
 

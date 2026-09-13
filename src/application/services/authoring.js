@@ -6,6 +6,7 @@ import { parseRequirementId } from "../../domain/identifiers.js";
 import { blockingFindings, QUALITY_RULE_CATALOG, QUALITY_RULE_VERSION, validateRequirementDraft } from "../../domain/quality.js";
 import { ApplicationError } from "../errors.js";
 import { markRelationshipsSuspect } from "./traceability.js";
+import { markEvidencePotentiallyStale } from "./reviews-verification-reporting.js";
 
 const MATERIAL_FIELDS = new Set(["statement", "category", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences"]);
 const FIELD_CLASSIFICATION = Object.freeze({
@@ -218,7 +219,8 @@ function updateCandidate(documents, request, context, policy) {
   const findings = validateRequirementDraft(candidateDraft(item), policy, { excludeId: item.id, existingRequirements: visibleRequirements(documents, context), forCommit: true });
   assertFindings(findings);
   const suspectRelationships = material.length ? markRelationshipsSuspect(documents, item.id, material, context, policy) : [];
-  return { changed: true, diff, item: clone(item), ...(request.reason ? { reason: request.reason } : {}), suspectRelationships, warnings: warnings(findings) };
+  const staleEvidence = markEvidencePotentiallyStale(documents, item.id, diff.map(({ field }) => field), context, policy);
+  return { changed: true, diff, item: clone(item), ...(request.reason ? { reason: request.reason } : {}), staleEvidence, suspectRelationships, warnings: warnings(findings) };
 }
 
 function retirementImpact(documents, id, context) {
@@ -266,6 +268,7 @@ function retireCandidate(documents, allocation, request, context, policy) {
   item.provenance = { ...item.provenance, updatedAt: timestamp(context.now), updatedBy: actor(context) };
   item.version += 1;
   impact.suspectRelationships = markRelationshipsSuspect(documents, item.id, ["retirement"], context, policy, "retirement");
+  impact.staleEvidence = markEvidencePotentiallyStale(documents, item.id, ["retirement"], context, policy);
   if (request.replacementId) {
     if (request.replacementId === request.id) throw new ApplicationError("INVALID_ARGUMENT", "A requirement cannot supersede itself");
     const replacement = requirement(documents, request.replacementId);

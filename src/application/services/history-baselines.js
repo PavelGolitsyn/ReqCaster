@@ -3,6 +3,7 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { canonicalHash } from "../../adapters/repository/canonical-json.js";
 import { ApplicationError } from "../errors.js";
 import { CursorCodec } from "./reads.js";
+import { evaluateVerification } from "./reviews-verification-reporting.js";
 
 const clone = (value) => structuredClone(value);
 const allRequirements = (documents) => [...documents.business.requirements, ...documents.software.requirements];
@@ -71,6 +72,24 @@ function readiness(documents, policy, request, context) {
     if (new Set(["closed", "cancelled", "rejected"]).has(change.status)) continue;
     if ((change.affectedRequirementIds ?? []).some((id) => ids.includes(id)) || (change.proposedChanges ?? []).some(({ id }) => ids.includes(id))) blockers.push(blocker("OPEN_CHANGE_REQUEST", "An unresolved change request affects the selection", { changeRequestId: change.id }));
   }
+  const quality = documents.business.qualityControl;
+  if (policy.verification?.requirePlansForReadiness) {
+    const levels = new Set(policy.authoringRules?.verificationPlanningLevels ?? []);
+    for (const item of selected.filter(({ level }) => levels.has(level))) {
+      const plan = quality?.verificationPlans?.find((entry) => entry.requirementId === item.id && entry.requirementVersion === item.version);
+      if (!plan) blockers.push(blocker("MISSING_VERIFICATION_PLAN", "Requirement lacks an objective verification plan for its exact version", { requirementId: item.id }));
+    }
+  }
+  if (quality) {
+    for (const review of quality.reviews) {
+      if (!review.requirementVersions?.some(({ id }) => ids.includes(id))) continue;
+      for (const finding of review.findings ?? []) if (finding.severity === "blocking" && finding.status === "open") blockers.push(blocker("BLOCKING_REVIEW_FINDING", "An unresolved blocking review finding affects the selection", { findingId: finding.id, reviewId: review.id }));
+    }
+    for (const item of selected) {
+      const verification = evaluateVerification(documents, item, {}, policy);
+      if (item.status === "verified" && verification.status !== "passed") blockers.push(blocker("MISSING_ACCEPTED_VERIFICATION", "Verified requirement lacks accepted applicable passing evidence", { requirementId: item.id, verificationStatus: verification.status }));
+    }
+  }
   const exceptions = [];
   for (const exception of request.exceptions ?? []) {
     const valid = present(exception.rationale) && exception.authority === principal(context) && present(exception.expiresAt ?? exception.reviewAt) && new Date(exception.expiresAt ?? exception.reviewAt).getTime() > new Date(context.now).getTime();
@@ -133,6 +152,12 @@ function scopedSnapshot(documents, ids) {
     });
   }
   if (output.business.changeControl) output.business.changeControl = { ...output.business.changeControl, changes: [], outbox: [], baselineMemberships: output.business.changeControl.baselineMemberships.filter(({ requirementId }) => selected.has(requirementId)) };
+  if (output.business.qualityControl) output.business.qualityControl = {
+    ...output.business.qualityControl,
+    reviews: output.business.qualityControl.reviews.filter((review) => review.requirementVersions.every(({ id }) => selected.has(id))),
+    verificationPlans: output.business.qualityControl.verificationPlans.filter(({ requirementId }) => selected.has(requirementId)),
+    evidence: output.business.qualityControl.evidence.filter((record) => record.requirementVersions.every(({ id }) => selected.has(id))),
+  };
   return output;
 }
 

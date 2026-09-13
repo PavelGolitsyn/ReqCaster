@@ -6,6 +6,7 @@ const knownQualityRules = new Set(QUALITY_RULE_CATALOG.map(({ id }) => id));
 const authoringFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria"]);
 const transitionFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria", "statement", "category"]);
 const blockingConditions = new Set(["blocking-tbds", "coverage", "critical-suspect-links"]);
+const evidenceSensitiveFields = new Set(["statement", "acceptanceCriteria", "verificationMethods", "criticality", "category", "rationale", "sourceReferences"]);
 
 export function validatePolicy(policy) {
   const issues = [];
@@ -75,6 +76,12 @@ export function validatePolicy(policy) {
   else {
     if (new Set(promoted).size !== promoted.length) issues.push("promoted quality rules must be unique");
     for (const ruleId of promoted) if (!knownQualityRules.has(ruleId) || !ruleId.startsWith("REQ-QUALITY-")) issues.push(`promoted quality rule is unknown or not advisory: ${ruleId}`);
+  }
+  if (policy?.verification) {
+    if (!Array.isArray(policy.verification.staleOnFields) || !policy.verification.staleOnFields.length) issues.push("verification stale-on fields must be a non-empty array");
+    else for (const field of policy.verification.staleOnFields) if (!evidenceSensitiveFields.has(field)) issues.push(`verification stale-on field is unknown: ${field}`);
+    if (typeof policy.verification.requireNonSuspectRelationship !== "boolean") issues.push("verification relationship policy must be boolean");
+    if (typeof policy.verification.requirePlansForReadiness !== "boolean") issues.push("verification readiness-plan policy must be boolean");
   }
   return issues;
 }

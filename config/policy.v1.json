@@ -68,5 +68,6 @@
   "retirementRules": { "decisionReferenceStatuses": ["approved", "implemented", "verified"], "blockUnresolvedCriticalDependencies": true },
   "authorizedDecisionTypes": ["approve", "reject", "waive", "close"],
   "limits": { "searchDefault": 20, "searchMaximum": 100, "graphDepthMaximum": 5, "graphNodeMaximum": 1000, "bulkMaximum": 500, "bulkByteMaximum": 1000000, "timeoutMilliseconds": 30000, "responseSizeMaximum": 256000 },
-  "qualityRules": { "structuralValidation": "blocking", "languageQuality": "advisory", "advisorySeverities": ["info", "warning"] }
+  "qualityRules": { "structuralValidation": "blocking", "languageQuality": "advisory", "advisorySeverities": ["info", "warning"] },
+  "verification": { "staleOnFields": ["statement", "acceptanceCriteria", "verificationMethods", "criticality"], "requireNonSuspectRelationship": true, "requirePlansForReadiness": true }
 }

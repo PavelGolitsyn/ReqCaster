@@ -21,6 +21,11 @@ Stage 6 adds reconstructable item and relationship history, hash-chained audit
 events, revision-pinned readiness checks, immutable checksummed baselines,
 field-level comparisons, and verified consistency-group backup and restore.
 
+Stage 7 adds exact-version review records and human decisions, objective
+verification plans, accepted evidence with policy-driven applicability,
+permission-aware reproducible reports, release-readiness projections, and
+drill-down metrics.
+
 ```sh
 npm run contracts:generate
 npm test
@@ -44,3 +49,5 @@ History, baseline, comparison, and audit behavior is documented in
 [`docs/engine/history-baselines-and-audit-guide.md`](docs/engine/history-baselines-and-audit-guide.md),
 with recovery procedures in
 [`docs/operators/backup-and-recovery.md`](docs/operators/backup-and-recovery.md).
+Review, verification, reporting, and metric workflows are documented in
+[`docs/engine/reviews-verification-and-reporting-guide.md`](docs/engine/reviews-verification-and-reporting-guide.md).

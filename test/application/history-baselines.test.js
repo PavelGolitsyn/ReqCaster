@@ -31,6 +31,7 @@ function seedReady({ business, software }, allocation) {
   software.relationships.push({ id: allocation.allocateRelationshipId(), rationale: "Derived obligation.", source: { id: "SR-000001", kind: "requirement", version: 1 }, suspect: false, target: { id: "BR-000001", kind: "requirement", version: 1 }, type: "derives_from", version: 1 });
   business.relationships.push({ id: allocation.allocateRelationshipId(), rationale: "Business verification.", source: { id: "BR-000001", kind: "requirement", version: 1 }, suspect: false, target: { id: "TEST-BR", kind: "external:test" }, type: "verified_by", version: 1 });
   software.relationships.push({ id: allocation.allocateRelationshipId(), rationale: "Software verification.", source: { id: "SR-000001", kind: "requirement", version: 1 }, suspect: false, target: { id: "TEST-SR", kind: "external:test" }, type: "verified_by", version: 1 });
+  business.qualityControl = { evidence: [], nextEvidenceNumber: 1, nextFindingNumber: 1, nextPlanNumber: 2, nextReviewNumber: 1, reviews: [], schemaVersion: "1.0.0", verificationPlans: [{ acceptanceCriteria: [{ conditions: "Configured system", measurementMethod: "observe result", parameter: "settings persistence", threshold: "settings remain available" }], configuration: "test", createdAt: "2026-09-13T12:00:00.000Z", createdBy: "seed", id: "VP-000001", methods: ["test"], owner: "team", procedure: { id: "TEST-SR", version: "1" }, requirementId: "SR-000001", requirementVersion: 1, status: "planned", updatedAt: "2026-09-13T12:00:00.000Z", version: 1 }] };
 }
 
 test("mixed transactions reconstruct exact item and relationship versions with attributable field changes", async () => {
@@ -88,9 +89,10 @@ test("readiness reports governed blocker categories and accepts attributable exp
   documents.software.relationships[0].suspect = true;
   documents.software.relationships.push({ id: "RL-999999", source: { id: "SR-000001", kind: "requirement" }, suspect: false, target: { id: "BR-000001", kind: "requirement" }, type: "conflicts_with", version: 1 });
   documents.business.changeControl = { baselineMemberships: [], changes: [{ affectedRequirementIds: ["BR-000001"], id: "CH-000001", proposedChanges: [], status: "analyzed" }], nextChangeNumber: 2, nextOutboxNumber: 1, outbox: [], schemaVersion: "1.0.0" };
+  documents.business.qualityControl.verificationPlans = [];
   const context = { identity: manager, now: "2026-09-13T12:00:00.000Z" };
   const checked = readiness(documents, policy, { requirementIds: ["BR-000001", "SR-000001"] }, context);
-  for (const code of ["STATUS_NOT_ALLOWED", "MISSING_OWNER", "UNRESOLVED_TBD", "MISSING_COVERAGE", "SUSPECT_LINK", "BLOCKING_CONFLICT", "OPEN_CHANGE_REQUEST"]) assert.ok(checked.blockers.some((entry) => entry.code === code), code);
+  for (const code of ["STATUS_NOT_ALLOWED", "MISSING_OWNER", "UNRESOLVED_TBD", "MISSING_COVERAGE", "SUSPECT_LINK", "BLOCKING_CONFLICT", "OPEN_CHANGE_REQUEST", "MISSING_VERIFICATION_PLAN"]) assert.ok(checked.blockers.some((entry) => entry.code === code), code);
   const excepted = readiness(documents, policy, { requirementIds: ["BR-000001", "SR-000001"], exceptions: [{ authority: "human:manager", code: "STATUS_NOT_ALLOWED", expiresAt: "2026-10-01T00:00:00.000Z", rationale: "Approved temporary lifecycle exception.", requirementId: "BR-000001" }] }, context);
   assert.ok(!excepted.blockers.some((entry) => entry.code === "STATUS_NOT_ALLOWED" && entry.requirementId === "BR-000001"));
   assert.equal(excepted.exceptions.length, 1);

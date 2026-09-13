@@ -36,6 +36,21 @@
       "required": ["schemaVersion", "nextChangeNumber", "nextOutboxNumber", "changes", "outbox", "baselineMemberships"],
       "type": "object"
     },
+    "qualityControl": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": { "items": { "type": "object" }, "maxItems": 200000, "type": "array" },
+        "nextEvidenceNumber": { "minimum": 1, "type": "integer" },
+        "nextFindingNumber": { "minimum": 1, "type": "integer" },
+        "nextPlanNumber": { "minimum": 1, "type": "integer" },
+        "nextReviewNumber": { "minimum": 1, "type": "integer" },
+        "reviews": { "items": { "type": "object" }, "maxItems": 100000, "type": "array" },
+        "schemaVersion": { "const": "1.0.0" },
+        "verificationPlans": { "items": { "type": "object" }, "maxItems": 200000, "type": "array" }
+      },
+      "required": ["schemaVersion", "nextReviewNumber", "nextFindingNumber", "nextPlanNumber", "nextEvidenceNumber", "reviews", "verificationPlans", "evidence"],
+      "type": "object"
+    },
     "businessRequirement": {
       "$ref": "#/$defs/requirement",
       "properties": {
@@ -97,6 +112,7 @@
         "documentType": { "enum": ["business", "software"] },
         "nextRelationshipNumber": { "maximum": 1000000, "minimum": 1, "type": "integer" },
         "nextRequirementNumber": { "maximum": 1000000, "minimum": 1, "type": "integer" },
+        "qualityControl": { "$ref": "#/$defs/qualityControl" },
         "relationships": {
           "items": { "$ref": "#/$defs/relationship" },
           "maxItems": 200000,
