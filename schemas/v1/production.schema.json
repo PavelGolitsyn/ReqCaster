@@ -1,0 +1,92 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/production.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "admission": {
+      "additionalProperties": false,
+      "properties": {
+        "maximumConcurrent": {
+          "maximum": 256,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "maximumQueue": {
+          "maximum": 4096,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "timeoutMilliseconds": {
+          "maximum": 300000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maximumConcurrent",
+        "maximumQueue",
+        "timeoutMilliseconds"
+      ],
+      "type": "object"
+    },
+    "backup": {
+      "additionalProperties": false,
+      "properties": {
+        "maximumAgeHours": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "recoveryPointObjectiveHours": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "recoveryTimeObjectiveMinutes": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maximumAgeHours",
+        "recoveryPointObjectiveHours",
+        "recoveryTimeObjectiveMinutes"
+      ],
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "telemetry": {
+      "additionalProperties": false,
+      "properties": {
+        "eventBufferMaximum": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "requireCorrelationId": {
+          "const": true
+        },
+        "safeMetadataOnly": {
+          "const": true
+        }
+      },
+      "required": [
+        "eventBufferMaximum",
+        "requireCorrelationId",
+        "safeMetadataOnly"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "$schema",
+    "admission",
+    "backup",
+    "schemaVersion",
+    "telemetry"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,100 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/ReviewFindingDispositionRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "disposition": {
+      "enum": [
+        "accepted",
+        "resolved",
+        "rejected",
+        "deferred",
+        "waived"
+      ]
+    },
+    "evidenceReferences": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "passed",
+              "failed",
+              "accepted",
+              "not_applicable"
+            ]
+          },
+          "type": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "uri": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "type": "object"
+      },
+      "maxItems": 128,
+      "type": "array"
+    },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "expectedVersion": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "findingId": {
+      "pattern": "^FN-[0-9]{6}$",
+      "type": "string"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "reviewId": {
+      "pattern": "^RV-[0-9]{6}$",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "idempotencyKey",
+    "expectedRepositoryRevision",
+    "reviewId",
+    "findingId",
+    "expectedVersion",
+    "disposition",
+    "rationale"
+  ],
+  "title": "ReviewFindingDispositionRequest",
+  "type": "object"
+}

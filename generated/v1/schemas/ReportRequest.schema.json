@@ -1,0 +1,62 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/ReportRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baselineId": {
+      "maxLength": 128,
+      "type": "string"
+    },
+    "compareBaselineId": {
+      "maxLength": 128,
+      "type": "string"
+    },
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "filters": {
+      "additionalProperties": true,
+      "maxProperties": 32,
+      "properties": {},
+      "required": [],
+      "type": "object"
+    },
+    "reportId": {
+      "maxLength": 128,
+      "type": "string"
+    },
+    "reportType": {
+      "enum": [
+        "business-requirements",
+        "software-requirements",
+        "traceability",
+        "coverage",
+        "orphans",
+        "reviews",
+        "changes",
+        "baseline",
+        "baseline-comparison",
+        "verification",
+        "readiness",
+        "audit",
+        "history"
+      ]
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "templateVersion": {
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "reportType"
+  ],
+  "title": "ReportRequest",
+  "type": "object"
+}

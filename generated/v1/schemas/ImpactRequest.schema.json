@@ -1,0 +1,149 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/ImpactRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baselineId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "depth": {
+      "maximum": 5,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "direction": {
+      "enum": [
+        "upstream",
+        "downstream",
+        "both"
+      ]
+    },
+    "id": {
+      "pattern": "^(BR|SR)-[0-9]{6}$",
+      "type": "string"
+    },
+    "ids": {
+      "items": {
+        "pattern": "^(BR|SR)-[0-9]{6}$",
+        "type": "string"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "includeExternal": {
+      "type": "boolean"
+    },
+    "includeInvalid": {
+      "type": "boolean"
+    },
+    "includeRetired": {
+      "type": "boolean"
+    },
+    "includeSuspect": {
+      "type": "boolean"
+    },
+    "includeWaived": {
+      "type": "boolean"
+    },
+    "manuallyAddedIds": {
+      "items": {
+        "pattern": "^(BR|SR)-[0-9]{6}$",
+        "type": "string"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "nodeLimit": {
+      "maximum": 1000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "relationshipTypes": {
+      "items": {
+        "maxLength": 64,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "starts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "artifactType": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "externalId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "externalVersion": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "kind": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "system": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "systemOfRecord": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "uri": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "direction"
+  ],
+  "title": "ImpactRequest",
+  "type": "object"
+}

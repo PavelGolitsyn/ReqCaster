@@ -1,0 +1,73 @@
+{
+  "$schema": "../schemas/v1/policy.schema.json",
+  "schemaVersion": "1.0.0",
+  "configurationVersion": "1",
+  "traceabilityModelVersion": "1.0.0",
+  "requirements": {
+    "categories": ["functional", "quality", "interface", "constraint", "safety", "regulatory"],
+    "statuses": ["proposed", "reviewed", "approved", "implemented", "verified", "delivered", "rejected", "deferred", "retired", "draft", "in-review"],
+    "priorities": ["low", "medium", "high", "critical"],
+    "criticalities": ["none", "low", "medium", "high", "safety-critical"],
+    "verificationMethods": ["test", "demonstration", "inspection", "analysis"]
+  },
+  "authoringRules": {
+    "defaultStatus": "proposed",
+    "requiredFields": [
+      { "level": "business", "fields": ["owner", "priority"] },
+      { "level": "software", "fields": ["owner", "priority"] }
+    ],
+    "rationaleOrSourceLevels": ["business", "software"],
+    "verificationPlanningLevels": ["software"]
+  },
+  "transitions": [
+    { "from": "proposed", "to": "reviewed", "permission": "requirements:mutate", "requiredFields": ["owner", "rationale"], "requiredEvidenceTypes": [], "blockingConditions": ["blocking-tbds"], "impactActions": ["notify-owner"], "allowException": true },
+    { "from": "reviewed", "to": "approved", "permission": "requirements:decide", "requiredFields": ["owner", "rationale", "sourceReferences", "acceptanceCriteria"], "requiredEvidenceTypes": ["review-decision"], "blockingConditions": ["coverage", "critical-suspect-links", "blocking-tbds"], "impactActions": ["notify-owner", "protect-content"], "allowException": true },
+    { "from": "approved", "to": "implemented", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": ["implementation"], "blockingConditions": ["critical-suspect-links"], "impactActions": ["notify-owner"], "allowException": true },
+    { "from": "implemented", "to": "verified", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": ["verification"], "blockingConditions": ["coverage", "critical-suspect-links"], "impactActions": ["notify-owner"], "allowException": true },
+    { "from": "verified", "to": "delivered", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": ["delivery"], "blockingConditions": ["critical-suspect-links"], "impactActions": ["notify-owner"], "allowException": true },
+    { "from": "proposed", "to": "rejected", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["notify-owner"], "allowException": false },
+    { "from": "reviewed", "to": "rejected", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["notify-owner"], "allowException": false },
+    { "from": "proposed", "to": "deferred", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["notify-owner"], "allowException": false },
+    { "from": "reviewed", "to": "deferred", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["notify-owner"], "allowException": false },
+    { "from": "proposed", "to": "retired", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["mark-links-suspect", "notify-owner"], "allowException": false },
+    { "from": "reviewed", "to": "retired", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": ["critical-suspect-links"], "impactActions": ["mark-links-suspect", "notify-owner"], "allowException": true },
+    { "from": "proposed", "to": "draft", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": [], "allowException": false },
+    { "from": "draft", "to": "in-review", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": [], "allowException": false },
+    { "from": "in-review", "to": "approved", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["protect-content"], "allowException": false },
+    { "from": "in-review", "to": "draft", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": [], "allowException": false },
+    { "from": "draft", "to": "retired", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["mark-links-suspect", "notify-owner"], "allowException": false },
+    { "from": "approved", "to": "retired", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": ["critical-suspect-links"], "impactActions": ["mark-links-suspect", "notify-owner"], "allowException": true },
+    { "from": "implemented", "to": "retired", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": ["critical-suspect-links"], "impactActions": ["mark-links-suspect", "notify-owner"], "allowException": true },
+    { "from": "verified", "to": "retired", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": ["critical-suspect-links"], "impactActions": ["mark-links-suspect", "notify-owner"], "allowException": true },
+    { "from": "delivered", "to": "retired", "permission": "requirements:decide", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": ["critical-suspect-links"], "impactActions": ["mark-links-suspect", "notify-owner"], "allowException": true },
+    { "from": "rejected", "to": "retired", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["notify-owner"], "allowException": false },
+    { "from": "deferred", "to": "retired", "permission": "requirements:mutate", "requiredFields": [], "requiredEvidenceTypes": [], "blockingConditions": [], "impactActions": ["notify-owner"], "allowException": false }
+  ],
+  "changeControl": { "protectedStatuses": ["approved", "implemented", "verified", "delivered"], "criticalImpactLevels": ["high", "safety-critical"], "impactDepthMaximum": 5, "impactNodeMaximum": 1000, "outboxMaximumAttempts": 5 },
+  "relationships": [
+    { "type": "derives_from", "direction": "source-to-target", "sourceKinds": ["software"], "targetKinds": ["business"], "maxTargets": 64, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "decomposes", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "downstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "depends_on", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software", "external:component", "external:interface", "external:system"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "conflicts_with", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "horizontal", "symmetric": true, "allowCycles": true, "rationaleRequired": true },
+    { "type": "implements", "direction": "source-to-target", "sourceKinds": ["external:implementation", "external:component", "external:design"], "targetKinds": ["business", "software"], "maxTargets": 1000, "suspectOn": ["target-content-change", "target-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "verified_by", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:test", "external:evidence"], "maxTargets": 1000, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "downstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "validated_by", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:evidence"], "maxTargets": 1000, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "downstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "mitigates", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:risk", "external:hazard"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "constrained_by", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:regulation", "external:interface", "external:decision", "external:document"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "supersedes", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 1, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "horizontal", "allowCycles": false, "rationaleRequired": true }
+  ],
+  "requiredMetadata": [
+    { "level": "business", "status": "approved", "fields": ["rationale", "owner", "sourceReferences", "acceptanceCriteria"] },
+    { "level": "software", "status": "approved", "fields": ["rationale", "owner", "sourceReferences", "acceptanceCriteria", "verificationMethods"] }
+  ],
+  "coverageRules": [
+    { "level": "business", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["verified_by"] },
+    { "level": "software", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["derives_from", "verified_by"] }
+  ],
+  "baselineReadiness": { "allowedStatuses": ["approved", "implemented", "verified"], "blockSuspectLinks": true, "blockMissingRequiredMetadata": true },
+  "retirementRules": { "decisionReferenceStatuses": ["approved", "implemented", "verified"], "blockUnresolvedCriticalDependencies": true },
+  "authorizedDecisionTypes": ["approve", "reject", "waive", "close"],
+  "limits": { "searchDefault": 20, "searchMaximum": 100, "graphDepthMaximum": 5, "graphNodeMaximum": 1000, "bulkMaximum": 500, "bulkByteMaximum": 1000000, "timeoutMilliseconds": 30000, "responseSizeMaximum": 256000 },
+  "qualityRules": { "structuralValidation": "blocking", "languageQuality": "advisory", "advisorySeverities": ["info", "warning"] },
+  "verification": { "staleOnFields": ["statement", "acceptanceCriteria", "verificationMethods", "criticality"], "requireNonSuspectRelationship": true, "requirePlansForReadiness": true }
+}

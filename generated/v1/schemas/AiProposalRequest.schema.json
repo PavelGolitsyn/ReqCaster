@@ -1,0 +1,450 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/AiProposalRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "draft": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptanceCriteria": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "text": {
+                "maxLength": 2000,
+                "minLength": 1,
+                "type": "string"
+              },
+              "verificationMethod": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "text"
+            ],
+            "type": "object"
+          },
+          "maxItems": 128,
+          "type": "array"
+        },
+        "aiAssistance": {
+          "additionalProperties": false,
+          "properties": {
+            "acceptance": {
+              "additionalProperties": false,
+              "properties": {
+                "acceptedAt": {
+                  "maxLength": 32,
+                  "minLength": 20,
+                  "type": "string"
+                },
+                "acceptedBy": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "acceptedContentHash": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "diff": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "after": {},
+                      "before": {},
+                      "field": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "field"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 64,
+                  "type": "array"
+                },
+                "principal": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "proposedContentHash": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "rationale": {
+                  "maxLength": 4000,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "acceptedAt",
+                "acceptedBy",
+                "principal",
+                "rationale",
+                "proposedContentHash",
+                "acceptedContentHash",
+                "diff"
+              ],
+              "type": "object"
+            },
+            "assisted": {
+              "type": "boolean"
+            },
+            "contentHash": {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            "generatedAt": {
+              "maxLength": 32,
+              "minLength": 20,
+              "type": "string"
+            },
+            "humanEdits": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "at": {
+                    "maxLength": 32,
+                    "minLength": 20,
+                    "type": "string"
+                  },
+                  "by": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "fields": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "principal": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "reason": {
+                    "maxLength": 4000,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "at",
+                  "by",
+                  "principal",
+                  "fields"
+                ],
+                "type": "object"
+              },
+              "maxItems": 4096,
+              "type": "array"
+            },
+            "model": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "promptTemplateVersion": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "proposalStatus": {
+              "enum": [
+                "proposed",
+                "accepted",
+                "rejected"
+              ]
+            },
+            "provider": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "rationale": {
+              "maxLength": 4000,
+              "minLength": 1,
+              "type": "string"
+            },
+            "requester": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            "ruleVersion": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "runId": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            "service": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "sourceItems": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "version": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "type": "object"
+              },
+              "maxItems": 500,
+              "type": "array"
+            },
+            "suggestionId": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "assisted"
+          ],
+          "type": "object"
+        },
+        "category": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "criticality": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "customAttributes": {
+          "additionalProperties": true,
+          "maxProperties": 64,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "level": {
+          "enum": [
+            "business",
+            "software"
+          ]
+        },
+        "owner": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "priority": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "shortLabel": {
+          "maxLength": 160,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sourceReferences": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "uri": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "uri"
+            ],
+            "type": "object"
+          },
+          "maxItems": 128,
+          "type": "array"
+        },
+        "statement": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "verificationMethods": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "level",
+        "statement",
+        "category"
+      ],
+      "type": "object"
+    },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "model": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "processor": {
+      "enum": [
+        "internal",
+        "external"
+      ]
+    },
+    "promptTemplateVersion": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "protectedFieldsIncluded": {
+      "type": "boolean"
+    },
+    "provider": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ruleVersion": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "runId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "service": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "sourceItems": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "type": "object"
+      },
+      "maxItems": 500,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "idempotencyKey",
+    "expectedRepositoryRevision",
+    "draft",
+    "provider",
+    "service",
+    "model",
+    "runId",
+    "promptTemplateVersion",
+    "sourceItems",
+    "rationale",
+    "processor"
+  ],
+  "title": "AiProposalRequest",
+  "type": "object"
+}

@@ -1,0 +1,134 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/ReviewFindingRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aiProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "promptTemplateVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "ruleVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "runId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "service": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "suggestionId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "suggestionId"
+      ],
+      "type": "object"
+    },
+    "author": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "comment": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "expectedVersion": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "origin": {
+      "enum": [
+        "human",
+        "ai",
+        "imported"
+      ]
+    },
+    "relationshipId": {
+      "pattern": "^RL-[0-9]{6}$",
+      "type": "string"
+    },
+    "requirementId": {
+      "pattern": "^(BR|SR)-[0-9]{6}$",
+      "type": "string"
+    },
+    "reviewId": {
+      "pattern": "^RV-[0-9]{6}$",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "minor",
+        "major",
+        "blocking"
+      ]
+    },
+    "summary": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "idempotencyKey",
+    "expectedRepositoryRevision",
+    "reviewId",
+    "expectedVersion",
+    "severity",
+    "summary",
+    "origin",
+    "author"
+  ],
+  "title": "ReviewFindingRequest",
+  "type": "object"
+}

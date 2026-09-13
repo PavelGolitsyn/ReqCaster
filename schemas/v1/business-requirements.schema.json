@@ -1,0 +1,6 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/business-requirements.schema.json",
+  "$ref": "repository-common.schema.json#/$defs/businessDocument",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical business requirements document"
+}

@@ -1,0 +1,5 @@
+{
+  "fixtureType": "legacy",
+  "schemaVersion": "0.9.0",
+  "businessRequirements": [{ "identifier": "BR-000001", "text": "A legacy record for migration tests." }]
+}

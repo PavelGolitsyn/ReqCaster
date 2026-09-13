@@ -1,0 +1,303 @@
+{
+  "$defs": {
+    "acceptanceCriterion": {
+      "additionalProperties": false,
+      "properties": {
+        "id": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "text": { "maxLength": 2000, "minLength": 1, "type": "string" },
+        "verificationMethod": { "maxLength": 64, "minLength": 1, "type": "string" }
+      },
+      "required": ["id", "text"],
+      "type": "object"
+    },
+    "businessDocument": {
+      "$ref": "#/$defs/document",
+      "properties": {
+        "$schema": { "const": ".engine/schemas/v1/business-requirements.schema.json" },
+        "changeControl": { "$ref": "#/$defs/changeControl" },
+        "documentType": { "const": "business" },
+        "requirements": {
+          "items": { "$ref": "#/$defs/businessRequirement" },
+          "maxItems": 100000,
+          "type": "array"
+        }
+      }
+    },
+    "changeControl": {
+      "additionalProperties": false,
+      "properties": {
+        "baselineMemberships": { "items": { "type": "object" }, "maxItems": 1000000, "type": "array" },
+        "changes": { "items": { "type": "object" }, "maxItems": 100000, "type": "array" },
+        "nextChangeNumber": { "minimum": 1, "type": "integer" },
+        "nextOutboxNumber": { "minimum": 1, "type": "integer" },
+        "outbox": { "items": { "type": "object" }, "maxItems": 200000, "type": "array" },
+        "schemaVersion": { "const": "1.0.0" }
+      },
+      "required": ["schemaVersion", "nextChangeNumber", "nextOutboxNumber", "changes", "outbox", "baselineMemberships"],
+      "type": "object"
+    },
+    "qualityControl": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": { "items": { "type": "object" }, "maxItems": 200000, "type": "array" },
+        "nextEvidenceNumber": { "minimum": 1, "type": "integer" },
+        "nextFindingNumber": { "minimum": 1, "type": "integer" },
+        "nextPlanNumber": { "minimum": 1, "type": "integer" },
+        "nextReviewNumber": { "minimum": 1, "type": "integer" },
+        "reviews": { "items": { "type": "object" }, "maxItems": 100000, "type": "array" },
+        "schemaVersion": { "const": "1.0.0" },
+        "verificationPlans": { "items": { "type": "object" }, "maxItems": 200000, "type": "array" }
+      },
+      "required": ["schemaVersion", "nextReviewNumber", "nextFindingNumber", "nextPlanNumber", "nextEvidenceNumber", "reviews", "verificationPlans", "evidence"],
+      "type": "object"
+    },
+    "businessRequirement": {
+      "$ref": "#/$defs/requirement",
+      "properties": {
+        "id": { "pattern": "^BR-[0-9]{6}$", "type": "string" },
+        "level": { "const": "business" }
+      }
+    },
+    "customAttributes": {
+      "additionalProperties": { "$ref": "#/$defs/customValue1" },
+      "maxProperties": 64,
+      "propertyNames": { "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$" },
+      "type": "object"
+    },
+    "customPrimitive": {
+      "anyOf": [
+        { "type": ["boolean", "number", "null"] },
+        { "maxLength": 4000, "type": "string" }
+      ]
+    },
+    "customValue1": {
+      "anyOf": [
+        { "$ref": "#/$defs/customPrimitive" },
+        { "items": { "$ref": "#/$defs/customValue2" }, "maxItems": 64, "type": "array" },
+        { "additionalProperties": { "$ref": "#/$defs/customValue2" }, "maxProperties": 64, "propertyNames": { "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$" }, "type": "object" }
+      ]
+    },
+    "customValue2": {
+      "anyOf": [
+        { "$ref": "#/$defs/customPrimitive" },
+        { "items": { "$ref": "#/$defs/customValue3" }, "maxItems": 64, "type": "array" },
+        { "additionalProperties": { "$ref": "#/$defs/customValue3" }, "maxProperties": 64, "propertyNames": { "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$" }, "type": "object" }
+      ]
+    },
+    "customValue3": {
+      "anyOf": [
+        { "$ref": "#/$defs/customPrimitive" },
+        { "items": { "$ref": "#/$defs/customValue4" }, "maxItems": 64, "type": "array" },
+        { "additionalProperties": { "$ref": "#/$defs/customValue4" }, "maxProperties": 64, "propertyNames": { "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$" }, "type": "object" }
+      ]
+    },
+    "customValue4": {
+      "anyOf": [
+        { "$ref": "#/$defs/customPrimitive" },
+        { "items": { "$ref": "#/$defs/customValue5" }, "maxItems": 64, "type": "array" },
+        { "additionalProperties": { "$ref": "#/$defs/customValue5" }, "maxProperties": 64, "propertyNames": { "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$" }, "type": "object" }
+      ]
+    },
+    "customValue5": {
+      "anyOf": [
+        { "$ref": "#/$defs/customPrimitive" },
+        { "items": false, "maxItems": 0, "type": "array" },
+        { "additionalProperties": false, "maxProperties": 0, "type": "object" }
+      ]
+    },
+    "document": {
+      "additionalProperties": false,
+      "properties": {
+        "$schema": { "type": "string" },
+        "documentType": { "enum": ["business", "software"] },
+        "nextRelationshipNumber": { "maximum": 1000000, "minimum": 1, "type": "integer" },
+        "nextRequirementNumber": { "maximum": 1000000, "minimum": 1, "type": "integer" },
+        "qualityControl": { "$ref": "#/$defs/qualityControl" },
+        "relationships": {
+          "items": { "$ref": "#/$defs/relationship" },
+          "maxItems": 200000,
+          "type": "array"
+        },
+        "repositoryRevision": { "minimum": 0, "type": "integer" },
+        "requirements": { "maxItems": 100000, "type": "array" },
+        "schemaVersion": { "const": "1.0.0" }
+      },
+      "required": ["$schema", "schemaVersion", "documentType", "repositoryRevision", "nextRequirementNumber", "nextRelationshipNumber", "requirements", "relationships"],
+      "type": "object"
+    },
+    "endpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "artifactType": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "externalId": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "externalVersion": { "maxLength": 128, "minLength": 1, "type": "string" },
+        "id": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "kind": { "pattern": "^(requirement|external:[a-z][a-z0-9_-]{0,62})$", "type": "string" },
+        "system": { "maxLength": 128, "minLength": 1, "type": "string" },
+        "systemOfRecord": { "maxLength": 128, "minLength": 1, "type": "string" },
+        "uri": { "maxLength": 2048, "minLength": 1, "type": "string" },
+        "version": { "minimum": 1, "type": "integer" }
+      },
+      "required": ["kind", "id"],
+      "type": "object"
+    },
+    "externalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "title": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "type": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "uri": { "maxLength": 2048, "minLength": 1, "type": "string" }
+      },
+      "required": ["type", "uri"],
+      "type": "object"
+    },
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "accountablePrincipal": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "aiAssistance": {
+          "additionalProperties": false,
+          "properties": {
+            "acceptance": { "type": "object" },
+            "assisted": { "type": "boolean" },
+            "contentHash": { "pattern": "^[a-f0-9]{64}$", "type": "string" },
+            "generatedAt": { "format": "date-time", "type": "string" },
+            "humanEdits": { "items": { "type": "object" }, "maxItems": 4096, "type": "array" },
+            "model": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "promptTemplateVersion": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "proposalStatus": { "enum": ["proposed", "accepted", "rejected"] },
+            "provider": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+            "requester": { "maxLength": 256, "minLength": 1, "type": "string" },
+            "ruleVersion": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "runId": { "maxLength": 256, "minLength": 1, "type": "string" },
+            "service": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "sourceItems": { "items": { "additionalProperties": false, "properties": { "id": { "maxLength": 256, "minLength": 1, "type": "string" }, "version": { "minimum": 1, "type": "integer" } }, "required": ["id", "version"], "type": "object" }, "maxItems": 500, "type": "array" },
+            "suggestionId": { "maxLength": 256, "minLength": 1, "type": "string" }
+          },
+          "required": ["assisted"],
+          "type": "object"
+        },
+        "createdAt": { "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$", "type": "string" },
+        "createdBy": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "source": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "updatedAt": { "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$", "type": "string" },
+        "updatedBy": { "maxLength": 256, "minLength": 1, "type": "string" }
+      },
+      "required": ["createdAt", "createdBy", "updatedAt", "updatedBy"],
+      "type": "object"
+    },
+    "reuse": {
+      "additionalProperties": false,
+      "properties": {
+        "adoptedAt": { "format": "date-time", "type": "string" },
+        "adoptedBy": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "applicability": { "type": "object" },
+        "divergenceRationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+        "mode": { "enum": ["governed-reference", "controlled-clone"] },
+        "originId": { "pattern": "^(BR|SR)-[0-9]{6}$", "type": "string" },
+        "originVersion": { "minimum": 1, "type": "integer" },
+        "sourceLibrary": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "sourceRepository": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "synchronizationState": { "enum": ["current", "source-changed", "intentional-divergence"] },
+        "synchronizedAt": { "format": "date-time", "type": "string" }
+      },
+      "required": ["mode", "originId", "originVersion", "sourceRepository", "adoptedAt", "adoptedBy", "applicability", "synchronizationState"],
+      "type": "object"
+    },
+    "relationship": {
+      "additionalProperties": false,
+      "properties": {
+        "customAttributes": { "$ref": "#/$defs/customAttributes" },
+        "history": { "items": { "$ref": "#/$defs/relationshipHistory" }, "maxItems": 4096, "type": "array" },
+        "id": { "pattern": "^RL-[0-9]{6}$", "type": "string" },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+        "retirement": { "$ref": "#/$defs/retirement" },
+        "source": { "$ref": "#/$defs/endpoint" },
+        "status": { "enum": ["valid", "suspect", "invalid", "waived"] },
+        "suspect": { "type": "boolean" },
+        "target": { "$ref": "#/$defs/endpoint" },
+        "type": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "version": { "minimum": 1, "type": "integer" }
+      },
+      "required": ["id", "version", "type", "source", "target", "suspect"],
+      "type": "object"
+    },
+    "relationshipHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "action": { "enum": ["created", "suspect-marked", "reassessed", "retired"] },
+        "assessment": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "at": { "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$", "type": "string" },
+        "by": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "changedFields": { "items": { "maxLength": 64, "minLength": 1, "type": "string" }, "maxItems": 64, "type": "array", "uniqueItems": true },
+        "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+        "reason": { "maxLength": 1000, "minLength": 1, "type": "string" },
+        "rule": { "maxLength": 128, "minLength": 1, "type": "string" },
+        "status": { "enum": ["valid", "suspect", "invalid", "waived"] },
+        "triggeringItemVersion": { "minimum": 1, "type": "integer" }
+      },
+      "required": ["action", "at", "by", "status"],
+      "type": "object"
+    },
+    "requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptanceCriteria": { "items": { "$ref": "#/$defs/acceptanceCriterion" }, "maxItems": 128, "type": "array" },
+        "category": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "criticality": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "customAttributes": { "$ref": "#/$defs/customAttributes" },
+        "id": { "pattern": "^(BR|SR)-[0-9]{6}$", "type": "string" },
+        "level": { "enum": ["business", "software"] },
+        "lifecycleHistory": { "items": { "type": "object" }, "maxItems": 4096, "type": "array" },
+        "owner": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "priority": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+        "retirement": { "$ref": "#/$defs/retirement" },
+        "reuse": { "$ref": "#/$defs/reuse" },
+        "shortLabel": { "maxLength": 160, "minLength": 1, "type": "string" },
+        "sourceReferences": { "items": { "$ref": "#/$defs/externalReference" }, "maxItems": 128, "type": "array" },
+        "statement": { "maxLength": 10000, "minLength": 1, "type": "string" },
+        "status": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "verificationMethods": { "items": { "maxLength": 64, "minLength": 1, "type": "string" }, "maxItems": 32, "type": "array", "uniqueItems": true },
+        "version": { "minimum": 1, "type": "integer" }
+      },
+      "required": ["id", "level", "version", "statement", "category", "status"],
+      "type": "object"
+    },
+    "retirement": {
+      "additionalProperties": false,
+      "properties": {
+        "decisionReference": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+        "retiredAt": { "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$", "type": "string" },
+        "retiredBy": { "maxLength": 256, "minLength": 1, "type": "string" }
+      },
+      "required": ["retiredAt", "retiredBy", "rationale"],
+      "type": "object"
+    },
+    "softwareDocument": {
+      "$ref": "#/$defs/document",
+      "properties": {
+        "$schema": { "const": ".engine/schemas/v1/software-requirements.schema.json" },
+        "documentType": { "const": "software" },
+        "requirements": {
+          "items": { "$ref": "#/$defs/softwareRequirement" },
+          "maxItems": 100000,
+          "type": "array"
+        }
+      }
+    },
+    "softwareRequirement": {
+      "$ref": "#/$defs/requirement",
+      "properties": {
+        "id": { "pattern": "^SR-[0-9]{6}$", "type": "string" },
+        "level": { "const": "software" }
+      }
+    }
+  },
+  "$id": "https://speccaster.local/schemas/v1/repository-common.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

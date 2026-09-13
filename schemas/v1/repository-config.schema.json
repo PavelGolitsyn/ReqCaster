@@ -1,0 +1,14 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/repository-config.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "documentMaximumBytes": { "maximum": 50000000, "minimum": 1024, "type": "integer" },
+    "lockLeaseMilliseconds": { "maximum": 3600000, "minimum": 1000, "type": "integer" },
+    "lockTimeoutMilliseconds": { "maximum": 300000, "minimum": 0, "type": "integer" },
+    "schemaVersion": { "const": "1.0.0" }
+  },
+  "required": ["schemaVersion", "documentMaximumBytes", "lockTimeoutMilliseconds", "lockLeaseMilliseconds"],
+  "title": "Canonical repository operational configuration",
+  "type": "object"
+}

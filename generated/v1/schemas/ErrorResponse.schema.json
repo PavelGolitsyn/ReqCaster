@@ -1,0 +1,93 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/ErrorResponse.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "INVALID_ARGUMENT",
+            "SCHEMA_VIOLATION",
+            "NOT_FOUND",
+            "FORBIDDEN",
+            "VERSION_CONFLICT",
+            "REPOSITORY_BUSY",
+            "INTEGRITY_FAILURE",
+            "PREVIEW_EXPIRED",
+            "SERVICE_UNAVAILABLE",
+            "TIMEOUT",
+            "CANCELLED",
+            "INTERNAL_ERROR"
+          ]
+        },
+        "current": {
+          "additionalProperties": false,
+          "properties": {
+            "itemVersion": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "repositoryRevision": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "details": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "maxLength": 512,
+                "type": "string"
+              },
+              "reason": {
+                "maxLength": 1000,
+                "type": "string"
+              }
+            },
+            "required": [
+              "reason"
+            ],
+            "type": "object"
+          },
+          "maxItems": 100,
+          "type": "array"
+        },
+        "message": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "details"
+      ],
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "error"
+  ],
+  "title": "ErrorResponse",
+  "type": "object"
+}

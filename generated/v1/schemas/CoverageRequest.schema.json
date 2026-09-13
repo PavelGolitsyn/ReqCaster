@@ -1,0 +1,76 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/CoverageRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baselineId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "cursor": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "type": "string"
+    },
+    "gap": {
+      "enum": [
+        "missing",
+        "planned",
+        "present",
+        "present-but-suspect",
+        "stale",
+        "failed",
+        "waived",
+        "deferred",
+        "accepted-passing",
+        "not-applicable"
+      ]
+    },
+    "includeRetired": {
+      "type": "boolean"
+    },
+    "level": {
+      "enum": [
+        "business",
+        "software"
+      ]
+    },
+    "limit": {
+      "maximum": 100,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "relationshipTypes": {
+      "items": {
+        "maxLength": 64,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "statuses": {
+      "items": {
+        "maxLength": 64,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId"
+  ],
+  "title": "CoverageRequest",
+  "type": "object"
+}

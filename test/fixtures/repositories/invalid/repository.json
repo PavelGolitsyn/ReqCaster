@@ -1,0 +1,6 @@
+{
+  "fixtureType": "invalid",
+  "expectedFailure": "title-bearing identifier",
+  "schemaVersion": "1.0.0",
+  "business": [{ "id": "BR-AUDIT-000001", "version": 1 }]
+}

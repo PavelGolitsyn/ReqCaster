@@ -1,0 +1,668 @@
+{
+  "$id": "https://speccaster.local/schemas/v1/ConfigurationUpdateRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "currentConfigurationVersion": {
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "authoringRules": {
+          "additionalProperties": false,
+          "properties": {
+            "defaultStatus": {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            "rationaleOrSourceLevels": {
+              "items": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "maxItems": 2,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "requiredFields": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "fields": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "level": {
+                    "enum": [
+                      "business",
+                      "software"
+                    ]
+                  }
+                },
+                "required": [
+                  "level",
+                  "fields"
+                ],
+                "type": "object"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            },
+            "verificationPlanningLevels": {
+              "items": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "maxItems": 2,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "defaultStatus",
+            "requiredFields",
+            "rationaleOrSourceLevels",
+            "verificationPlanningLevels"
+          ],
+          "type": "object"
+        },
+        "authorizedDecisionTypes": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "baselineReadiness": {
+          "additionalProperties": false,
+          "properties": {
+            "allowedStatuses": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "blockMissingRequiredMetadata": {
+              "type": "boolean"
+            },
+            "blockSuspectLinks": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "allowedStatuses",
+            "blockSuspectLinks",
+            "blockMissingRequiredMetadata"
+          ],
+          "type": "object"
+        },
+        "changeControl": {
+          "additionalProperties": false,
+          "properties": {
+            "criticalImpactLevels": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 32,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "impactDepthMaximum": {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "impactNodeMaximum": {
+              "maximum": 10000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "outboxMaximumAttempts": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "protectedStatuses": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "protectedStatuses",
+            "criticalImpactLevels",
+            "impactDepthMaximum",
+            "impactNodeMaximum",
+            "outboxMaximumAttempts"
+          ],
+          "type": "object"
+        },
+        "coverageRules": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "level": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "requiredRelationshipTypes": {
+                "items": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "statuses": {
+                "items": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "level",
+              "statuses",
+              "requiredRelationshipTypes"
+            ],
+            "type": "object"
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        "limits": {
+          "additionalProperties": false,
+          "properties": {
+            "bulkByteMaximum": {
+              "minimum": 1024,
+              "type": "integer"
+            },
+            "bulkMaximum": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "graphDepthMaximum": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "graphNodeMaximum": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "responseSizeMaximum": {
+              "minimum": 1024,
+              "type": "integer"
+            },
+            "searchDefault": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "searchMaximum": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "timeoutMilliseconds": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "searchDefault",
+            "searchMaximum",
+            "graphDepthMaximum",
+            "graphNodeMaximum",
+            "bulkMaximum",
+            "bulkByteMaximum",
+            "timeoutMilliseconds",
+            "responseSizeMaximum"
+          ],
+          "type": "object"
+        },
+        "qualityRules": {
+          "additionalProperties": false,
+          "properties": {
+            "advisorySeverities": {
+              "items": {
+                "enum": [
+                  "info",
+                  "warning"
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "languageQuality": {
+              "const": "advisory"
+            },
+            "promotedRuleIds": {
+              "items": {
+                "pattern": "^REQ-[A-Z]+-[0-9]{3}$",
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "structuralValidation": {
+              "const": "blocking"
+            }
+          },
+          "required": [
+            "structuralValidation",
+            "languageQuality",
+            "advisorySeverities"
+          ],
+          "type": "object"
+        },
+        "relationships": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "allowCycles": {
+                "type": "boolean"
+              },
+              "direction": {
+                "const": "source-to-target"
+              },
+              "maxTargets": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "rationaleRequired": {
+                "type": "boolean"
+              },
+              "sourceKinds": {
+                "items": {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                "maxItems": 32,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "suspectOn": {
+                "items": {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                "maxItems": 16,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "symmetric": {
+                "type": "boolean"
+              },
+              "targetKinds": {
+                "items": {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                "maxItems": 32,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "traversal": {
+                "enum": [
+                  "upstream",
+                  "downstream",
+                  "horizontal"
+                ]
+              },
+              "type": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "direction",
+              "sourceKinds",
+              "targetKinds",
+              "maxTargets",
+              "suspectOn"
+            ],
+            "type": "object"
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        "requiredMetadata": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "fields": {
+                "items": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "level": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "status": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "level",
+              "status",
+              "fields"
+            ],
+            "type": "object"
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        "requirements": {
+          "additionalProperties": false,
+          "properties": {
+            "categories": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "criticalities": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 32,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "priorities": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 32,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "statuses": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "verificationMethods": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 32,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "categories",
+            "statuses",
+            "priorities",
+            "criticalities",
+            "verificationMethods"
+          ],
+          "type": "object"
+        },
+        "retirementRules": {
+          "additionalProperties": false,
+          "properties": {
+            "blockUnresolvedCriticalDependencies": {
+              "type": "boolean"
+            },
+            "decisionReferenceStatuses": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "decisionReferenceStatuses",
+            "blockUnresolvedCriticalDependencies"
+          ],
+          "type": "object"
+        },
+        "traceabilityModelVersion": {
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+          "type": "string"
+        },
+        "transitions": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "allowException": {
+                "type": "boolean"
+              },
+              "blockingConditions": {
+                "items": {
+                  "enum": [
+                    "blocking-tbds",
+                    "coverage",
+                    "critical-suspect-links"
+                  ]
+                },
+                "maxItems": 16,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "from": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "impactActions": {
+                "items": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 32,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "permission": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              "requiredEvidenceTypes": {
+                "items": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "requiredFields": {
+                "items": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "to": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "permission",
+              "requiredFields",
+              "requiredEvidenceTypes",
+              "blockingConditions",
+              "impactActions",
+              "allowException"
+            ],
+            "type": "object"
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        "verification": {
+          "additionalProperties": false,
+          "properties": {
+            "requireNonSuspectRelationship": {
+              "type": "boolean"
+            },
+            "requirePlansForReadiness": {
+              "type": "boolean"
+            },
+            "staleOnFields": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 32,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "staleOnFields",
+            "requireNonSuspectRelationship",
+            "requirePlansForReadiness"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "traceabilityModelVersion",
+        "requirements",
+        "authoringRules",
+        "transitions",
+        "relationships",
+        "requiredMetadata",
+        "coverageRules",
+        "baselineReadiness",
+        "retirementRules",
+        "authorizedDecisionTypes",
+        "limits",
+        "qualityRules"
+      ],
+      "type": "object"
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "idempotencyKey",
+    "expectedRepositoryRevision",
+    "currentConfigurationVersion",
+    "policy",
+    "rationale"
+  ],
+  "title": "ConfigurationUpdateRequest",
+  "type": "object"
+}

@@ -1,0 +1,7 @@
+# History, baselines, and audit
+
+Every committed repository transaction retains verified before/after canonical snapshots. `requirements.history` derives append-only record events and JSON Pointer-like field changes from those snapshots; `readVersion()` reconstructs requirements and relationships without consulting their current value. Transaction provenance captures the agent, accountable principal, role, command, correlation ID, reason, change request, time, and before/after hashes.
+
+Run `baselines.checkReadiness` for an exact requirement set. A successful result includes a short-lived, principal-bound, repository-revision-pinned token. `baselines.create` requires that token, manager permission, purpose, approval references, and idempotency metadata. The immutable manifest records exact item/link versions, configuration and policy identities, source revision, authorized exceptions, and checksums. Current edits produce new current versions and cannot affect baseline reads.
+
+The governed audit log is separate from operational logs. Its immutable events form a SHA-256 chain across bounded rotation segments. `audit.verify` fails closed on modification, deletion, reordering, or invalid segment boundaries. In degraded mode, repository mutation and audited dispatch fail closed; only direct diagnostic reads and operator recovery remain available until an isolated restore verifies or the evidence chain is reconciled under the break-glass procedure.

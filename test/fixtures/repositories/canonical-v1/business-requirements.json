@@ -1,0 +1,48 @@
+{
+  "$schema": ".engine/schemas/v1/business-requirements.schema.json",
+  "documentType": "business",
+  "nextRelationshipNumber": 2,
+  "nextRequirementNumber": 2,
+  "relationships": [],
+  "repositoryRevision": 7,
+  "requirements": [
+    {
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "Data remains available after restart.",
+          "verificationMethod": "test"
+        }
+      ],
+      "category": "functional",
+      "customAttributes": {
+        "portfolio.owner": "platform"
+      },
+      "id": "BR-000001",
+      "level": "business",
+      "provenance": {
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "createdBy": "requirements-manager",
+        "source": "stakeholder-interview",
+        "updatedAt": "2026-02-01T00:00:00.000Z",
+        "updatedBy": "requirements-manager"
+      },
+      "retirement": {
+        "rationale": "Superseded by the software-level requirement.",
+        "retiredAt": "2026-02-01T00:00:00.000Z",
+        "retiredBy": "requirements-manager"
+      },
+      "sourceReferences": [
+        {
+          "title": "Interview notes",
+          "type": "document",
+          "uri": "urn:source:interview-1"
+        }
+      ],
+      "statement": "The product shall retain user settings.",
+      "status": "retired",
+      "version": 2
+    }
+  ],
+  "schemaVersion": "1.0.0"
+}
