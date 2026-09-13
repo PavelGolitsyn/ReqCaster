@@ -158,9 +158,21 @@
         "aiAssistance": {
           "additionalProperties": false,
           "properties": {
+            "acceptance": { "type": "object" },
             "assisted": { "type": "boolean" },
+            "contentHash": { "pattern": "^[a-f0-9]{64}$", "type": "string" },
+            "generatedAt": { "format": "date-time", "type": "string" },
+            "humanEdits": { "items": { "type": "object" }, "maxItems": 4096, "type": "array" },
             "model": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "promptTemplateVersion": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "proposalStatus": { "enum": ["proposed", "accepted", "rejected"] },
             "provider": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+            "requester": { "maxLength": 256, "minLength": 1, "type": "string" },
+            "ruleVersion": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "runId": { "maxLength": 256, "minLength": 1, "type": "string" },
+            "service": { "maxLength": 128, "minLength": 1, "type": "string" },
+            "sourceItems": { "items": { "additionalProperties": false, "properties": { "id": { "maxLength": 256, "minLength": 1, "type": "string" }, "version": { "minimum": 1, "type": "integer" } }, "required": ["id", "version"], "type": "object" }, "maxItems": 500, "type": "array" },
             "suggestionId": { "maxLength": 256, "minLength": 1, "type": "string" }
           },
           "required": ["assisted"],
@@ -173,6 +185,24 @@
         "updatedBy": { "maxLength": 256, "minLength": 1, "type": "string" }
       },
       "required": ["createdAt", "createdBy", "updatedAt", "updatedBy"],
+      "type": "object"
+    },
+    "reuse": {
+      "additionalProperties": false,
+      "properties": {
+        "adoptedAt": { "format": "date-time", "type": "string" },
+        "adoptedBy": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "applicability": { "type": "object" },
+        "divergenceRationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+        "mode": { "enum": ["governed-reference", "controlled-clone"] },
+        "originId": { "pattern": "^(BR|SR)-[0-9]{6}$", "type": "string" },
+        "originVersion": { "minimum": 1, "type": "integer" },
+        "sourceLibrary": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "sourceRepository": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "synchronizationState": { "enum": ["current", "source-changed", "intentional-divergence"] },
+        "synchronizedAt": { "format": "date-time", "type": "string" }
+      },
+      "required": ["mode", "originId", "originVersion", "sourceRepository", "adoptedAt", "adoptedBy", "applicability", "synchronizationState"],
       "type": "object"
     },
     "relationship": {
@@ -226,6 +256,7 @@
         "provenance": { "$ref": "#/$defs/provenance" },
         "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
         "retirement": { "$ref": "#/$defs/retirement" },
+        "reuse": { "$ref": "#/$defs/reuse" },
         "shortLabel": { "maxLength": 160, "minLength": 1, "type": "string" },
         "sourceReferences": { "items": { "$ref": "#/$defs/externalReference" }, "maxItems": 128, "type": "array" },
         "statement": { "maxLength": 10000, "minLength": 1, "type": "string" },

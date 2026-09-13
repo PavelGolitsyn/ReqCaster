@@ -81,7 +81,7 @@ function assertVersion(record, expectedVersion, repositoryRevision, noun = "reco
 }
 
 function assertAuthority(requestAuthority, context, path = "/authority") {
-  if (!context.identity?.principal?.id || requestAuthority !== principal(context)) throw new ApplicationError("FORBIDDEN", "The recorded authority must be the authenticated accountable human", {
+  if (!context.identity?.principal?.id?.startsWith("human:") || requestAuthority !== principal(context)) throw new ApplicationError("FORBIDDEN", "The recorded authority must be the authenticated accountable human", {
     details: [{ path, reason: "must equal the authenticated principal identity" }],
   });
 }
@@ -208,6 +208,7 @@ export class PossibleTransitionsService extends WorkflowService {
 export class TransitionRequirementService extends WorkflowService {
   async execute(request, context) {
     const policy = await this.policy();
+    if (!principal(context).startsWith("human:")) throw new ApplicationError("FORBIDDEN", "Lifecycle decisions require an authenticated accountable human principal");
     if (request.expectedPolicyVersion !== policy.configurationVersion) throw new ApplicationError("VERSION_CONFLICT", "Expected workflow policy version does not match current policy", {
       details: [{ path: "/expectedPolicyVersion", reason: `current policy version is ${policy.configurationVersion}` }],
     });
@@ -215,6 +216,7 @@ export class TransitionRequirementService extends WorkflowService {
       const item = findRequirement(documents, request.id);
       assertVersion(item, request.expectedVersion, documents.business.repositoryRevision, "requirement");
       if (context.authorization?.canReadItem && !context.authorization.canReadItem(context.security, item)) throw new ApplicationError("NOT_FOUND", "Requirement was not found");
+      if (item.provenance?.aiAssistance?.assisted && item.provenance.aiAssistance.proposalStatus !== "accepted") throw new ApplicationError("INVALID_ARGUMENT", "AI-proposed content requires explicit human acceptance before lifecycle transition");
       const rule = policy.transitions.find(({ from, to }) => from === item.status && to === request.toStatus);
       if (!rule) throw new ApplicationError("INVALID_ARGUMENT", "The requested lifecycle transition is not configured for the current state");
       const evaluated = transitionBlockers(documents, item, rule, request, policy, context);
@@ -369,6 +371,7 @@ function analyzeImpacts(documents, change, request, policy) {
 
 export class AnalyzeChangeService extends WorkflowService {
   async execute(request, context) {
+    if (request.acceptTruncation && !principal(context).startsWith("human:")) throw new ApplicationError("FORBIDDEN", "Accepting truncated impact analysis requires an authenticated accountable human principal");
     const policy = await this.policy();
     return this.mutate(request, context, "changes.analyze", (documents) => {
       const control = ensureChangeControl(documents);
@@ -399,6 +402,7 @@ export class AnalyzeChangeService extends WorkflowService {
 
 export class DispositionImpactService extends WorkflowService {
   async execute(request, context) {
+    if (!principal(context).startsWith("human:")) throw new ApplicationError("FORBIDDEN", "Impact disposition requires an authenticated accountable human principal");
     return this.mutate(request, context, "changes.dispositionImpact", (documents) => {
       const control = ensureChangeControl(documents);
       const change = findChange(documents, request.changeId);

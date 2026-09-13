@@ -26,6 +26,11 @@ verification plans, accepted evidence with policy-driven applicability,
 permission-aware reproducible reports, release-readiness projections, and
 drill-down metrics.
 
+Stage 8 adds preview-first JSON/CSV/ReqIF imports, governed JSON/CSV exports,
+versioned integration contracts, explicit reference/clone reuse with protected
+divergence, and attributable AI proposals that require accountable human
+acceptance.
+
 ```sh
 npm run contracts:generate
 npm test
@@ -51,3 +56,7 @@ with recovery procedures in
 [`docs/operators/backup-and-recovery.md`](docs/operators/backup-and-recovery.md).
 Review, verification, reporting, and metric workflows are documented in
 [`docs/engine/reviews-verification-and-reporting-guide.md`](docs/engine/reviews-verification-and-reporting-guide.md).
+Import, export, integration, reuse, and AI controls are documented in
+[`docs/engine/import-exchange-reuse-ai-governance-guide.md`](docs/engine/import-exchange-reuse-ai-governance-guide.md),
+with the representative migration procedure in
+[`docs/operators/migration-pilot-runbook.md`](docs/operators/migration-pilot-runbook.md).

@@ -11,7 +11,32 @@
           "minLength": 1,
           "type": "string"
         },
+        "promptTemplateVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
         "provider": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "ruleVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "runId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "service": {
           "maxLength": 128,
           "minLength": 1,
           "type": "string"

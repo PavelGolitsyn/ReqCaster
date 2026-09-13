@@ -19,14 +19,15 @@ export const DOCUMENT_LIMITS = Object.freeze({
 const envelopeFields = new Set(["$schema", "schemaVersion", "documentType", "repositoryRevision", "nextRequirementNumber", "nextRelationshipNumber", "requirements", "relationships"]);
 envelopeFields.add("changeControl");
 envelopeFields.add("qualityControl");
-const requirementFields = new Set(["id", "level", "version", "statement", "shortLabel", "category", "status", "priority", "criticality", "owner", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences", "provenance", "retirement", "customAttributes", "lifecycleHistory"]);
+const requirementFields = new Set(["id", "level", "version", "statement", "shortLabel", "category", "status", "priority", "criticality", "owner", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences", "provenance", "retirement", "customAttributes", "lifecycleHistory", "reuse"]);
 const relationshipFields = new Set(["id", "version", "type", "source", "target", "status", "suspect", "rationale", "provenance", "retirement", "history", "customAttributes"]);
 const endpointFields = new Set(["kind", "id", "version", "system", "artifactType", "externalId", "externalVersion", "uri", "systemOfRecord"]);
 const relationshipHistoryFields = new Set(["action", "at", "by", "status", "assessment", "rationale", "triggeringItemVersion", "changedFields", "rule", "reason"]);
 const acceptanceFields = new Set(["id", "text", "verificationMethod"]);
 const referenceFields = new Set(["type", "uri", "title"]);
 const provenanceFields = new Set(["createdAt", "createdBy", "updatedAt", "updatedBy", "source", "accountablePrincipal", "aiAssistance"]);
-const assistanceFields = new Set(["assisted", "provider", "model", "suggestionId"]);
+const assistanceFields = new Set(["assisted", "provider", "service", "model", "suggestionId", "runId", "promptTemplateVersion", "ruleVersion", "generatedAt", "sourceItems", "requester", "contentHash", "rationale", "proposalStatus", "acceptance", "humanEdits"]);
+const reuseFields = new Set(["mode", "originId", "originVersion", "sourceRepository", "sourceLibrary", "adoptedAt", "adoptedBy", "applicability", "synchronizationState", "divergenceRationale", "synchronizedAt"]);
 const retirementFields = new Set(["retiredAt", "retiredBy", "rationale", "decisionReference"]);
 const relationshipStatuses = new Set(["valid", "suspect", "invalid", "waived"]);
 const changeStatuses = new Set(["draft", "triaged", "analyzing", "ready_for_decision", "approved", "rejected", "deferred", "implementing", "verifying", "closed", "cancelled"]);
@@ -218,10 +219,34 @@ function provenance(value, path, issues) {
     if (exactFields(assistance, assistanceFields, `${path}/aiAssistance`, issues)) {
       required(assistance, ["assisted"], `${path}/aiAssistance`, issues);
       if (typeof assistance.assisted !== "boolean") issue(issues, `${path}/aiAssistance/assisted`, "must be a boolean");
-      for (const name of ["provider", "model", "suggestionId"]) if (name in assistance) boundedString(assistance[name], `${path}/aiAssistance/${name}`, issues, name === "suggestionId" ? 256 : 128);
+      for (const name of ["provider", "service", "model", "suggestionId", "runId", "promptTemplateVersion", "ruleVersion", "requester"]) if (name in assistance) boundedString(assistance[name], `${path}/aiAssistance/${name}`, issues, new Set(["suggestionId", "runId", "requester"]).has(name) ? 256 : 128);
+      if ("generatedAt" in assistance) timestamp(assistance.generatedAt, `${path}/aiAssistance/generatedAt`, issues);
+      if ("contentHash" in assistance && !/^[a-f0-9]{64}$/u.test(assistance.contentHash)) issue(issues, `${path}/aiAssistance/contentHash`, "must be a SHA-256 hash");
+      if ("rationale" in assistance) boundedString(assistance.rationale, `${path}/aiAssistance/rationale`, issues, 4000);
+      if ("proposalStatus" in assistance && !new Set(["proposed", "accepted", "rejected"]).has(assistance.proposalStatus)) issue(issues, `${path}/aiAssistance/proposalStatus`, "is not a governed proposal status");
+      if ("sourceItems" in assistance) {
+        if (!Array.isArray(assistance.sourceItems) || assistance.sourceItems.length > 500) issue(issues, `${path}/aiAssistance/sourceItems`, "must be a bounded array");
+        else assistance.sourceItems.forEach((item, index) => { if (!object(item)) issue(issues, `${path}/aiAssistance/sourceItems/${index}`, "must be an object"); else { required(item, ["id", "version"], `${path}/aiAssistance/sourceItems/${index}`, issues); boundedString(item.id, `${path}/aiAssistance/sourceItems/${index}/id`, issues, 256); positiveVersion(item.version, `${path}/aiAssistance/sourceItems/${index}/version`, issues); } });
+      }
+      if ("acceptance" in assistance) boundedJson(assistance.acceptance, `${path}/aiAssistance/acceptance`, issues);
+      if ("humanEdits" in assistance) boundedJson(assistance.humanEdits, `${path}/aiAssistance/humanEdits`, issues);
     }
   }
   if (typeof value.createdAt === "string" && typeof value.updatedAt === "string" && value.updatedAt < value.createdAt) issue(issues, `${path}/updatedAt`, "must not precede createdAt");
+}
+
+function validateReuse(value, path, issues) {
+  if (!exactFields(value, reuseFields, path, issues)) return;
+  required(value, ["mode", "originId", "originVersion", "sourceRepository", "adoptedAt", "adoptedBy", "applicability", "synchronizationState"], path, issues);
+  if (!new Set(["governed-reference", "controlled-clone"]).has(value.mode)) issue(issues, `${path}/mode`, "is not a supported reuse mode");
+  if (!parseRequirementId(value.originId)) issue(issues, `${path}/originId`, "must be a canonical requirement ID");
+  positiveVersion(value.originVersion, `${path}/originVersion`, issues);
+  for (const name of ["sourceRepository", "sourceLibrary", "adoptedBy"]) if (name in value) boundedString(value[name], `${path}/${name}`, issues, 256);
+  for (const name of ["adoptedAt", "synchronizedAt"]) if (name in value) timestamp(value[name], `${path}/${name}`, issues);
+  if ("applicability" in value) boundedJson(value.applicability, `${path}/applicability`, issues);
+  if (!new Set(["current", "source-changed", "intentional-divergence"]).has(value.synchronizationState)) issue(issues, `${path}/synchronizationState`, "is not a governed synchronization state");
+  if (value.synchronizationState === "intentional-divergence" && !("divergenceRationale" in value)) issue(issues, `${path}/divergenceRationale`, "is required for intentional divergence");
+  if ("divergenceRationale" in value) boundedString(value.divergenceRationale, `${path}/divergenceRationale`, issues, 4000);
 }
 
 function retirement(value, path, issues) {
@@ -286,6 +311,7 @@ function validateRequirement(record, level, path, policy, issues) {
   if (record.status !== "retired" && "retirement" in record) issue(issues, `${path}/retirement`, "is allowed only for retired requirements");
   if ("retirement" in record) retirement(record.retirement, `${path}/retirement`, issues);
   if ("customAttributes" in record) custom(record.customAttributes, `${path}/customAttributes`, issues);
+  if ("reuse" in record) validateReuse(record.reuse, `${path}/reuse`, issues);
   if ("lifecycleHistory" in record) validateLifecycleHistory(record.lifecycleHistory, `${path}/lifecycleHistory`, issues);
   for (const rule of policy.requiredMetadata.filter((candidate) => candidate.level === level && candidate.status === record.status)) {
     for (const field of rule.fields) {

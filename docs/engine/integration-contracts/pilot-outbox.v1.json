@@ -1,0 +1,52 @@
+{
+  "id": "pilot-outbox",
+  "version": "1.0.0",
+  "direction": "event-outbox",
+  "cadence": "continuous",
+  "fieldOwnership": {
+    "requirement.*": "speccaster",
+    "deliveryReceipt": "consumer"
+  },
+  "identityMapping": {
+    "canonical": "id+version",
+    "external": "system+externalId+externalVersion"
+  },
+  "lifecycleSemantics": {
+    "create": "publish",
+    "update": "publish-new-version",
+    "delete": "retire-only"
+  },
+  "conflictDetection": {
+    "strategy": "compare-canonical-and-external-versions",
+    "silentLastWriteWins": false
+  },
+  "conflictResolutionOwner": "team:requirements",
+  "retry": {
+    "idempotencyKey": "outbox.id",
+    "maximumAttempts": "policy.changeControl.outboxMaximumAttempts"
+  },
+  "orderingReplay": {
+    "orderingKey": "aggregateId",
+    "replay": "at-least-once-with-idempotent-consumer"
+  },
+  "permissions": {
+    "readScope": "caller-derived",
+    "confidentiality": "do-not-downgrade"
+  },
+  "reconciliation": {
+    "counts": ["pending", "delivered", "failed", "dead-letter"],
+    "owner": "team:integration"
+  },
+  "deadLetter": {
+    "owner": "team:integration",
+    "resolution": "inspect-correct-and-explicitly-replay"
+  },
+  "compatibility": {
+    "eventSchema": "1.0.0",
+    "minimumConsumer": "1.0.0"
+  },
+  "rollback": {
+    "strategy": "disable-consumer-and-replay-from-outbox",
+    "canonicalRepositoryUnchanged": true
+  }
+}

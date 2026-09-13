@@ -129,7 +129,10 @@ export class RecordReviewFindingService extends QualityCommandService {
         id: allocate(quality, "nextFindingNumber", "FN"), origin: request.origin, recordedBy: actor(context), recordedFor: principal(context),
         severity: request.severity, status: "open", summary: request.summary,
         ...(request.requirementId ? { requirementId: request.requirementId } : {}), ...(request.relationshipId ? { relationshipId: request.relationshipId } : {}),
-        ...(request.aiProvenance ? { aiProvenance: clone(request.aiProvenance) } : {}),
+        ...(request.aiProvenance ? { aiProvenance: { promptTemplateVersion: request.aiProvenance.promptTemplateVersion ?? "unavailable", ruleVersion: request.aiProvenance.ruleVersion ?? "unavailable", runId: request.aiProvenance.runId ?? request.aiProvenance.suggestionId, service: request.aiProvenance.service ?? request.aiProvenance.provider, ...clone(request.aiProvenance), contentHash: canonicalHash({ comment: request.comment ?? request.summary, severity: request.severity, summary: request.summary }), generatedAt: now, proposalStatus: "proposed", requester: principal(context), sourceItems: [
+          ...(request.requirementId ? review.requirementVersions.filter(({ id }) => id === request.requirementId) : []),
+          ...(request.relationshipId ? review.relationshipVersions.filter(({ id }) => id === request.relationshipId) : []),
+        ] } } : {}),
       };
       review.findings.push(finding); review.updatedAt = now; review.version += 1;
       review.history.push({ action: "finding-recorded", at: now, by: actor(context), findingId: finding.id, origin: finding.origin });
@@ -140,6 +143,7 @@ export class RecordReviewFindingService extends QualityCommandService {
 
 export class DispositionReviewFindingService extends QualityCommandService {
   async execute(request, context) {
+    requireHumanPrincipal(context, "Finding disposition");
     return this.mutate(request, context, "reviews.dispositionFinding", (documents) => {
       const review = findReview(documents, request.reviewId); requireVersion(review, request.expectedVersion, documents.business.repositoryRevision, "review");
       if (review.status !== "open") throw new ApplicationError("INVALID_ARGUMENT", "A closed review cannot be changed");
@@ -148,6 +152,7 @@ export class DispositionReviewFindingService extends QualityCommandService {
       if (finding.status !== "open") throw new ApplicationError("INVALID_ARGUMENT", "Review finding is already dispositioned");
       const now = timestamp(context.now);
       finding.status = request.disposition; finding.disposition = { at: now, by: actor(context), evidenceReferences: clone(request.evidenceReferences ?? []), principal: principal(context), rationale: request.rationale };
+      if (finding.aiProvenance) finding.aiProvenance = { ...finding.aiProvenance, acceptance: { acceptedAt: now, acceptedBy: actor(context), disposition: request.disposition, principal: principal(context), rationale: request.rationale }, proposalStatus: new Set(["accepted", "resolved"]).has(request.disposition) ? "accepted" : request.disposition === "rejected" ? "rejected" : "proposed" };
       review.updatedAt = now; review.version += 1; review.history.push({ action: "finding-dispositioned", at: now, by: actor(context), disposition: request.disposition, findingId: finding.id, principal: principal(context) });
       return { finding: clone(finding), reviewId: review.id, reviewVersion: review.version };
     });
@@ -217,7 +222,11 @@ export class RecordVerificationPlanService extends QualityCommandService {
 
 export class RecordVerificationEvidenceService extends QualityCommandService {
   async execute(request, context) {
-    if (new Set(["waived", "not_applicable"]).has(request.status) && (!request.rationale || request.authority !== principal(context))) throw new ApplicationError("INVALID_ARGUMENT", "Waived and not-applicable evidence require rationale from the authenticated authority");
+    if (new Set(["waived", "not_applicable"]).has(request.status)) {
+      requireHumanPrincipal(context, "Evidence waiver or not-applicable disposition");
+      if (!request.rationale || request.authority !== principal(context)) throw new ApplicationError("INVALID_ARGUMENT", "Waived and not-applicable evidence require rationale from the authenticated authority");
+    }
+    if (request.origin === "ai" && new Set(["waived", "not_applicable"]).has(request.status)) throw new ApplicationError("FORBIDDEN", "AI-generated evidence cannot waive evidence or decide applicability");
     if (request.origin === "ai" && !request.aiProvenance) throw new ApplicationError("INVALID_ARGUMENT", "AI-generated evidence requires provider, model, and run provenance");
     if (request.acceptanceDecision === "accept") {
       requireHumanPrincipal(context, "Evidence acceptance");
@@ -244,7 +253,7 @@ export class RecordVerificationEvidenceService extends QualityCommandService {
         id: evidenceId, recordedBy: actor(context), requirementVersions: clone(request.requirementVersions).sort((a, b) => a.id.localeCompare(b.id)),
         sourceSystem: request.sourceSystem, status: request.status, version: 1, origin: request.origin,
         ...Object.fromEntries(["planId", "relationshipId", "disposition", "rationale", "authority", "release", "variant"].filter((key) => request[key] !== undefined).map((key) => [key, clone(request[key])])),
-        ...(request.aiProvenance ? { aiProvenance: clone(request.aiProvenance) } : {}),
+        ...(request.aiProvenance ? { aiProvenance: { promptTemplateVersion: request.aiProvenance.promptTemplateVersion ?? "unavailable", ruleVersion: request.aiProvenance.ruleVersion ?? "unavailable", service: request.aiProvenance.service ?? request.aiProvenance.provider, ...clone(request.aiProvenance), contentHash: canonicalHash({ actualResult: request.actualResult, artifactChecksum: request.artifactChecksum, expectedResult: request.expectedResult, status: request.status }), generatedAt: now, proposalStatus: request.acceptanceDecision === "accept" ? "accepted" : "proposed", requester: principal(context), sourceItems: clone(request.requirementVersions), ...(request.acceptanceDecision === "accept" ? { acceptance: { acceptedAt: now, acceptedBy: actor(context), principal: principal(context) } } : {}) } } : {}),
       };
       if (quality.evidence.some((record) => record.id === evidence.id || (record.externalId === evidence.externalId && record.externalVersion === evidence.externalVersion))) throw new ApplicationError("INVALID_ARGUMENT", "Evidence ID and version already exist");
       quality.evidence.push(evidence); return { evidence: clone(evidence) };

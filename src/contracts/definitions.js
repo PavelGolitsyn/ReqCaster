@@ -52,7 +52,19 @@ const endpoint = object({
   uri: string({ minLength: 1, maxLength: 2048 }),
   systemOfRecord: string({ minLength: 1, maxLength: 128 }),
 }, ["kind"]);
-
+const sourceItemVersion = object({ id: string({ minLength: 1, maxLength: 256 }), version: expectedVersion }, ["id", "version"]);
+const aiAssistance = object({
+  assisted: { type: "boolean" }, provider: string({ minLength: 1, maxLength: 128 }), service: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }),
+  suggestionId: string({ minLength: 1, maxLength: 256 }), runId: string({ minLength: 1, maxLength: 256 }), promptTemplateVersion: string({ minLength: 1, maxLength: 128 }), ruleVersion: string({ minLength: 1, maxLength: 128 }),
+  generatedAt: string({ minLength: 20, maxLength: 32 }), sourceItems: array(sourceItemVersion, { maxItems: 500 }), requester: string({ minLength: 1, maxLength: 256 }), contentHash: string({ pattern: "^[a-f0-9]{64}$" }),
+  rationale: string({ minLength: 1, maxLength: 4000 }), proposalStatus: { enum: ["proposed", "accepted", "rejected"] },
+  acceptance: object({
+    acceptedAt: string({ minLength: 20, maxLength: 32 }), acceptedBy: string({ minLength: 1, maxLength: 256 }), principal: string({ minLength: 1, maxLength: 256 }), rationale: string({ minLength: 1, maxLength: 4000 }),
+    proposedContentHash: string({ pattern: "^[a-f0-9]{64}$" }), acceptedContentHash: string({ pattern: "^[a-f0-9]{64}$" }),
+    diff: array(object({ field: string({ minLength: 1, maxLength: 64 }), before: {}, after: {} }, ["field"]), { maxItems: 64 }),
+  }, ["acceptedAt", "acceptedBy", "principal", "rationale", "proposedContentHash", "acceptedContentHash", "diff"]),
+  humanEdits: array(object({ at: string({ minLength: 20, maxLength: 32 }), by: string({ minLength: 1, maxLength: 256 }), principal: string({ minLength: 1, maxLength: 256 }), fields: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 64, uniqueItems: true }), reason: string({ minLength: 1, maxLength: 4000 }) }, ["at", "by", "principal", "fields"]), { maxItems: 4096 }),
+}, ["assisted"]);
 const query = (payload, required = []) => object(
   { schemaVersion: { const: "1.0.0" }, correlationId, ...payload },
   ["schemaVersion", "correlationId", ...required],
@@ -85,12 +97,7 @@ const requirementDraft = object({
     title: string({ minLength: 1, maxLength: 256 }),
   }, ["type", "uri"]), { maxItems: 128 }),
   customAttributes: object({}, [], { additionalProperties: true, maxProperties: 64 }),
-  aiAssistance: object({
-    assisted: { type: "boolean" },
-    provider: string({ minLength: 1, maxLength: 128 }),
-    model: string({ minLength: 1, maxLength: 128 }),
-    suggestionId: string({ minLength: 1, maxLength: 256 }),
-  }, ["assisted"]),
+  aiAssistance,
 }, ["level", "statement", "category"]);
 
 const acceptanceCriteria = requirementDraft.properties.acceptanceCriteria;
@@ -365,6 +372,12 @@ export const SCHEMAS = Object.freeze({
   BulkPreviewRequest: command({ operations: array(bulkOperation, { minItems: 1, maxItems: 500 }) }, ["operations"]),
   BulkCommitRequest: object({ schemaVersion: { const: "1.0.0" }, correlationId, idempotencyKey, previewToken: string({ minLength: 32, maxLength: 2048 }) }, ["schemaVersion", "correlationId", "idempotencyKey", "previewToken"]),
   ImportCommitRequest: command({ previewToken: string({ minLength: 32, maxLength: 2048 }), diffHash: string({ pattern: "^[a-f0-9]{64}$" }) }, ["previewToken", "diffHash"]),
+  ExportRequest: query({ format: { enum: ["json", "csv"] }, baselineId: string({ minLength: 1, maxLength: 128 }) }, ["format"]),
+  ReuseAdoptRequest: command({ sourceId: requirementId, sourceExpectedVersion: expectedVersion, mode: { enum: ["governed-reference", "controlled-clone"] }, sourceRepository: string({ minLength: 1, maxLength: 256 }), sourceLibrary: string({ minLength: 1, maxLength: 256 }), applicability: object({}, [], { additionalProperties: true, maxProperties: 32 }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["sourceId", "sourceExpectedVersion", "mode", "sourceRepository", "applicability", "rationale"]),
+  ReusePropagationPreviewRequest: command({ sourceId: requirementId, sourceExpectedVersion: expectedVersion, dispositions: array(object({ id: requirementId, action: { enum: ["accept", "retain-divergence"] }, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "action", "rationale"]), { maxItems: 500 }) }, ["sourceId", "sourceExpectedVersion", "dispositions"]),
+  ReusePropagationCommitRequest: command({ previewToken: string({ minLength: 32, maxLength: 2048 }), diffHash: string({ pattern: "^[a-f0-9]{64}$" }) }, ["previewToken", "diffHash"]),
+  AiProposalRequest: command({ draft: requirementDraft, provider: string({ minLength: 1, maxLength: 128 }), service: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }), runId: string({ minLength: 1, maxLength: 256 }), promptTemplateVersion: string({ minLength: 1, maxLength: 128 }), ruleVersion: string({ minLength: 1, maxLength: 128 }), sourceItems: array(sourceItemVersion, { maxItems: 500 }), rationale: string({ minLength: 1, maxLength: 4000 }), processor: { enum: ["internal", "external"] }, protectedFieldsIncluded: { type: "boolean" } }, ["draft", "provider", "service", "model", "runId", "promptTemplateVersion", "sourceItems", "rationale", "processor"]),
+  AiProposalAcceptRequest: command({ id: requirementId, expectedVersion, proposedContentHash: string({ pattern: "^[a-f0-9]{64}$" }), acceptedPatch: patch, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "proposedContentHash", "rationale"]),
   PossibleTransitionsRequest: query({ id: requirementId, expectedVersion, toStatus: string({ minLength: 1, maxLength: 64 }), evidenceReferences: array(evidenceReference, { maxItems: 128 }) }, ["id"]),
   TransitionRequest: command({
     id: requirementId,
@@ -415,7 +428,7 @@ export const SCHEMAS = Object.freeze({
     summary: string({ minLength: 1, maxLength: 1000 }), comment: string({ minLength: 1, maxLength: 4000 }),
     requirementId, relationshipId,
     origin: { enum: ["human", "ai", "imported"] }, author: string({ minLength: 1, maxLength: 256 }),
-    aiProvenance: object({ provider: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }), suggestionId: string({ minLength: 1, maxLength: 256 }) }, ["provider", "model", "suggestionId"]),
+    aiProvenance: object({ provider: string({ minLength: 1, maxLength: 128 }), service: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }), suggestionId: string({ minLength: 1, maxLength: 256 }), runId: string({ minLength: 1, maxLength: 256 }), promptTemplateVersion: string({ minLength: 1, maxLength: 128 }), ruleVersion: string({ minLength: 1, maxLength: 128 }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["provider", "model", "suggestionId"]),
   }, ["reviewId", "expectedVersion", "severity", "summary", "origin", "author"]),
   ReviewFindingDispositionRequest: command({
     reviewId, findingId, expectedVersion, disposition: { enum: ["accepted", "resolved", "rejected", "deferred", "waived"] },
@@ -439,7 +452,7 @@ export const SCHEMAS = Object.freeze({
     artifactUri: string({ minLength: 1, maxLength: 2048 }), artifactChecksum: string({ pattern: "^[a-f0-9]{64}$" }), sourceSystem: string({ minLength: 1, maxLength: 128 }),
     defectReferences: array(string({ minLength: 1, maxLength: 256 }), { maxItems: 128, uniqueItems: true }), disposition: string({ minLength: 1, maxLength: 4000 }), rationale: string({ minLength: 1, maxLength: 4000 }), authority: string({ minLength: 1, maxLength: 256 }),
     origin: { enum: ["human", "ai", "imported", "integration"] },
-    aiProvenance: object({ provider: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }), runId: string({ minLength: 1, maxLength: 256 }) }, ["provider", "model", "runId"]),
+    aiProvenance: object({ provider: string({ minLength: 1, maxLength: 128 }), service: string({ minLength: 1, maxLength: 128 }), model: string({ minLength: 1, maxLength: 128 }), runId: string({ minLength: 1, maxLength: 256 }), promptTemplateVersion: string({ minLength: 1, maxLength: 128 }), ruleVersion: string({ minLength: 1, maxLength: 128 }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["provider", "model", "runId"]),
     acceptanceDecision: { enum: ["accept", "record-only"] },
   }, ["externalId", "externalVersion", "requirementVersions", "caseId", "caseVersion", "environment", "configuration", "executor", "executedAt", "expectedResult", "actualResult", "status", "artifactUri", "artifactChecksum", "sourceSystem", "origin", "acceptanceDecision"]),
   VerificationStatusRequest: query({ requirementIds: array(requirementId, { maxItems: 500, uniqueItems: true }), baselineId: string({ minLength: 1, maxLength: 128 }), release: string({ minLength: 1, maxLength: 160 }), variant: string({ minLength: 1, maxLength: 160 }), configuration: string({ minLength: 1, maxLength: 256 }) }),

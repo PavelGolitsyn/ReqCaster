@@ -1,0 +1,72 @@
+{
+  "$id": "https://spec-speaker.local/schemas/v1/ReusePropagationPreviewRequest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "correlationId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "dispositions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "accept",
+              "retain-divergence"
+            ]
+          },
+          "id": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "maxItems": 500,
+      "type": "array"
+    },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "sourceExpectedVersion": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "sourceId": {
+      "pattern": "^(BR|SR)-[0-9]{6}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "correlationId",
+    "idempotencyKey",
+    "expectedRepositoryRevision",
+    "sourceId",
+    "sourceExpectedVersion",
+    "dispositions"
+  ],
+  "title": "ReusePropagationPreviewRequest",
+  "type": "object"
+}

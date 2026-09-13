@@ -165,6 +165,7 @@ export class CreateBaselineService {
   constructor({ repository, baselineStore, policy, readinessTokenStore, audit }) { this.repository = repository; this.store = baselineStore; this.configuredPolicy = policy; this.tokens = readinessTokenStore; this.audit = audit; }
   async execute(request, context) {
     try {
+      if (!principal(context).startsWith("human:")) throw new ApplicationError("FORBIDDEN", "Baseline creation requires an authenticated accountable human principal");
       if (!this.tokens) throw new ApplicationError("INTERNAL_ERROR", "Baseline readiness token storage is not configured");
       const token = this.tokens.verify(request.readinessToken, context.now);
       const current = await this.repository.read();

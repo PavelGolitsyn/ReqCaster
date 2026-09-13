@@ -309,6 +309,7 @@ export class UnlinkRequirementService extends TraceabilityCommandService {
 
 export class ReassessRelationshipService extends TraceabilityCommandService {
   async execute(request, context) {
+    if (!principal(context).startsWith("human:")) throw new ApplicationError("FORBIDDEN", "Suspect relationship resolution requires an authenticated accountable human principal");
     return this.mutate(request, context, "requirements.reassessLink", (documents) => {
       const located = relationshipLocation(documents, request.id);
       if (!located || !activeRelationship(located.relationship)) throw new ApplicationError("NOT_FOUND", "Relationship was not found");

@@ -177,11 +177,22 @@ function visibleRequirements(documents, context) {
   return allRequirements(documents).filter((item) => !context.authorization?.canReadItem || context.authorization.canReadItem(context.security, item));
 }
 
+function markReuseSourceChanged(documents, sourceId, sourceVersion, context) {
+  const changed = [];
+  for (const use of allRequirements(documents).filter((item) => item.reuse?.originId === sourceId && item.reuse.originVersion < sourceVersion && item.reuse.synchronizationState !== "intentional-divergence")) {
+    use.reuse = { ...use.reuse, synchronizationState: "source-changed" };
+    use.version += 1;
+    use.provenance = { ...use.provenance, updatedAt: timestamp(context.now), updatedBy: actor(context) };
+    changed.push({ id: use.id, version: use.version });
+  }
+  return changed;
+}
+
 function createCandidate(documents, allocation, draft, context, policy, existing = visibleRequirements(documents, context)) {
   const defaultStatus = policy.authoringRules.defaultStatus;
   if (draft.status !== undefined && draft.status !== defaultStatus) throw new ApplicationError("SCHEMA_VIOLATION", "Normal create commands cannot select a governed lifecycle status", { details: [{ path: "/draft/status", reason: `must be omitted or ${defaultStatus}; privileged imports use a separate workflow` }] });
   const normalized = { ...clone(draft), status: defaultStatus };
-  const findings = validateRequirementDraft(normalized, policy, { existingRequirements: existing, forCommit: true });
+  const findings = validateRequirementDraft(normalized, policy, { existingRequirements: existing, forCommit: true, newRecord: true });
   assertFindings(findings);
   const id = allocation.allocateRequirementId(normalized.level);
   const record = {
@@ -216,11 +227,17 @@ function updateCandidate(documents, request, context, policy) {
   if (!diff.length) return { changed: false, diff, item: clone(item), warnings: [] };
   item.version += 1;
   item.provenance = { ...item.provenance, updatedAt: timestamp(context.now), updatedBy: actor(context) };
+  if (item.provenance.aiAssistance?.proposalStatus === "accepted") {
+    item.provenance.aiAssistance.humanEdits = [...(item.provenance.aiAssistance.humanEdits ?? []), {
+      at: timestamp(context.now), by: actor(context), fields: diff.map(({ field }) => field), principal: principal(context), ...(request.reason ? { reason: request.reason } : {}),
+    }];
+  }
   const findings = validateRequirementDraft(candidateDraft(item), policy, { excludeId: item.id, existingRequirements: visibleRequirements(documents, context), forCommit: true });
   assertFindings(findings);
   const suspectRelationships = material.length ? markRelationshipsSuspect(documents, item.id, material, context, policy) : [];
   const staleEvidence = markEvidencePotentiallyStale(documents, item.id, diff.map(({ field }) => field), context, policy);
-  return { changed: true, diff, item: clone(item), ...(request.reason ? { reason: request.reason } : {}), staleEvidence, suspectRelationships, warnings: warnings(findings) };
+  const reuseImpacts = material.length ? markReuseSourceChanged(documents, item.id, item.version, context) : [];
+  return { changed: true, diff, item: clone(item), ...(request.reason ? { reason: request.reason } : {}), reuseImpacts, staleEvidence, suspectRelationships, warnings: warnings(findings) };
 }
 
 function retirementImpact(documents, id, context) {
@@ -428,6 +445,7 @@ export class ValidateDraftService extends AuthoringService {
 
 export class CreateRequirementService extends AuthoringService {
   async execute(request, context) {
+    if (request.draft.aiAssistance?.assisted === true) throw new ApplicationError("INVALID_ARGUMENT", "AI-assisted requirements must enter through ai.proposeRequirement");
     const policy = await this.policy();
     return this.executeMutation(request, context, "requirements.create", (documents, allocation) => createCandidate(documents, allocation, request.draft, context, policy));
   }

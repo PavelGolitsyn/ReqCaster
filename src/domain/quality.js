@@ -21,7 +21,7 @@ export const QUALITY_RULE_CATALOG = Object.freeze([
 const RULES = new Map(QUALITY_RULE_CATALOG.map((rule) => [rule.id, rule]));
 const DRAFT_FIELDS = new Set([
   "level", "statement", "shortLabel", "category", "status", "priority", "criticality", "owner", "rationale", "source",
-  "verificationMethods", "acceptanceCriteria", "sourceReferences", "customAttributes", "aiAssistance",
+  "verificationMethods", "acceptanceCriteria", "sourceReferences", "customAttributes", "aiAssistance", "reuse",
 ]);
 
 function empty(value) {
@@ -80,6 +80,12 @@ export function validateRequirementDraft(draft, policy, options = {}) {
   }
   if (options.forCommit && (policy?.authoringRules?.verificationPlanningLevels ?? []).includes(candidate.level) && empty(candidate.verificationMethods) && empty(candidate.acceptanceCriteria)) {
     add(findings, policy, "REQ-STRUCT-002", "/verificationMethods", "Software requirements require verification planning.", "Add a verification method or measurable acceptance criterion.");
+  }
+  if (candidate.aiAssistance?.assisted === true) {
+    for (const field of ["provider", "service", "model", "runId", "promptTemplateVersion", "ruleVersion", "generatedAt", "sourceItems", "requester", "contentHash", "rationale", "proposalStatus"]) {
+      if (empty(candidate.aiAssistance[field])) add(findings, policy, "REQ-STRUCT-002", `/aiAssistance/${field}`, `AI-assisted content requires ${field} provenance.`, `Record the accountable AI proposal ${field}.`);
+    }
+    if (options.newRecord && candidate.aiAssistance.proposalStatus && candidate.aiAssistance.proposalStatus !== "proposed") add(findings, policy, "REQ-STRUCT-003", "/aiAssistance/proposalStatus", "New AI-assisted content must begin as a proposal.", "Use proposed until an accountable human accepts it.");
   }
 
   const vocabularies = [["category", "categories"], ["status", "statuses"], ["priority", "priorities"], ["criticality", "criticalities"]];

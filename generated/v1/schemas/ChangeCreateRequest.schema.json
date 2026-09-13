@@ -94,18 +94,197 @@
               "aiAssistance": {
                 "additionalProperties": false,
                 "properties": {
+                  "acceptance": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "acceptedAt": {
+                        "maxLength": 32,
+                        "minLength": 20,
+                        "type": "string"
+                      },
+                      "acceptedBy": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "acceptedContentHash": {
+                        "pattern": "^[a-f0-9]{64}$",
+                        "type": "string"
+                      },
+                      "diff": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "after": {},
+                            "before": {},
+                            "field": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "field"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 64,
+                        "type": "array"
+                      },
+                      "principal": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "proposedContentHash": {
+                        "pattern": "^[a-f0-9]{64}$",
+                        "type": "string"
+                      },
+                      "rationale": {
+                        "maxLength": 4000,
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "acceptedAt",
+                      "acceptedBy",
+                      "principal",
+                      "rationale",
+                      "proposedContentHash",
+                      "acceptedContentHash",
+                      "diff"
+                    ],
+                    "type": "object"
+                  },
                   "assisted": {
                     "type": "boolean"
+                  },
+                  "contentHash": {
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": "string"
+                  },
+                  "generatedAt": {
+                    "maxLength": 32,
+                    "minLength": 20,
+                    "type": "string"
+                  },
+                  "humanEdits": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "at": {
+                          "maxLength": 32,
+                          "minLength": 20,
+                          "type": "string"
+                        },
+                        "by": {
+                          "maxLength": 256,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "fields": {
+                          "items": {
+                            "maxLength": 64,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "maxItems": 64,
+                          "minItems": 1,
+                          "type": "array",
+                          "uniqueItems": true
+                        },
+                        "principal": {
+                          "maxLength": 256,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "reason": {
+                          "maxLength": 4000,
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "at",
+                        "by",
+                        "principal",
+                        "fields"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 4096,
+                    "type": "array"
                   },
                   "model": {
                     "maxLength": 128,
                     "minLength": 1,
                     "type": "string"
                   },
+                  "promptTemplateVersion": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "proposalStatus": {
+                    "enum": [
+                      "proposed",
+                      "accepted",
+                      "rejected"
+                    ]
+                  },
                   "provider": {
                     "maxLength": 128,
                     "minLength": 1,
                     "type": "string"
+                  },
+                  "rationale": {
+                    "maxLength": 4000,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "requester": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "ruleVersion": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "runId": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "service": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "sourceItems": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "maxLength": 256,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "version": {
+                          "minimum": 1,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 500,
+                    "type": "array"
                   },
                   "suggestionId": {
                     "maxLength": 256,

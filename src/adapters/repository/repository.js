@@ -3,7 +3,7 @@ import { constants } from "node:fs";
 import { copyFile, lstat, mkdir, open, readFile, readdir, realpath, rename } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 
-import { formatRelationshipId, formatRequirementId, MAX_IDENTIFIER_NUMBER } from "../../domain/identifiers.js";
+import { formatRelationshipId, formatRequirementId, MAX_IDENTIFIER_NUMBER, parseRelationshipId, parseRequirementId } from "../../domain/identifiers.js";
 import { validatePolicy } from "../../domain/policy.js";
 import { buildSearchIndex } from "../../index/search-index.js";
 import { canonicalBytes, canonicalHash, parseStrictJson, sha256 } from "./canonical-json.js";
@@ -557,12 +557,31 @@ export class CanonicalJsonRepository {
         allocated.requirements.add(id);
         return id;
       },
+      reserveRequirementId(id) {
+        const parsed = parseRequirementId(id);
+        if (!parsed) throw new TypeError(`Invalid requirement identifier: ${id}`);
+        const document = parsed.level === "business" ? business : software;
+        if ([...business.requirements, ...software.requirements].some((record) => record.id === id)) throw new TypeError(`Requirement identifier already exists: ${id}`);
+        document.nextRequirementNumber = Math.max(document.nextRequirementNumber, parsed.number + 1);
+        allocated.requirements.add(id);
+        return id;
+      },
       allocateRelationshipId() {
         if (business.nextRelationshipNumber !== software.nextRelationshipNumber) throw new IntegrityError("Relationship allocators disagree");
         if (business.nextRelationshipNumber > MAX_IDENTIFIER_NUMBER) throw new RangeError("Relationship identifier space is exhausted");
         const id = formatRelationshipId(business.nextRelationshipNumber);
         business.nextRelationshipNumber += 1;
         software.nextRelationshipNumber += 1;
+        allocated.relationships.add(id);
+        return id;
+      },
+      reserveRelationshipId(id) {
+        const parsed = parseRelationshipId(id);
+        if (!parsed) throw new TypeError(`Invalid relationship identifier: ${id}`);
+        if ([...business.relationships, ...software.relationships].some((record) => record.id === id)) throw new TypeError(`Relationship identifier already exists: ${id}`);
+        const next = parsed.number + 1;
+        business.nextRelationshipNumber = Math.max(business.nextRelationshipNumber, next);
+        software.nextRelationshipNumber = Math.max(software.nextRelationshipNumber, next);
         allocated.relationships.add(id);
         return id;
       },

@@ -59,6 +59,12 @@ export const TOOL_CATALOG = Object.freeze([
   tool("audit.verify", "VerifyAuditService", PERMISSIONS.AUDIT, "query", "AuditVerifyRequest"),
   tool("imports.preview", "PreviewImportService", PERMISSIONS.IMPORT, "command", "ImportPreviewRequest"),
   tool("imports.commit", "CommitImportService", PERMISSIONS.IMPORT, "command", "ImportCommitRequest", [...commandErrors, "PREVIEW_EXPIRED"]),
+  tool("exports.generate", "ExportRequirementsService", PERMISSIONS.READ, "query", "ExportRequest"),
+  tool("reuse.adopt", "AdoptReuseService", PERMISSIONS.MUTATE, "command", "ReuseAdoptRequest"),
+  tool("reuse.previewPropagation", "PreviewReusePropagationService", PERMISSIONS.MUTATE, "command", "ReusePropagationPreviewRequest"),
+  tool("reuse.commitPropagation", "CommitReusePropagationService", PERMISSIONS.MUTATE, "command", "ReusePropagationCommitRequest", [...commandErrors, "PREVIEW_EXPIRED"]),
+  tool("ai.proposeRequirement", "ProposeAiRequirementService", PERMISSIONS.MUTATE, "command", "AiProposalRequest"),
+  tool("ai.acceptProposal", "AcceptAiProposalService", PERMISSIONS.DECIDE, "command", "AiProposalAcceptRequest"),
   tool("configuration.get", "GetConfigurationService", PERMISSIONS.READ, "query", "ConfigurationGetRequest"),
   tool("configuration.update", "UpdateConfigurationService", PERMISSIONS.CONFIGURE, "command", "ConfigurationUpdateRequest"),
 ]);

@@ -1,5 +1,5 @@
 {
-  "$id": "https://spec-speaker.local/schemas/v1/ValidateDraftRequest.schema.json",
+  "$id": "https://spec-speaker.local/schemas/v1/AiProposalRequest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -350,15 +350,101 @@
       ],
       "type": "object"
     },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "idempotencyKey": {
+      "maxLength": 128,
+      "minLength": 8,
+      "type": "string"
+    },
+    "model": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "processor": {
+      "enum": [
+        "internal",
+        "external"
+      ]
+    },
+    "promptTemplateVersion": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "protectedFieldsIncluded": {
+      "type": "boolean"
+    },
+    "provider": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ruleVersion": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "runId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
     "schemaVersion": {
       "const": "1.0.0"
+    },
+    "service": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "sourceItems": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version"
+        ],
+        "type": "object"
+      },
+      "maxItems": 500,
+      "type": "array"
     }
   },
   "required": [
     "schemaVersion",
     "correlationId",
-    "draft"
+    "idempotencyKey",
+    "expectedRepositoryRevision",
+    "draft",
+    "provider",
+    "service",
+    "model",
+    "runId",
+    "promptTemplateVersion",
+    "sourceItems",
+    "rationale",
+    "processor"
   ],
-  "title": "ValidateDraftRequest",
+  "title": "AiProposalRequest",
   "type": "object"
 }
