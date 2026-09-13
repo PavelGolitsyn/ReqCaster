@@ -8,7 +8,9 @@ engine intended primarily for AI-agent access.
 Stage 0 establishes the architecture and executable contracts. Stage 1 adds the
 strict, transactional two-file canonical JSON repository under
 `src/adapters/repository`. Stage 2 adds authenticated, permission-aware exact
-reads and deterministic bounded search with a rebuildable derived index.
+reads and deterministic bounded search with a rebuildable derived index. Stage
+3 adds manager-only controlled authoring, advisory quality validation, durable
+idempotency, tombstone retirement, and exact two-step bulk commits.
 
 ```sh
 npm run contracts:generate
@@ -25,3 +27,5 @@ CI.
 Read and search behavior, including projections, cursor semantics, and the
 recommended two-step agent pattern, is documented in
 [`docs/engine/search-and-read-semantics.md`](docs/engine/search-and-read-semantics.md).
+Controlled authoring examples and quality-rule behavior are documented in
+[`docs/engine/controlled-authoring-guide.md`](docs/engine/controlled-authoring-guide.md).

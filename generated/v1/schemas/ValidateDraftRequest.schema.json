@@ -12,27 +12,76 @@
       "properties": {
         "acceptanceCriteria": {
           "items": {
-            "maxLength": 2000,
-            "minLength": 1,
-            "type": "string"
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "text": {
+                "maxLength": 2000,
+                "minLength": 1,
+                "type": "string"
+              },
+              "verificationMethod": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "text"
+            ],
+            "type": "object"
           },
           "maxItems": 128,
           "type": "array"
         },
-        "allocation": {
-          "items": {
-            "maxLength": 160,
-            "minLength": 1,
-            "type": "string"
+        "aiAssistance": {
+          "additionalProperties": false,
+          "properties": {
+            "assisted": {
+              "type": "boolean"
+            },
+            "model": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "provider": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "suggestionId": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            }
           },
-          "maxItems": 64,
-          "type": "array",
-          "uniqueItems": true
+          "required": [
+            "assisted"
+          ],
+          "type": "object"
         },
         "category": {
           "maxLength": 64,
           "minLength": 1,
           "type": "string"
+        },
+        "criticality": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "customAttributes": {
+          "additionalProperties": true,
+          "maxProperties": 64,
+          "properties": {},
+          "required": [],
+          "type": "object"
         },
         "level": {
           "enum": [
@@ -40,10 +89,59 @@
             "software"
           ]
         },
+        "owner": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "priority": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "type": "string"
+        },
         "shortLabel": {
           "maxLength": 160,
           "minLength": 1,
           "type": "string"
+        },
+        "source": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sourceReferences": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "uri": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "uri"
+            ],
+            "type": "object"
+          },
+          "maxItems": 128,
+          "type": "array"
         },
         "statement": {
           "maxLength": 10000,
@@ -54,6 +152,16 @@
           "maxLength": 64,
           "minLength": 1,
           "type": "string"
+        },
+        "verificationMethods": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "type": "array",
+          "uniqueItems": true
         }
       },
       "required": [

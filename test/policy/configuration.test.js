@@ -51,3 +51,10 @@ test("contradictory and non-positive limits are rejected", () => {
   assert.ok(issues.includes("searchDefault cannot exceed searchMaximum"));
   assert.ok(issues.some((issue) => issue.includes("bulkMaximum")));
 });
+
+test("only known advisory quality rules can be promoted to governed gates", () => {
+  const candidate = structuredClone(policy);
+  candidate.qualityRules.promotedRuleIds = ["REQ-QUALITY-004", "REQ-STRUCT-001", "REQ-QUALITY-999"];
+  const issues = validatePolicy(candidate);
+  assert.equal(issues.filter((issue) => issue.includes("promoted quality rule")).length, 2);
+});

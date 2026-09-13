@@ -36,9 +36,58 @@ const requirementDraft = object({
   shortLabel: string({ minLength: 1, maxLength: 160 }),
   category: string({ minLength: 1, maxLength: 64 }),
   status: string({ minLength: 1, maxLength: 64 }),
-  allocation: array(string({ minLength: 1, maxLength: 160 }), { maxItems: 64, uniqueItems: true }),
-  acceptanceCriteria: array(string({ minLength: 1, maxLength: 2000 }), { maxItems: 128 }),
+  priority: string({ minLength: 1, maxLength: 64 }),
+  criticality: string({ minLength: 1, maxLength: 64 }),
+  owner: string({ minLength: 1, maxLength: 256 }),
+  rationale: string({ minLength: 1, maxLength: 4000 }),
+  source: string({ minLength: 1, maxLength: 256 }),
+  verificationMethods: array(string({ minLength: 1, maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
+  acceptanceCriteria: array(object({
+    id: string({ minLength: 1, maxLength: 64 }),
+    text: string({ minLength: 1, maxLength: 2000 }),
+    verificationMethod: string({ minLength: 1, maxLength: 64 }),
+  }, ["id", "text"]), { maxItems: 128 }),
+  sourceReferences: array(object({
+    type: string({ minLength: 1, maxLength: 64 }),
+    uri: string({ minLength: 1, maxLength: 2048 }),
+    title: string({ minLength: 1, maxLength: 256 }),
+  }, ["type", "uri"]), { maxItems: 128 }),
+  customAttributes: object({}, [], { additionalProperties: true, maxProperties: 64 }),
+  aiAssistance: object({
+    assisted: { type: "boolean" },
+    provider: string({ minLength: 1, maxLength: 128 }),
+    model: string({ minLength: 1, maxLength: 128 }),
+    suggestionId: string({ minLength: 1, maxLength: 256 }),
+  }, ["assisted"]),
 }, ["level", "statement", "category"]);
+
+const acceptanceCriteria = requirementDraft.properties.acceptanceCriteria;
+const sourceReferences = requirementDraft.properties.sourceReferences;
+const customAttributes = requirementDraft.properties.customAttributes;
+const patch = object({
+  statement: string({ minLength: 1, maxLength: 10000 }),
+  shortLabel: string({ minLength: 1, maxLength: 160 }),
+  category: string({ minLength: 1, maxLength: 64 }),
+  priority: string({ minLength: 1, maxLength: 64 }),
+  criticality: string({ minLength: 1, maxLength: 64 }),
+  owner: string({ minLength: 1, maxLength: 256 }),
+  rationale: string({ minLength: 1, maxLength: 4000 }),
+  verificationMethods: requirementDraft.properties.verificationMethods,
+  acceptanceCriteria,
+  sourceReferences,
+  customAttributes,
+});
+
+const bulkOperation = object({
+  operation: { enum: ["create", "update", "retire"] },
+  draft: requirementDraft,
+  id: requirementId,
+  expectedVersion,
+  patch,
+  reason: string({ minLength: 1, maxLength: 4000 }),
+  decisionReference: string({ minLength: 1, maxLength: 256 }),
+  replacementId: requirementId,
+}, ["operation"]);
 
 export const POLICY_BODY_SCHEMA = object({
   requirements: object({
@@ -48,6 +97,15 @@ export const POLICY_BODY_SCHEMA = object({
     criticalities: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
     verificationMethods: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
   }, ["categories", "statuses", "priorities", "criticalities", "verificationMethods"]),
+  authoringRules: object({
+    defaultStatus: string({ minLength: 1, maxLength: 64 }),
+    requiredFields: array(object({
+      level: { enum: ["business", "software"] },
+      fields: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
+    }, ["level", "fields"]), { minItems: 1, maxItems: 2 }),
+    rationaleOrSourceLevels: array({ enum: ["business", "software"] }, { maxItems: 2, uniqueItems: true }),
+    verificationPlanningLevels: array({ enum: ["business", "software"] }, { maxItems: 2, uniqueItems: true }),
+  }, ["defaultStatus", "requiredFields", "rationaleOrSourceLevels", "verificationPlanningLevels"]),
   transitions: array(object({
     from: string({ minLength: 1, maxLength: 64 }),
     to: string({ minLength: 1, maxLength: 64 }),
@@ -76,6 +134,10 @@ export const POLICY_BODY_SCHEMA = object({
     blockSuspectLinks: { type: "boolean" },
     blockMissingRequiredMetadata: { type: "boolean" },
   }, ["allowedStatuses", "blockSuspectLinks", "blockMissingRequiredMetadata"]),
+  retirementRules: object({
+    decisionReferenceStatuses: array(string({ minLength: 1, maxLength: 64 }), { maxItems: 64, uniqueItems: true }),
+    blockUnresolvedCriticalDependencies: { type: "boolean" },
+  }, ["decisionReferenceStatuses", "blockUnresolvedCriticalDependencies"]),
   authorizedDecisionTypes: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
   limits: object({
     searchDefault: integer({ minimum: 1 }),
@@ -83,15 +145,17 @@ export const POLICY_BODY_SCHEMA = object({
     graphDepthMaximum: integer({ minimum: 1 }),
     graphNodeMaximum: integer({ minimum: 1 }),
     bulkMaximum: integer({ minimum: 1 }),
+    bulkByteMaximum: integer({ minimum: 1024 }),
     timeoutMilliseconds: integer({ minimum: 1 }),
     responseSizeMaximum: integer({ minimum: 1024 }),
-  }, ["searchDefault", "searchMaximum", "graphDepthMaximum", "graphNodeMaximum", "bulkMaximum", "timeoutMilliseconds", "responseSizeMaximum"]),
+  }, ["searchDefault", "searchMaximum", "graphDepthMaximum", "graphNodeMaximum", "bulkMaximum", "bulkByteMaximum", "timeoutMilliseconds", "responseSizeMaximum"]),
   qualityRules: object({
     structuralValidation: { const: "blocking" },
     languageQuality: { const: "advisory" },
     advisorySeverities: array({ enum: ["info", "warning"] }, { minItems: 1, maxItems: 2, uniqueItems: true }),
+    promotedRuleIds: array(string({ pattern: "^REQ-[A-Z]+-[0-9]{3}$" }), { maxItems: 64, uniqueItems: true }),
   }, ["structuralValidation", "languageQuality", "advisorySeverities"]),
-}, ["requirements", "transitions", "relationships", "requiredMetadata", "coverageRules", "baselineReadiness", "authorizedDecisionTypes", "limits", "qualityRules"]);
+}, ["requirements", "authoringRules", "transitions", "relationships", "requiredMetadata", "coverageRules", "baselineReadiness", "retirementRules", "authorizedDecisionTypes", "limits", "qualityRules"]);
 
 export const POLICY_DOCUMENT_SCHEMA = object({
   $schema: string({ minLength: 1, maxLength: 512 }),
@@ -150,11 +214,13 @@ export const SCHEMAS = Object.freeze({
   ReportRequest: query({ reportType: { enum: ["traceability", "coverage", "history", "readiness"] }, baselineId: string({ maxLength: 128 }), reportId: string({ maxLength: 128 }) }, ["reportType"]),
   ValidateDraftRequest: query({ draft: requirementDraft }, ["draft"]),
   CreateRequest: command({ draft: requirementDraft }, ["draft"]),
-  UpdateRequest: command({ id: requirementId, expectedVersion, patch: object({ statement: string({ minLength: 1, maxLength: 10000 }), shortLabel: string({ minLength: 1, maxLength: 160 }), category: string({ maxLength: 64 }) }) }, ["id", "expectedVersion", "patch"]),
+  UpdateRequest: command({ id: requirementId, expectedVersion, patch, reason: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "patch"]),
+  RetireRequest: command({ id: requirementId, expectedVersion, reason: string({ minLength: 1, maxLength: 4000 }), decisionReference: string({ minLength: 1, maxLength: 256 }), replacementId: requirementId }, ["id", "expectedVersion", "reason"]),
   VersionedItemCommand: command({ id: string({ minLength: 1, maxLength: 128 }), expectedVersion, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "rationale"]),
   LinkRequest: command({ sourceId: requirementId, targetId: string({ minLength: 1, maxLength: 256 }), relationshipType: string({ minLength: 1, maxLength: 64 }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["sourceId", "targetId", "relationshipType", "rationale"]),
-  BulkPreviewRequest: command({ operations: array(object({ operation: { enum: ["create", "update", "retire", "link", "unlink", "transition"] }, subjectId: string({ maxLength: 128 }) }, ["operation"]), { minItems: 1, maxItems: 500 }) }, ["operations"]),
-  BulkCommitRequest: command({ previewToken: string({ minLength: 32, maxLength: 2048 }), diffHash: string({ pattern: "^[a-f0-9]{64}$" }) }, ["previewToken", "diffHash"]),
+  BulkPreviewRequest: command({ operations: array(bulkOperation, { minItems: 1, maxItems: 500 }) }, ["operations"]),
+  BulkCommitRequest: object({ schemaVersion: { const: "1.0.0" }, correlationId, idempotencyKey, previewToken: string({ minLength: 32, maxLength: 2048 }) }, ["schemaVersion", "correlationId", "idempotencyKey", "previewToken"]),
+  ImportCommitRequest: command({ previewToken: string({ minLength: 32, maxLength: 2048 }), diffHash: string({ pattern: "^[a-f0-9]{64}$" }) }, ["previewToken", "diffHash"]),
   TransitionRequest: command({ id: requirementId, expectedVersion, toStatus: string({ minLength: 1, maxLength: 64 }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "toStatus", "rationale"]),
   DecisionRequest: command({ id: string({ minLength: 1, maxLength: 128 }), expectedVersion, decision: { enum: ["approve", "reject", "waive", "abstain", "close"] }, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "decision", "rationale"]),
   ChangeCreateRequest: command({ title: string({ minLength: 1, maxLength: 200 }), rationale: string({ minLength: 1, maxLength: 4000 }), affectedRequirementIds: array(requirementId, { maxItems: 500, uniqueItems: true }) }, ["title", "rationale", "affectedRequirementIds"]),

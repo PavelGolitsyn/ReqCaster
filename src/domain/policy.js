@@ -1,9 +1,20 @@
+import { QUALITY_RULE_CATALOG } from "./quality.js";
+
 const knownKinds = new Set(["business", "software", "external:test", "external:component"]);
 const knownPermissions = new Set(["requirements:read", "requirements:validate-draft", "requirements:mutate", "requirements:decide", "requirements:baseline", "requirements:import", "requirements:configure"]);
+const knownQualityRules = new Set(QUALITY_RULE_CATALOG.map(({ id }) => id));
+const authoringFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria"]);
 
 export function validatePolicy(policy) {
   const issues = [];
   const statuses = new Set(policy?.requirements?.statuses ?? []);
+  if (!statuses.has(policy?.authoringRules?.defaultStatus)) issues.push(`authoring default status is unknown: ${policy?.authoringRules?.defaultStatus}`);
+  const authoringLevels = new Set();
+  for (const rule of policy?.authoringRules?.requiredFields ?? []) {
+    if (authoringLevels.has(rule.level)) issues.push(`duplicate authoring rule for level: ${rule.level}`);
+    authoringLevels.add(rule.level);
+    for (const field of rule.fields ?? []) if (!authoringFields.has(field)) issues.push(`authoring required field is unknown: ${field}`);
+  }
   const transitionKeys = new Set();
   for (const transition of policy?.transitions ?? []) {
     if (!statuses.has(transition.from)) issues.push(`transition source is unknown: ${transition.from}`);
@@ -32,10 +43,22 @@ export function validatePolicy(policy) {
   for (const status of policy?.baselineReadiness?.allowedStatuses ?? []) {
     if (!statuses.has(status)) issues.push(`baseline status is unknown: ${status}`);
   }
+  for (const status of policy?.retirementRules?.decisionReferenceStatuses ?? []) {
+    if (!statuses.has(status)) issues.push(`retirement decision-reference status is unknown: ${status}`);
+  }
+  for (const level of [...(policy?.authoringRules?.rationaleOrSourceLevels ?? []), ...(policy?.authoringRules?.verificationPlanningLevels ?? [])]) {
+    if (!new Set(["business", "software"]).has(level)) issues.push(`authoring rule level is unknown: ${level}`);
+  }
   const limits = policy?.limits ?? {};
   for (const [name, value] of Object.entries(limits)) {
     if (!Number.isInteger(value) || value < 1) issues.push(`limit must be a positive integer: ${name}`);
   }
   if (limits.searchDefault > limits.searchMaximum) issues.push("searchDefault cannot exceed searchMaximum");
+  const promoted = policy?.qualityRules?.promotedRuleIds ?? [];
+  if (!Array.isArray(promoted)) issues.push("promoted quality rules must be an array");
+  else {
+    if (new Set(promoted).size !== promoted.length) issues.push("promoted quality rules must be unique");
+    for (const ruleId of promoted) if (!knownQualityRules.has(ruleId) || !ruleId.startsWith("REQ-QUALITY-")) issues.push(`promoted quality rule is unknown or not advisory: ${ruleId}`);
+  }
   return issues;
 }

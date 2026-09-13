@@ -83,7 +83,7 @@ function assertIntegrityRecord(value) {
 }
 
 function assertManifest(value, directoryName) {
-  const allowed = new Set(["actor", "after", "afterRevision", "before", "beforeRevision", "committedAt", "createdAt", "recoveredAt", "recoveryReason", "schemaVersion", "status", "transactionId"]);
+  const allowed = new Set(["actor", "after", "afterRevision", "before", "beforeRevision", "committedAt", "createdAt", "idempotency", "recoveredAt", "recoveryReason", "schemaVersion", "status", "transactionId"]);
   if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some((key) => !allowed.has(key))) throw new IntegrityError("Transaction manifest has an invalid shape");
   if (value.schemaVersion !== CURRENT_SCHEMA_VERSION || value.transactionId !== directoryName || !/^[0-9]{12}-[a-f0-9-]{36}$/u.test(value.transactionId)) throw new IntegrityError("Transaction manifest identity is invalid");
   if (!new Set(["prepared", "committed", "rolled-back"]).has(value.status) || !Number.isInteger(value.beforeRevision) || value.beforeRevision < 0 || value.afterRevision !== value.beforeRevision + 1) throw new IntegrityError("Transaction manifest revision metadata is invalid");
@@ -94,6 +94,11 @@ function assertManifest(value, directoryName) {
   }
   for (const name of ["committedAt", "recoveredAt"]) if (name in value && !canonicalTimestamp(value[name])) throw new IntegrityError(`Transaction manifest ${name} is invalid`);
   if ("recoveryReason" in value && (typeof value.recoveryReason !== "string" || value.recoveryReason.length > 1000)) throw new IntegrityError("Transaction manifest recoveryReason is invalid");
+  if ("idempotency" in value) {
+    const receipt = value.idempotency;
+    if (!receipt || typeof receipt !== "object" || Array.isArray(receipt) || Object.keys(receipt).sort().join(",") !== "correlationId,key,requestHash,result,scope") throw new IntegrityError("Transaction idempotency receipt has an invalid shape");
+    if (typeof receipt.correlationId !== "string" || receipt.correlationId.length < 1 || receipt.correlationId.length > 128 || typeof receipt.key !== "string" || receipt.key.length < 8 || receipt.key.length > 128 || typeof receipt.scope !== "string" || receipt.scope.length < 1 || receipt.scope.length > 512 || !/^[a-f0-9]{64}$/u.test(receipt.requestHash ?? "")) throw new IntegrityError("Transaction idempotency receipt is invalid");
+  }
 }
 
 function compareVersions(left, right) {
@@ -249,11 +254,19 @@ export class CanonicalJsonRepository {
     return documents.business.repositoryRevision;
   }
 
+  async getPolicy() {
+    return this.#withLock(async () => clone(this.policy));
+  }
+
   async execute(mutator, options = {}) {
     if (typeof mutator !== "function") throw new TypeError("Repository mutation must be a function");
     return this.#withLock(async () => {
       await this.#recoverLocked();
       const state = await this.#loadLocked();
+      if (options.idempotency) {
+        const replay = await this.#idempotencyReplay(options.idempotency);
+        if (replay) return replay;
+      }
       if (options.expectedRepositoryRevision !== undefined && options.expectedRepositoryRevision !== state.business.value.repositoryRevision) {
         throw new RepositoryError("VERSION_CONFLICT", "Expected repository revision does not match current revision", [{ path: "/expectedRepositoryRevision", reason: `current revision is ${state.business.value.repositoryRevision}` }]);
       }
@@ -268,7 +281,7 @@ export class CanonicalJsonRepository {
       software.repositoryRevision = revision;
       assertValidRepositoryDocuments(business, software, this.policy);
       assertMonotonicTransition(state, { business, software }, allocation.allocated);
-      await this.#commitLocked(state, { business, software }, { actor: options.actor ?? "internal", faultInjector: options.faultInjector ?? this.faultInjector });
+      await this.#commitLocked(state, { business, software }, { actor: options.actor ?? "internal", faultInjector: options.faultInjector ?? this.faultInjector, idempotency: options.idempotency ? { ...options.idempotency, result: clone(result) } : undefined });
       return { committed: true, repositoryRevision: revision, result };
     });
   }
@@ -584,6 +597,7 @@ export class CanonicalJsonRepository {
       before: { businessHash: sha256(beforeBusiness), softwareHash: sha256(beforeSoftware) },
       beforeRevision: before.business.value.repositoryRevision ?? before.business.value.revision,
       createdAt: new Date().toISOString(),
+      ...(options.idempotency ? { idempotency: options.idempotency } : {}),
       schemaVersion: CURRENT_SCHEMA_VERSION,
       status: "prepared",
       transactionId,
@@ -626,13 +640,21 @@ export class CanonicalJsonRepository {
     for (const entry of entries.filter((item) => item.isDirectory()).sort((left, right) => left.name.localeCompare(right.name))) {
       const path = join(root, entry.name, "manifest.json");
       try {
-        const manifest = (await readCanonical(path, 64_000)).value;
+        const manifest = (await readCanonical(path, DOCUMENT_LIMITS.maximumBytes + 1_000_000)).value;
         assertManifest(manifest, entry.name);
         results.push({ directory: join(root, entry.name), manifest, path });
       }
       catch (error) { if (error.code !== "ENOENT") throw error; }
     }
     return results;
+  }
+
+  async #idempotencyReplay(request) {
+    if (!request || typeof request.scope !== "string" || typeof request.key !== "string" || !/^[a-f0-9]{64}$/u.test(request.requestHash ?? "")) throw new TypeError("Idempotency metadata is invalid");
+    const match = (await this.#manifests()).reverse().find(({ manifest }) => manifest.status === "committed" && manifest.idempotency?.scope === request.scope && manifest.idempotency?.key === request.key);
+    if (!match) return null;
+    if (match.manifest.idempotency.requestHash !== request.requestHash) throw new RepositoryError("INVALID_ARGUMENT", "Idempotency key was already used for a different command", [{ path: "/idempotencyKey", reason: "must not be reused with different command content" }]);
+    return { committed: false, replayed: true, repositoryRevision: match.manifest.afterRevision, result: clone(match.manifest.idempotency.result) };
   }
 
   async #recoverLocked() {

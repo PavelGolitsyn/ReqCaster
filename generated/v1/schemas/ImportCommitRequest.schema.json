@@ -1,11 +1,19 @@
 {
-  "$id": "https://spec-speaker.local/schemas/v1/BulkCommitRequest.schema.json",
+  "$id": "https://spec-speaker.local/schemas/v1/ImportCommitRequest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
     "correlationId": {
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
       "type": "string"
+    },
+    "diffHash": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "expectedRepositoryRevision": {
+      "minimum": 0,
+      "type": "integer"
     },
     "idempotencyKey": {
       "maxLength": 128,
@@ -25,8 +33,10 @@
     "schemaVersion",
     "correlationId",
     "idempotencyKey",
-    "previewToken"
+    "expectedRepositoryRevision",
+    "previewToken",
+    "diffHash"
   ],
-  "title": "BulkCommitRequest",
+  "title": "ImportCommitRequest",
   "type": "object"
 }

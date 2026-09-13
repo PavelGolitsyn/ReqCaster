@@ -692,7 +692,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:baseline"
@@ -1153,7 +1153,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -1400,7 +1400,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -1642,7 +1642,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -1889,7 +1889,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -2126,7 +2126,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -2376,6 +2376,77 @@
                   "policy": {
                     "additionalProperties": false,
                     "properties": {
+                      "authoringRules": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "defaultStatus": {
+                            "maxLength": 64,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "rationaleOrSourceLevels": {
+                            "items": {
+                              "enum": [
+                                "business",
+                                "software"
+                              ]
+                            },
+                            "maxItems": 2,
+                            "type": "array",
+                            "uniqueItems": true
+                          },
+                          "requiredFields": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "fields": {
+                                  "items": {
+                                    "maxLength": 64,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "maxItems": 32,
+                                  "minItems": 1,
+                                  "type": "array",
+                                  "uniqueItems": true
+                                },
+                                "level": {
+                                  "enum": [
+                                    "business",
+                                    "software"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "level",
+                                "fields"
+                              ],
+                              "type": "object"
+                            },
+                            "maxItems": 2,
+                            "minItems": 1,
+                            "type": "array"
+                          },
+                          "verificationPlanningLevels": {
+                            "items": {
+                              "enum": [
+                                "business",
+                                "software"
+                              ]
+                            },
+                            "maxItems": 2,
+                            "type": "array",
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": [
+                          "defaultStatus",
+                          "requiredFields",
+                          "rationaleOrSourceLevels",
+                          "verificationPlanningLevels"
+                        ],
+                        "type": "object"
+                      },
                       "authorizedDecisionTypes": {
                         "items": {
                           "maxLength": 64,
@@ -2461,6 +2532,10 @@
                       "limits": {
                         "additionalProperties": false,
                         "properties": {
+                          "bulkByteMaximum": {
+                            "minimum": 1024,
+                            "type": "integer"
+                          },
                           "bulkMaximum": {
                             "minimum": 1,
                             "type": "integer"
@@ -2496,6 +2571,7 @@
                           "graphDepthMaximum",
                           "graphNodeMaximum",
                           "bulkMaximum",
+                          "bulkByteMaximum",
                           "timeoutMilliseconds",
                           "responseSizeMaximum"
                         ],
@@ -2518,6 +2594,15 @@
                           },
                           "languageQuality": {
                             "const": "advisory"
+                          },
+                          "promotedRuleIds": {
+                            "items": {
+                              "pattern": "^REQ-[A-Z]+-[0-9]{3}$",
+                              "type": "string"
+                            },
+                            "maxItems": 64,
+                            "type": "array",
+                            "uniqueItems": true
                           },
                           "structuralValidation": {
                             "const": "blocking"
@@ -2694,6 +2779,29 @@
                         ],
                         "type": "object"
                       },
+                      "retirementRules": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "blockUnresolvedCriticalDependencies": {
+                            "type": "boolean"
+                          },
+                          "decisionReferenceStatuses": {
+                            "items": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "maxItems": 64,
+                            "type": "array",
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": [
+                          "decisionReferenceStatuses",
+                          "blockUnresolvedCriticalDependencies"
+                        ],
+                        "type": "object"
+                      },
                       "transitions": {
                         "items": {
                           "additionalProperties": false,
@@ -2727,11 +2835,13 @@
                     },
                     "required": [
                       "requirements",
+                      "authoringRules",
                       "transitions",
                       "relationships",
                       "requiredMetadata",
                       "coverageRules",
                       "baselineReadiness",
+                      "retirementRules",
                       "authorizedDecisionTypes",
                       "limits",
                       "qualityRules"
@@ -2938,7 +3048,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:configure"
@@ -3169,7 +3279,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
           }
         },
         "x-permission": "requirements:import"
@@ -3409,7 +3519,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:import"
@@ -3427,14 +3537,6 @@
                   "correlationId": {
                     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
                     "type": "string"
-                  },
-                  "diffHash": {
-                    "pattern": "^[a-f0-9]{64}$",
-                    "type": "string"
-                  },
-                  "expectedRepositoryRevision": {
-                    "minimum": 0,
-                    "type": "integer"
                   },
                   "idempotencyKey": {
                     "maxLength": 128,
@@ -3454,9 +3556,7 @@
                   "schemaVersion",
                   "correlationId",
                   "idempotencyKey",
-                  "expectedRepositoryRevision",
-                  "previewToken",
-                  "diffHash"
+                  "previewToken"
                 ],
                 "type": "object"
               }
@@ -3640,7 +3740,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
           }
         },
         "x-permission": "requirements:mutate"
@@ -3672,18 +3772,314 @@
                     "items": {
                       "additionalProperties": false,
                       "properties": {
+                        "decisionReference": {
+                          "maxLength": 256,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "draft": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "acceptanceCriteria": {
+                              "items": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "id": {
+                                    "maxLength": 64,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "text": {
+                                    "maxLength": 2000,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "verificationMethod": {
+                                    "maxLength": 64,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "text"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 128,
+                              "type": "array"
+                            },
+                            "aiAssistance": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "assisted": {
+                                  "type": "boolean"
+                                },
+                                "model": {
+                                  "maxLength": 128,
+                                  "minLength": 1,
+                                  "type": "string"
+                                },
+                                "provider": {
+                                  "maxLength": 128,
+                                  "minLength": 1,
+                                  "type": "string"
+                                },
+                                "suggestionId": {
+                                  "maxLength": 256,
+                                  "minLength": 1,
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "assisted"
+                              ],
+                              "type": "object"
+                            },
+                            "category": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "criticality": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "customAttributes": {
+                              "additionalProperties": true,
+                              "maxProperties": 64,
+                              "properties": {},
+                              "required": [],
+                              "type": "object"
+                            },
+                            "level": {
+                              "enum": [
+                                "business",
+                                "software"
+                              ]
+                            },
+                            "owner": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "priority": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "rationale": {
+                              "maxLength": 4000,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "shortLabel": {
+                              "maxLength": 160,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "source": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "sourceReferences": {
+                              "items": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "title": {
+                                    "maxLength": 256,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "maxLength": 64,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "uri": {
+                                    "maxLength": 2048,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "type",
+                                  "uri"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 128,
+                              "type": "array"
+                            },
+                            "statement": {
+                              "maxLength": 10000,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "status": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "verificationMethods": {
+                              "items": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "maxItems": 32,
+                              "type": "array",
+                              "uniqueItems": true
+                            }
+                          },
+                          "required": [
+                            "level",
+                            "statement",
+                            "category"
+                          ],
+                          "type": "object"
+                        },
+                        "expectedVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "id": {
+                          "pattern": "^(BR|SR)-[0-9]{6}$",
+                          "type": "string"
+                        },
                         "operation": {
                           "enum": [
                             "create",
                             "update",
-                            "retire",
-                            "link",
-                            "unlink",
-                            "transition"
+                            "retire"
                           ]
                         },
-                        "subjectId": {
-                          "maxLength": 128,
+                        "patch": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "acceptanceCriteria": {
+                              "items": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "id": {
+                                    "maxLength": 64,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "text": {
+                                    "maxLength": 2000,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "verificationMethod": {
+                                    "maxLength": 64,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "text"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 128,
+                              "type": "array"
+                            },
+                            "category": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "criticality": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "customAttributes": {
+                              "additionalProperties": true,
+                              "maxProperties": 64,
+                              "properties": {},
+                              "required": [],
+                              "type": "object"
+                            },
+                            "owner": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "priority": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "rationale": {
+                              "maxLength": 4000,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "shortLabel": {
+                              "maxLength": 160,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "sourceReferences": {
+                              "items": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "title": {
+                                    "maxLength": 256,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "maxLength": 64,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "uri": {
+                                    "maxLength": 2048,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "type",
+                                  "uri"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 128,
+                              "type": "array"
+                            },
+                            "statement": {
+                              "maxLength": 10000,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "verificationMethods": {
+                              "items": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "maxItems": 32,
+                              "type": "array",
+                              "uniqueItems": true
+                            }
+                          },
+                          "required": [],
+                          "type": "object"
+                        },
+                        "reason": {
+                          "maxLength": 4000,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "replacementId": {
+                          "pattern": "^(BR|SR)-[0-9]{6}$",
                           "type": "string"
                         }
                       },
@@ -3889,7 +4285,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -4378,27 +4774,76 @@
                     "properties": {
                       "acceptanceCriteria": {
                         "items": {
-                          "maxLength": 2000,
-                          "minLength": 1,
-                          "type": "string"
+                          "additionalProperties": false,
+                          "properties": {
+                            "id": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "text": {
+                              "maxLength": 2000,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "verificationMethod": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "text"
+                          ],
+                          "type": "object"
                         },
                         "maxItems": 128,
                         "type": "array"
                       },
-                      "allocation": {
-                        "items": {
-                          "maxLength": 160,
-                          "minLength": 1,
-                          "type": "string"
+                      "aiAssistance": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "assisted": {
+                            "type": "boolean"
+                          },
+                          "model": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "provider": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "suggestionId": {
+                            "maxLength": 256,
+                            "minLength": 1,
+                            "type": "string"
+                          }
                         },
-                        "maxItems": 64,
-                        "type": "array",
-                        "uniqueItems": true
+                        "required": [
+                          "assisted"
+                        ],
+                        "type": "object"
                       },
                       "category": {
                         "maxLength": 64,
                         "minLength": 1,
                         "type": "string"
+                      },
+                      "criticality": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "customAttributes": {
+                        "additionalProperties": true,
+                        "maxProperties": 64,
+                        "properties": {},
+                        "required": [],
+                        "type": "object"
                       },
                       "level": {
                         "enum": [
@@ -4406,10 +4851,59 @@
                           "software"
                         ]
                       },
+                      "owner": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "priority": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "rationale": {
+                        "maxLength": 4000,
+                        "minLength": 1,
+                        "type": "string"
+                      },
                       "shortLabel": {
                         "maxLength": 160,
                         "minLength": 1,
                         "type": "string"
+                      },
+                      "source": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "sourceReferences": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "uri": {
+                              "maxLength": 2048,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "uri"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 128,
+                        "type": "array"
                       },
                       "statement": {
                         "maxLength": 10000,
@@ -4420,6 +4914,16 @@
                         "maxLength": 64,
                         "minLength": 1,
                         "type": "string"
+                      },
+                      "verificationMethods": {
+                        "items": {
+                          "maxLength": 64,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
                       }
                     },
                     "required": [
@@ -4631,7 +5135,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -5357,7 +5861,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -6027,6 +6531,11 @@
                     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
                     "type": "string"
                   },
+                  "decisionReference": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "type": "string"
+                  },
                   "expectedRepositoryRevision": {
                     "minimum": 0,
                     "type": "integer"
@@ -6036,8 +6545,7 @@
                     "type": "integer"
                   },
                   "id": {
-                    "maxLength": 128,
-                    "minLength": 1,
+                    "pattern": "^(BR|SR)-[0-9]{6}$",
                     "type": "string"
                   },
                   "idempotencyKey": {
@@ -6045,9 +6553,13 @@
                     "minLength": 8,
                     "type": "string"
                   },
-                  "rationale": {
+                  "reason": {
                     "maxLength": 4000,
                     "minLength": 1,
+                    "type": "string"
+                  },
+                  "replacementId": {
+                    "pattern": "^(BR|SR)-[0-9]{6}$",
                     "type": "string"
                   },
                   "schemaVersion": {
@@ -6061,7 +6573,7 @@
                   "expectedRepositoryRevision",
                   "id",
                   "expectedVersion",
-                  "rationale"
+                  "reason"
                 ],
                 "type": "object"
               }
@@ -6245,7 +6757,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -7156,7 +7668,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -7393,7 +7905,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -7432,8 +7944,65 @@
                   "patch": {
                     "additionalProperties": false,
                     "properties": {
+                      "acceptanceCriteria": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "id": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "text": {
+                              "maxLength": 2000,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "verificationMethod": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "text"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 128,
+                        "type": "array"
+                      },
                       "category": {
                         "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "criticality": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "customAttributes": {
+                        "additionalProperties": true,
+                        "maxProperties": 64,
+                        "properties": {},
+                        "required": [],
+                        "type": "object"
+                      },
+                      "owner": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "priority": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "rationale": {
+                        "maxLength": 4000,
+                        "minLength": 1,
                         "type": "string"
                       },
                       "shortLabel": {
@@ -7441,14 +8010,58 @@
                         "minLength": 1,
                         "type": "string"
                       },
+                      "sourceReferences": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "uri": {
+                              "maxLength": 2048,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "uri"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 128,
+                        "type": "array"
+                      },
                       "statement": {
                         "maxLength": 10000,
                         "minLength": 1,
                         "type": "string"
+                      },
+                      "verificationMethods": {
+                        "items": {
+                          "maxLength": 64,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
                       }
                     },
                     "required": [],
                     "type": "object"
+                  },
+                  "reason": {
+                    "maxLength": 4000,
+                    "minLength": 1,
+                    "type": "string"
                   },
                   "schemaVersion": {
                     "const": "1.0.0"
@@ -7645,7 +8258,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -7669,27 +8282,76 @@
                     "properties": {
                       "acceptanceCriteria": {
                         "items": {
-                          "maxLength": 2000,
-                          "minLength": 1,
-                          "type": "string"
+                          "additionalProperties": false,
+                          "properties": {
+                            "id": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "text": {
+                              "maxLength": 2000,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "verificationMethod": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "text"
+                          ],
+                          "type": "object"
                         },
                         "maxItems": 128,
                         "type": "array"
                       },
-                      "allocation": {
-                        "items": {
-                          "maxLength": 160,
-                          "minLength": 1,
-                          "type": "string"
+                      "aiAssistance": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "assisted": {
+                            "type": "boolean"
+                          },
+                          "model": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "provider": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "suggestionId": {
+                            "maxLength": 256,
+                            "minLength": 1,
+                            "type": "string"
+                          }
                         },
-                        "maxItems": 64,
-                        "type": "array",
-                        "uniqueItems": true
+                        "required": [
+                          "assisted"
+                        ],
+                        "type": "object"
                       },
                       "category": {
                         "maxLength": 64,
                         "minLength": 1,
                         "type": "string"
+                      },
+                      "criticality": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "customAttributes": {
+                        "additionalProperties": true,
+                        "maxProperties": 64,
+                        "properties": {},
+                        "required": [],
+                        "type": "object"
                       },
                       "level": {
                         "enum": [
@@ -7697,10 +8359,59 @@
                           "software"
                         ]
                       },
+                      "owner": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "priority": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "rationale": {
+                        "maxLength": 4000,
+                        "minLength": 1,
+                        "type": "string"
+                      },
                       "shortLabel": {
                         "maxLength": 160,
                         "minLength": 1,
                         "type": "string"
+                      },
+                      "source": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "sourceReferences": {
+                        "items": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "title": {
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "uri": {
+                              "maxLength": 2048,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "uri"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 128,
+                        "type": "array"
                       },
                       "statement": {
                         "maxLength": 10000,
@@ -7711,6 +8422,16 @@
                         "maxLength": 64,
                         "minLength": 1,
                         "type": "string"
+                      },
+                      "verificationMethods": {
+                        "items": {
+                          "maxLength": 64,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
                       }
                     },
                     "required": [
@@ -8155,7 +8876,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -8402,7 +9123,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"

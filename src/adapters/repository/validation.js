@@ -22,8 +22,9 @@ const relationshipFields = new Set(["id", "version", "type", "source", "target",
 const endpointFields = new Set(["kind", "id", "version"]);
 const acceptanceFields = new Set(["id", "text", "verificationMethod"]);
 const referenceFields = new Set(["type", "uri", "title"]);
-const provenanceFields = new Set(["createdAt", "createdBy", "updatedAt", "updatedBy", "source"]);
-const retirementFields = new Set(["retiredAt", "retiredBy", "rationale"]);
+const provenanceFields = new Set(["createdAt", "createdBy", "updatedAt", "updatedBy", "source", "accountablePrincipal", "aiAssistance"]);
+const assistanceFields = new Set(["assisted", "provider", "model", "suggestionId"]);
+const retirementFields = new Set(["retiredAt", "retiredBy", "rationale", "decisionReference"]);
 const externalKinds = new Set(["external:test", "external:component"]);
 
 function issue(issues, path, reason) {
@@ -87,7 +88,15 @@ function provenance(value, path, issues) {
   if (!exactFields(value, provenanceFields, path, issues)) return;
   required(value, ["createdAt", "createdBy", "updatedAt", "updatedBy"], path, issues);
   for (const name of ["createdAt", "updatedAt"]) if (name in value) timestamp(value[name], `${path}/${name}`, issues);
-  for (const name of ["createdBy", "updatedBy", "source"]) if (name in value) boundedString(value[name], `${path}/${name}`, issues, 256);
+  for (const name of ["createdBy", "updatedBy", "source", "accountablePrincipal"]) if (name in value) boundedString(value[name], `${path}/${name}`, issues, 256);
+  if ("aiAssistance" in value) {
+    const assistance = value.aiAssistance;
+    if (exactFields(assistance, assistanceFields, `${path}/aiAssistance`, issues)) {
+      required(assistance, ["assisted"], `${path}/aiAssistance`, issues);
+      if (typeof assistance.assisted !== "boolean") issue(issues, `${path}/aiAssistance/assisted`, "must be a boolean");
+      for (const name of ["provider", "model", "suggestionId"]) if (name in assistance) boundedString(assistance[name], `${path}/aiAssistance/${name}`, issues, name === "suggestionId" ? 256 : 128);
+    }
+  }
   if (typeof value.createdAt === "string" && typeof value.updatedAt === "string" && value.updatedAt < value.createdAt) issue(issues, `${path}/updatedAt`, "must not precede createdAt");
 }
 
@@ -95,7 +104,7 @@ function retirement(value, path, issues) {
   if (!exactFields(value, retirementFields, path, issues)) return;
   required(value, ["retiredAt", "retiredBy", "rationale"], path, issues);
   if ("retiredAt" in value) timestamp(value.retiredAt, `${path}/retiredAt`, issues);
-  for (const name of ["retiredBy", "rationale"]) if (name in value) boundedString(value[name], `${path}/${name}`, issues, name === "rationale" ? 4000 : 256);
+  for (const name of ["retiredBy", "rationale", "decisionReference"]) if (name in value) boundedString(value[name], `${path}/${name}`, issues, name === "rationale" ? 4000 : 256);
 }
 
 function validateRequirement(record, level, path, policy, issues) {

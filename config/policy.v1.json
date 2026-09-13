@@ -4,12 +4,22 @@
   "configurationVersion": "1",
   "requirements": {
     "categories": ["functional", "quality", "interface", "constraint", "safety", "regulatory"],
-    "statuses": ["draft", "in-review", "approved", "implemented", "verified", "retired"],
+    "statuses": ["proposed", "draft", "in-review", "approved", "implemented", "verified", "retired"],
     "priorities": ["low", "medium", "high", "critical"],
     "criticalities": ["none", "low", "medium", "high", "safety-critical"],
     "verificationMethods": ["test", "demonstration", "inspection", "analysis"]
   },
+  "authoringRules": {
+    "defaultStatus": "proposed",
+    "requiredFields": [
+      { "level": "business", "fields": ["owner", "priority"] },
+      { "level": "software", "fields": ["owner", "priority"] }
+    ],
+    "rationaleOrSourceLevels": ["business", "software"],
+    "verificationPlanningLevels": ["software"]
+  },
   "transitions": [
+    { "from": "proposed", "to": "draft", "permission": "requirements:mutate" },
     { "from": "draft", "to": "in-review", "permission": "requirements:mutate" },
     { "from": "in-review", "to": "approved", "permission": "requirements:decide" },
     { "from": "in-review", "to": "draft", "permission": "requirements:mutate" },
@@ -33,7 +43,8 @@
     { "level": "software", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["verifies"] }
   ],
   "baselineReadiness": { "allowedStatuses": ["approved", "implemented", "verified"], "blockSuspectLinks": true, "blockMissingRequiredMetadata": true },
+  "retirementRules": { "decisionReferenceStatuses": ["approved", "implemented", "verified"], "blockUnresolvedCriticalDependencies": true },
   "authorizedDecisionTypes": ["approve", "reject", "waive", "close"],
-  "limits": { "searchDefault": 20, "searchMaximum": 100, "graphDepthMaximum": 5, "graphNodeMaximum": 1000, "bulkMaximum": 500, "timeoutMilliseconds": 30000, "responseSizeMaximum": 256000 },
+  "limits": { "searchDefault": 20, "searchMaximum": 100, "graphDepthMaximum": 5, "graphNodeMaximum": 1000, "bulkMaximum": 500, "bulkByteMaximum": 1000000, "timeoutMilliseconds": 30000, "responseSizeMaximum": 256000 },
   "qualityRules": { "structuralValidation": "blocking", "languageQuality": "advisory", "advisorySeverities": ["info", "warning"] }
 }

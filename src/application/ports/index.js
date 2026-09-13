@@ -3,7 +3,7 @@
  * stages; these guards make adapter mistakes fail early without a framework.
  */
 const methods = Object.freeze({
-  Repository: ["read", "execute", "revision"],
+  Repository: ["read", "execute", "revision", "getPolicy"],
   Authorization: ["authorize"],
   Clock: ["now"],
   Identity: ["authenticate"],

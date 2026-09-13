@@ -12,10 +12,28 @@ startup recovery rolls it forward from the checksummed transaction copies. If a
 candidate is corrupt, recovery quarantines it and restores both verified before
 images.
 
-The adapter exposes `initialize`, `open`, `read`, `revision`, `execute`,
+The adapter exposes `initialize`, `open`, `read`, `revision`, `getPolicy`, `execute`,
 `validate`, `diagnose`, `recover`, `rebuildDerivedState`, and migration methods.
 Mutation callbacks receive allocators; callers must never manufacture IDs or
 edit the canonical files directly.
+
+## Engine-owned files
+
+`business-requirements.json` and `software-requirements.json` are engine-owned
+database files, not hand-authored project documents. The engine stores their
+last committed SHA-256 checksums under `.engine/versions/current.json` and
+verifies them on every open and locked read. An out-of-band edit therefore puts
+the repository into `INTEGRITY_FAILURE`; it is quarantined and is never adopted
+as trusted history.
+
+In production, run the service under a dedicated operating-system account. Give
+that account write access to the requirements root, give agent processes no
+filesystem access to it, and expose data only through authenticated tools. For
+a repository that is also versioned in Git, use a pre-commit/CI step such as
+`npm run repository -- validate /absolute/requirements-root` and reject commits
+whose canonical files were not produced by a committed engine transaction.
+Filesystem permissions supplement the checksum and transaction controls; they
+do not replace them.
 
 Operator usage:
 

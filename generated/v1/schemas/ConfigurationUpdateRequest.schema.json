@@ -24,6 +24,77 @@
     "policy": {
       "additionalProperties": false,
       "properties": {
+        "authoringRules": {
+          "additionalProperties": false,
+          "properties": {
+            "defaultStatus": {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            "rationaleOrSourceLevels": {
+              "items": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "maxItems": 2,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "requiredFields": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "fields": {
+                    "items": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "maxItems": 32,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "level": {
+                    "enum": [
+                      "business",
+                      "software"
+                    ]
+                  }
+                },
+                "required": [
+                  "level",
+                  "fields"
+                ],
+                "type": "object"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            },
+            "verificationPlanningLevels": {
+              "items": {
+                "enum": [
+                  "business",
+                  "software"
+                ]
+              },
+              "maxItems": 2,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "defaultStatus",
+            "requiredFields",
+            "rationaleOrSourceLevels",
+            "verificationPlanningLevels"
+          ],
+          "type": "object"
+        },
         "authorizedDecisionTypes": {
           "items": {
             "maxLength": 64,
@@ -109,6 +180,10 @@
         "limits": {
           "additionalProperties": false,
           "properties": {
+            "bulkByteMaximum": {
+              "minimum": 1024,
+              "type": "integer"
+            },
             "bulkMaximum": {
               "minimum": 1,
               "type": "integer"
@@ -144,6 +219,7 @@
             "graphDepthMaximum",
             "graphNodeMaximum",
             "bulkMaximum",
+            "bulkByteMaximum",
             "timeoutMilliseconds",
             "responseSizeMaximum"
           ],
@@ -166,6 +242,15 @@
             },
             "languageQuality": {
               "const": "advisory"
+            },
+            "promotedRuleIds": {
+              "items": {
+                "pattern": "^REQ-[A-Z]+-[0-9]{3}$",
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array",
+              "uniqueItems": true
             },
             "structuralValidation": {
               "const": "blocking"
@@ -342,6 +427,29 @@
           ],
           "type": "object"
         },
+        "retirementRules": {
+          "additionalProperties": false,
+          "properties": {
+            "blockUnresolvedCriticalDependencies": {
+              "type": "boolean"
+            },
+            "decisionReferenceStatuses": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "decisionReferenceStatuses",
+            "blockUnresolvedCriticalDependencies"
+          ],
+          "type": "object"
+        },
         "transitions": {
           "items": {
             "additionalProperties": false,
@@ -375,11 +483,13 @@
       },
       "required": [
         "requirements",
+        "authoringRules",
         "transitions",
         "relationships",
         "requiredMetadata",
         "coverageRules",
         "baselineReadiness",
+        "retirementRules",
         "authorizedDecisionTypes",
         "limits",
         "qualityRules"

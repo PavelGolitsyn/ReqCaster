@@ -1,1 +1,2 @@
+export { BulkCommitService, BulkPreviewService, CreateRequirementService, createAuthoringServices, FIELD_CLASSIFICATION, MATERIAL_FIELDS, PreviewTokenStore, RetireRequirementService, UpdateRequirementService, ValidateDraftService } from "./authoring.js";
 export { CursorCodec, createReadServices, GetRequirementService, ListRequirementsService, REQUIREMENT_PROJECTION_PRESETS, REQUIREMENT_READ_FIELDS, SearchRequirementsService } from "./reads.js";

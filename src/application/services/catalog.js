@@ -1,7 +1,7 @@
 import { PERMISSIONS } from "../authorization.js";
 
 const queryErrors = ["INVALID_ARGUMENT", "SCHEMA_VIOLATION", "NOT_FOUND", "FORBIDDEN", "REPOSITORY_BUSY", "INTEGRITY_FAILURE", "INTERNAL_ERROR"];
-const commandErrors = ["INVALID_ARGUMENT", "SCHEMA_VIOLATION", "FORBIDDEN", "VERSION_CONFLICT", "REPOSITORY_BUSY", "INTEGRITY_FAILURE", "INTERNAL_ERROR"];
+const commandErrors = ["INVALID_ARGUMENT", "SCHEMA_VIOLATION", "NOT_FOUND", "FORBIDDEN", "VERSION_CONFLICT", "REPOSITORY_BUSY", "INTEGRITY_FAILURE", "INTERNAL_ERROR"];
 
 function tool(name, service, permission, kind, input, errors = kind === "query" ? queryErrors : commandErrors) {
   return Object.freeze({ name, service, permission, kind, input, output: "OperationResponse", errors: Object.freeze(errors) });
@@ -19,7 +19,7 @@ export const TOOL_CATALOG = Object.freeze([
   tool("requirements.validateDraft", "ValidateDraftService", PERMISSIONS.VALIDATE_DRAFT, "query", "ValidateDraftRequest"),
   tool("requirements.create", "CreateRequirementService", PERMISSIONS.MUTATE, "command", "CreateRequest"),
   tool("requirements.update", "UpdateRequirementService", PERMISSIONS.MUTATE, "command", "UpdateRequest"),
-  tool("requirements.retire", "RetireRequirementService", PERMISSIONS.MUTATE, "command", "VersionedItemCommand"),
+  tool("requirements.retire", "RetireRequirementService", PERMISSIONS.MUTATE, "command", "RetireRequest"),
   tool("requirements.link", "LinkRequirementService", PERMISSIONS.MUTATE, "command", "LinkRequest"),
   tool("requirements.unlink", "UnlinkRequirementService", PERMISSIONS.MUTATE, "command", "VersionedItemCommand"),
   tool("requirements.bulkPreview", "BulkPreviewService", PERMISSIONS.MUTATE, "command", "BulkPreviewRequest"),
@@ -37,7 +37,7 @@ export const TOOL_CATALOG = Object.freeze([
   tool("baselines.get", "GetBaselineService", PERMISSIONS.READ, "query", "BaselineGetRequest"),
   tool("baselines.compare", "CompareBaselineService", PERMISSIONS.READ, "query", "CompareRequest"),
   tool("imports.preview", "PreviewImportService", PERMISSIONS.IMPORT, "command", "ImportPreviewRequest"),
-  tool("imports.commit", "CommitImportService", PERMISSIONS.IMPORT, "command", "BulkCommitRequest", [...commandErrors, "PREVIEW_EXPIRED"]),
+  tool("imports.commit", "CommitImportService", PERMISSIONS.IMPORT, "command", "ImportCommitRequest", [...commandErrors, "PREVIEW_EXPIRED"]),
   tool("configuration.get", "GetConfigurationService", PERMISSIONS.READ, "query", "ConfigurationGetRequest"),
   tool("configuration.update", "UpdateConfigurationService", PERMISSIONS.CONFIGURE, "command", "ConfigurationUpdateRequest"),
 ]);
