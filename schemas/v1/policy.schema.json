@@ -118,6 +118,56 @@
       ],
       "type": "object"
     },
+    "changeControl": {
+      "additionalProperties": false,
+      "properties": {
+        "criticalImpactLevels": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "impactDepthMaximum": {
+          "maximum": 20,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "impactNodeMaximum": {
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "outboxMaximumAttempts": {
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "protectedStatuses": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "protectedStatuses",
+        "criticalImpactLevels",
+        "impactDepthMaximum",
+        "impactNodeMaximum",
+        "outboxMaximumAttempts"
+      ],
+      "type": "object"
+    },
     "configurationVersion": {
       "pattern": "^[1-9][0-9]*$",
       "type": "string"
@@ -465,15 +515,60 @@
       "items": {
         "additionalProperties": false,
         "properties": {
+          "allowException": {
+            "type": "boolean"
+          },
+          "blockingConditions": {
+            "items": {
+              "enum": [
+                "blocking-tbds",
+                "coverage",
+                "critical-suspect-links"
+              ]
+            },
+            "maxItems": 16,
+            "type": "array",
+            "uniqueItems": true
+          },
           "from": {
             "maxLength": 64,
             "minLength": 1,
             "type": "string"
           },
+          "impactActions": {
+            "items": {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array",
+            "uniqueItems": true
+          },
           "permission": {
             "maxLength": 128,
             "minLength": 1,
             "type": "string"
+          },
+          "requiredEvidenceTypes": {
+            "items": {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 64,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "requiredFields": {
+            "items": {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 64,
+            "type": "array",
+            "uniqueItems": true
           },
           "to": {
             "maxLength": 64,
@@ -484,7 +579,12 @@
         "required": [
           "from",
           "to",
-          "permission"
+          "permission",
+          "requiredFields",
+          "requiredEvidenceTypes",
+          "blockingConditions",
+          "impactActions",
+          "allowException"
         ],
         "type": "object"
       },

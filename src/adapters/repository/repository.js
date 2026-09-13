@@ -161,6 +161,27 @@ function assertMonotonicTransition(before, after, allocated) {
       if (!oldRecords.has(id) && newRecord.version !== 1) issues.push({ path: `/${collection}/${id}/version`, reason: "new records must start at version 1" });
     }
   }
+  const oldControl = before.business.value.changeControl;
+  const newControl = after.business.changeControl;
+  if (oldControl && !newControl) issues.push({ path: "/business/changeControl", reason: "governed change-control state must not be removed" });
+  if (oldControl && newControl) {
+    if (newControl.nextChangeNumber < oldControl.nextChangeNumber) issues.push({ path: "/business/changeControl/nextChangeNumber", reason: "must never decrement" });
+    if (newControl.nextOutboxNumber < oldControl.nextOutboxNumber) issues.push({ path: "/business/changeControl/nextOutboxNumber", reason: "must never decrement" });
+    const oldChanges = new Map(oldControl.changes.map((record) => [record.id, record]));
+    const newChanges = new Map(newControl.changes.map((record) => [record.id, record]));
+    for (const [id, oldRecord] of oldChanges) {
+      const newRecord = newChanges.get(id);
+      if (!newRecord) { issues.push({ path: `/business/changeControl/changes/${id}`, reason: "governed change records must not be deleted" }); continue; }
+      const changed = canonicalHash(withoutVersion(oldRecord)) !== canonicalHash(withoutVersion(newRecord));
+      if (changed && newRecord.version !== oldRecord.version + 1) issues.push({ path: `/business/changeControl/changes/${id}/version`, reason: "must increase by exactly one when an existing change record changes" });
+      if (!changed && newRecord.version !== oldRecord.version) issues.push({ path: `/business/changeControl/changes/${id}/version`, reason: "must remain unchanged when change record content is unchanged" });
+    }
+    for (const [id, newRecord] of newChanges) if (!oldChanges.has(id) && newRecord.version !== 1) issues.push({ path: `/business/changeControl/changes/${id}/version`, reason: "new change records must start at version 1" });
+    const newOutboxIds = new Set(newControl.outbox.map(({ id }) => id));
+    for (const { id } of oldControl.outbox) if (!newOutboxIds.has(id)) issues.push({ path: `/business/changeControl/outbox/${id}`, reason: "outbox records must not be deleted" });
+    const newMemberships = new Set(newControl.baselineMemberships.map((entry) => canonicalHash(entry)));
+    for (const entry of oldControl.baselineMemberships) if (!newMemberships.has(canonicalHash(entry))) issues.push({ path: "/business/changeControl/baselineMemberships", reason: "baseline membership must not be removed" });
+  }
   if (issues.length) throw new ValidationError(issues);
 }
 

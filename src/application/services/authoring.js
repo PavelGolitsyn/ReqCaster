@@ -13,6 +13,7 @@ const FIELD_CLASSIFICATION = Object.freeze({
   shortLabel: "metadata-only", priority: "metadata-only", criticality: "metadata-only", owner: "metadata-only", customAttributes: "administrative",
 });
 const PATCH_FIELDS = new Set(Object.keys(FIELD_CLASSIFICATION));
+export const GOVERNED_CHANGE_COMMIT = Symbol("governed-change-commit");
 
 function clone(value) {
   return structuredClone(value);
@@ -39,6 +40,33 @@ function documentForId(documents, id) {
 
 function requirement(documents, id) {
   return documentForId(documents, id)?.requirements.find((item) => item.id === id);
+}
+
+function governedChange(documents, changeId) {
+  return documents.business.changeControl?.changes?.find((change) => change.id === changeId);
+}
+
+function baselineMemberships(documents, id, version) {
+  return (documents.business.changeControl?.baselineMemberships ?? []).filter((entry) => entry.requirementId === id && entry.version === version);
+}
+
+function assertApprovedChangeForProtectedContent(documents, item, request, policy, operation = "update") {
+  const protectedStatuses = new Set(policy.changeControl?.protectedStatuses ?? ["approved", "implemented", "verified", "delivered"]);
+  const memberships = baselineMemberships(documents, item.id, item.version);
+  if (!protectedStatuses.has(item.status) && memberships.length === 0) return;
+  const change = request.changeId ? governedChange(documents, request.changeId) : null;
+  const approved = change && new Set(["approved", "implementing"]).has(change.status);
+  const exactTarget = approved && request[GOVERNED_CHANGE_COMMIT] === true && change.proposedChanges?.some((proposal) => proposal.operation === operation
+    && proposal.id === item.id
+    && proposal.expectedVersion === item.version
+    && (operation !== "update" || canonicalHash(proposal.patch) === canonicalHash(request.patch))
+    && (operation !== "retire" || (proposal.replacementId ?? null) === (request.replacementId ?? null)));
+  if (!exactTarget) throw new ApplicationError("INVALID_ARGUMENT", "Changes to approved or baselined content require an approved change record for the exact item version", {
+    details: [
+      { path: "/changeId", reason: request.changeId ? "does not authorize this exact item version" : "an approved change record is required" },
+      ...memberships.map(({ baselineId }) => ({ path: "/id", reason: `version belongs to baseline ${baselineId}` })),
+    ],
+  });
 }
 
 function activeRelationship(item) {
@@ -175,6 +203,7 @@ function updateCandidate(documents, request, context, policy) {
   if (unknown.length) throw new ApplicationError("SCHEMA_VIOLATION", "Patch contains unsupported fields", { details: unknown.map((field) => ({ path: `/patch/${field}`, reason: "is not a mutable requirement field" })) });
   const material = Object.entries(request.patch ?? {}).filter(([field, value]) => MATERIAL_FIELDS.has(field) && !sameField(item, field, value)).map(([field]) => field);
   if (material.length && !request.reason) throw new ApplicationError("SCHEMA_VIOLATION", "A reason is required for material changes", { details: [{ path: "/reason", reason: `is required for material fields: ${material.join(", ")}` }] });
+  if (material.length) assertApprovedChangeForProtectedContent(documents, item, request, policy);
   const diff = [];
   for (const [field, value] of Object.entries(request.patch ?? {})) {
     if (sameField(item, field, value)) continue;
@@ -217,6 +246,7 @@ function retireCandidate(documents, allocation, request, context, policy) {
   assertItemVersion(item, request.expectedVersion, documents.business.repositoryRevision);
   assertItemScope(item, context);
   if (item.status === "retired") throw new ApplicationError("INVALID_ARGUMENT", "Requirement is already retired");
+  assertApprovedChangeForProtectedContent(documents, item, request, policy, "retire");
   const { blockingCritical, preview: impact } = retirementImpact(documents, request.id, context);
   if (new Set(policy.retirementRules.decisionReferenceStatuses).has(item.status) && !request.decisionReference) {
     throw new ApplicationError("INVALID_ARGUMENT", "A decision reference is required to retire governed lifecycle content", { details: [{ path: "/decisionReference", reason: `is required when status is ${item.status}` }] });
@@ -284,8 +314,8 @@ function localAllocation(documents) {
 function applyBulkOperation(documents, allocation, operation, context, policy) {
   const allowed = {
     create: new Set(["operation", "draft"]),
-    update: new Set(["operation", "id", "expectedVersion", "patch", "reason"]),
-    retire: new Set(["operation", "id", "expectedVersion", "reason", "decisionReference", "replacementId"]),
+    update: new Set(["operation", "id", "expectedVersion", "patch", "reason", "changeId"]),
+    retire: new Set(["operation", "id", "expectedVersion", "reason", "decisionReference", "replacementId", "changeId"]),
   }[operation.operation];
   if (!allowed) throw new ApplicationError("SCHEMA_VIOLATION", "Unsupported bulk operation");
   const irrelevant = Object.keys(operation).filter((field) => !allowed.has(field));
@@ -505,4 +535,4 @@ export function createAuthoringServices(options) {
   };
 }
 
-export { FIELD_CLASSIFICATION, MATERIAL_FIELDS };
+export { applyBulkOperation, FIELD_CLASSIFICATION, localAllocation, MATERIAL_FIELDS, summarize, updateCandidate };

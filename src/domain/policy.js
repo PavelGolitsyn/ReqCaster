@@ -4,6 +4,8 @@ const internalKinds = new Set(["business", "software"]);
 const knownPermissions = new Set(["requirements:read", "requirements:validate-draft", "requirements:mutate", "requirements:decide", "requirements:baseline", "requirements:import", "requirements:configure"]);
 const knownQualityRules = new Set(QUALITY_RULE_CATALOG.map(({ id }) => id));
 const authoringFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria"]);
+const transitionFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria", "statement", "category"]);
+const blockingConditions = new Set(["blocking-tbds", "coverage", "critical-suspect-links"]);
 
 export function validatePolicy(policy) {
   const issues = [];
@@ -18,10 +20,15 @@ export function validatePolicy(policy) {
   }
   const transitionKeys = new Set();
   for (const transition of policy?.transitions ?? []) {
+    for (const field of ["requiredFields", "requiredEvidenceTypes", "blockingConditions", "impactActions", "allowException"]) if (!(field in transition)) issues.push(`transition declaration is incomplete (${field}): ${transition.from}->${transition.to}`);
     if (!statuses.has(transition.from)) issues.push(`transition source is unknown: ${transition.from}`);
     if (!statuses.has(transition.to)) issues.push(`transition target is unknown: ${transition.to}`);
     if (transition.from === transition.to) issues.push(`self transition is contradictory: ${transition.from}`);
     if (!knownPermissions.has(transition.permission)) issues.push(`transition permission is unknown: ${transition.permission}`);
+    for (const field of transition.requiredFields ?? []) if (!transitionFields.has(field)) issues.push(`transition required field is unknown: ${field}`);
+    for (const condition of transition.blockingConditions ?? []) if (!blockingConditions.has(condition)) issues.push(`transition blocking condition is unknown: ${condition}`);
+    if (new Set(transition.requiredFields ?? []).size !== (transition.requiredFields ?? []).length) issues.push(`transition required fields must be unique: ${transition.from}->${transition.to}`);
+    if (new Set(transition.requiredEvidenceTypes ?? []).size !== (transition.requiredEvidenceTypes ?? []).length) issues.push(`transition evidence types must be unique: ${transition.from}->${transition.to}`);
     const key = `${transition.from}->${transition.to}`;
     if (transitionKeys.has(key)) issues.push(`duplicate transition: ${key}`);
     transitionKeys.add(key);
@@ -49,6 +56,11 @@ export function validatePolicy(policy) {
   }
   for (const status of policy?.retirementRules?.decisionReferenceStatuses ?? []) {
     if (!statuses.has(status)) issues.push(`retirement decision-reference status is unknown: ${status}`);
+  }
+  for (const status of policy?.changeControl?.protectedStatuses ?? []) if (!statuses.has(status)) issues.push(`change-control protected status is unknown: ${status}`);
+  for (const name of ["impactDepthMaximum", "impactNodeMaximum", "outboxMaximumAttempts"]) {
+    const value = policy?.changeControl?.[name];
+    if (value !== undefined && (!Number.isInteger(value) || value < 1)) issues.push(`change-control limit must be positive: ${name}`);
   }
   for (const level of [...(policy?.authoringRules?.rationaleOrSourceLevels ?? []), ...(policy?.authoringRules?.verificationPlanningLevels ?? [])]) {
     if (!new Set(["business", "software"]).has(level)) issues.push(`authoring rule level is unknown: ${level}`);

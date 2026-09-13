@@ -21,6 +21,13 @@ const expectedRepositoryRevision = integer({ minimum: 0 });
 const expectedVersion = integer({ minimum: 1 });
 const requirementIds = array(requirementId, { minItems: 1, maxItems: 50, uniqueItems: true });
 const relationshipId = string({ pattern: "^RL-[0-9]{6}$" });
+const changeId = string({ pattern: "^CH-[0-9]{6}$" });
+const evidenceReference = object({
+  id: string({ minLength: 1, maxLength: 256 }),
+  type: string({ minLength: 1, maxLength: 64 }),
+  uri: string({ minLength: 1, maxLength: 2048 }),
+  status: { enum: ["planned", "passed", "failed", "accepted", "not_applicable"] },
+}, ["id", "type"]);
 const endpoint = object({
   kind: string({ minLength: 1, maxLength: 64 }),
   id: string({ minLength: 1, maxLength: 256 }),
@@ -101,6 +108,25 @@ const bulkOperation = object({
   replacementId: requirementId,
 }, ["operation"]);
 
+const changeOperation = object({
+  operation: { enum: ["create", "update", "retire"] },
+  draft: requirementDraft,
+  id: requirementId,
+  expectedVersion,
+  patch,
+  reason: string({ minLength: 1, maxLength: 4000 }),
+  decisionReference: string({ minLength: 1, maxLength: 256 }),
+  replacementId: requirementId,
+}, ["operation"]);
+const transitionException = object({
+  scope: array(string({ minLength: 1, maxLength: 128 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
+  rationale: string({ minLength: 1, maxLength: 4000 }),
+  approver: string({ minLength: 1, maxLength: 256 }),
+  expiresAt: string({ minLength: 20, maxLength: 32 }),
+  reviewAt: string({ minLength: 20, maxLength: 32 }),
+}, ["scope", "rationale", "approver"]);
+const impactKey = object({ kind: string({ minLength: 1, maxLength: 64 }), id: string({ minLength: 1, maxLength: 256 }), version: expectedVersion }, ["kind", "id"]);
+
 export const POLICY_BODY_SCHEMA = object({
   traceabilityModelVersion: string({ pattern: "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" }),
   requirements: object({
@@ -123,7 +149,19 @@ export const POLICY_BODY_SCHEMA = object({
     from: string({ minLength: 1, maxLength: 64 }),
     to: string({ minLength: 1, maxLength: 64 }),
     permission: string({ minLength: 1, maxLength: 128 }),
-  }, ["from", "to", "permission"]), { maxItems: 256 }),
+    requiredFields: array(string({ minLength: 1, maxLength: 64 }), { maxItems: 64, uniqueItems: true }),
+    requiredEvidenceTypes: array(string({ minLength: 1, maxLength: 64 }), { maxItems: 64, uniqueItems: true }),
+    blockingConditions: array({ enum: ["blocking-tbds", "coverage", "critical-suspect-links"] }, { maxItems: 16, uniqueItems: true }),
+    impactActions: array(string({ minLength: 1, maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
+    allowException: { type: "boolean" },
+  }, ["from", "to", "permission", "requiredFields", "requiredEvidenceTypes", "blockingConditions", "impactActions", "allowException"]), { maxItems: 256 }),
+  changeControl: object({
+    protectedStatuses: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 64, uniqueItems: true }),
+    criticalImpactLevels: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
+    impactDepthMaximum: integer({ minimum: 1, maximum: 20 }),
+    impactNodeMaximum: integer({ minimum: 1, maximum: 10000 }),
+    outboxMaximumAttempts: integer({ minimum: 1, maximum: 100 }),
+  }, ["protectedStatuses", "criticalImpactLevels", "impactDepthMaximum", "impactNodeMaximum", "outboxMaximumAttempts"]),
   relationships: array(object({
     type: string({ minLength: 1, maxLength: 64 }),
     direction: { const: "source-to-target" },
@@ -302,9 +340,39 @@ export const SCHEMAS = Object.freeze({
   BulkPreviewRequest: command({ operations: array(bulkOperation, { minItems: 1, maxItems: 500 }) }, ["operations"]),
   BulkCommitRequest: object({ schemaVersion: { const: "1.0.0" }, correlationId, idempotencyKey, previewToken: string({ minLength: 32, maxLength: 2048 }) }, ["schemaVersion", "correlationId", "idempotencyKey", "previewToken"]),
   ImportCommitRequest: command({ previewToken: string({ minLength: 32, maxLength: 2048 }), diffHash: string({ pattern: "^[a-f0-9]{64}$" }) }, ["previewToken", "diffHash"]),
-  TransitionRequest: command({ id: requirementId, expectedVersion, toStatus: string({ minLength: 1, maxLength: 64 }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "toStatus", "rationale"]),
+  PossibleTransitionsRequest: query({ id: requirementId, expectedVersion, toStatus: string({ minLength: 1, maxLength: 64 }), evidenceReferences: array(evidenceReference, { maxItems: 128 }) }, ["id"]),
+  TransitionRequest: command({
+    id: requirementId,
+    expectedVersion,
+    expectedPolicyVersion: string({ minLength: 1, maxLength: 64 }),
+    toStatus: string({ minLength: 1, maxLength: 64 }),
+    rationale: string({ minLength: 1, maxLength: 4000 }),
+    evidenceReferences: array(evidenceReference, { maxItems: 128 }),
+    exception: transitionException,
+  }, ["id", "expectedVersion", "expectedPolicyVersion", "toStatus", "rationale"]),
   DecisionRequest: command({ id: string({ minLength: 1, maxLength: 128 }), expectedVersion, decision: { enum: ["approve", "reject", "waive", "abstain", "close"] }, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "decision", "rationale"]),
-  ChangeCreateRequest: command({ title: string({ minLength: 1, maxLength: 200 }), rationale: string({ minLength: 1, maxLength: 4000 }), affectedRequirementIds: array(requirementId, { maxItems: 500, uniqueItems: true }) }, ["title", "rationale", "affectedRequirementIds"]),
+  ChangeCreateRequest: command({
+    title: string({ minLength: 1, maxLength: 200 }),
+    rationale: string({ minLength: 1, maxLength: 4000 }),
+    source: string({ minLength: 1, maxLength: 256 }),
+    urgency: { enum: ["routine", "urgent", "emergency"] },
+    accountableOwner: string({ minLength: 1, maxLength: 256 }),
+    affectedRelease: string({ minLength: 1, maxLength: 160 }),
+    affectedBaseline: string({ minLength: 1, maxLength: 128 }),
+    affectedConfiguration: string({ minLength: 1, maxLength: 128 }),
+    affectedVariant: string({ minLength: 1, maxLength: 160 }),
+    affectedRequirementIds: array(requirementId, { maxItems: 500, uniqueItems: true }),
+    proposedChanges: array(changeOperation, { minItems: 1, maxItems: 500 }),
+  }, ["title", "rationale", "source", "accountableOwner"]),
+  ChangeTriageRequest: command({ changeId, expectedVersion, accountableOwner: string({ minLength: 1, maxLength: 256 }), duplicateOf: changeId, issues: array(string({ minLength: 1, maxLength: 1000 }), { maxItems: 128 }) }, ["changeId", "expectedVersion", "accountableOwner"]),
+  ChangeAnalyzeRequest: command({ changeId, expectedVersion, depth: integer({ minimum: 1, maximum: 20 }), nodeLimit: integer({ minimum: 1, maximum: 10000 }), manuallyAddedImpacts: array(impactKey, { maxItems: 1000 }), assessments: object({}, [], { additionalProperties: true, maxProperties: 32 }), acceptTruncation: { type: "boolean" }, truncationRationale: string({ minLength: 1, maxLength: 4000 }) }, ["changeId", "expectedVersion"]),
+  ChangeDispositionImpactRequest: command({ changeId, expectedVersion, impact: impactKey, disposition: { enum: ["accepted", "mitigated", "not_affected", "deferred", "rejected"] }, owner: string({ minLength: 1, maxLength: 256 }), rationale: string({ minLength: 1, maxLength: 4000 }), evidenceReferences: array(evidenceReference, { maxItems: 128 }) }, ["changeId", "expectedVersion", "impact", "disposition", "owner", "rationale"]),
+  ChangeDecisionRequest: command({ changeId, expectedVersion, decision: { enum: ["approve", "reject", "defer"] }, authority: string({ minLength: 1, maxLength: 256 }), rationale: string({ minLength: 1, maxLength: 4000 }), conditions: array(string({ minLength: 1, maxLength: 1000 }), { maxItems: 128 }) }, ["changeId", "expectedVersion", "decision", "authority", "rationale"]),
+  ChangePreviewImplementationRequest: command({ changeId, expectedVersion }, ["changeId", "expectedVersion"]),
+  ChangeCommitImplementationRequest: object({ schemaVersion: { const: "1.0.0" }, correlationId, idempotencyKey, previewToken: string({ minLength: 32, maxLength: 2048 }) }, ["schemaVersion", "correlationId", "idempotencyKey", "previewToken"]),
+  ChangeCloseRequest: command({ changeId, expectedVersion, authority: string({ minLength: 1, maxLength: 256 }), rationale: string({ minLength: 1, maxLength: 4000 }), evidenceReferences: array(evidenceReference, { maxItems: 256 }), residualExceptions: array(transitionException, { maxItems: 64 }) }, ["changeId", "expectedVersion", "authority", "rationale", "evidenceReferences"]),
+  ChangeGetRequest: query({ changeId }, ["changeId"]),
+  WorkflowDashboardRequest: query({ owner: string({ minLength: 1, maxLength: 256 }), includeClosed: { type: "boolean" } }),
   ReviewCreateRequest: command({ title: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), reviewType: { enum: ["informal", "formal"] } }, ["title", "requirementIds", "reviewType"]),
   BaselineReadinessRequest: query({ requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }) }, ["requirementIds"]),
   BaselineCreateRequest: command({ name: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["name", "requirementIds", "rationale"]),

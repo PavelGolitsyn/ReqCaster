@@ -17,7 +17,8 @@ export const DOCUMENT_LIMITS = Object.freeze({
 });
 
 const envelopeFields = new Set(["$schema", "schemaVersion", "documentType", "repositoryRevision", "nextRequirementNumber", "nextRelationshipNumber", "requirements", "relationships"]);
-const requirementFields = new Set(["id", "level", "version", "statement", "shortLabel", "category", "status", "priority", "criticality", "owner", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences", "provenance", "retirement", "customAttributes"]);
+envelopeFields.add("changeControl");
+const requirementFields = new Set(["id", "level", "version", "statement", "shortLabel", "category", "status", "priority", "criticality", "owner", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences", "provenance", "retirement", "customAttributes", "lifecycleHistory"]);
 const relationshipFields = new Set(["id", "version", "type", "source", "target", "status", "suspect", "rationale", "provenance", "retirement", "history", "customAttributes"]);
 const endpointFields = new Set(["kind", "id", "version", "system", "artifactType", "externalId", "externalVersion", "uri", "systemOfRecord"]);
 const relationshipHistoryFields = new Set(["action", "at", "by", "status", "assessment", "rationale", "triggeringItemVersion", "changedFields", "rule", "reason"]);
@@ -27,6 +28,7 @@ const provenanceFields = new Set(["createdAt", "createdBy", "updatedAt", "update
 const assistanceFields = new Set(["assisted", "provider", "model", "suggestionId"]);
 const retirementFields = new Set(["retiredAt", "retiredBy", "rationale", "decisionReference"]);
 const relationshipStatuses = new Set(["valid", "suspect", "invalid", "waived"]);
+const changeStatuses = new Set(["draft", "triaged", "analyzing", "ready_for_decision", "approved", "rejected", "deferred", "implementing", "verifying", "closed", "cancelled"]);
 
 function issue(issues, path, reason) {
   issues.push({ path, reason });
@@ -83,6 +85,83 @@ function custom(value, path, issues, depth = 0) {
     if (!/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/u.test(key)) issue(issues, `${path}/${key}`, "extension key is invalid");
     custom(value[key], `${path}/${key}`, issues, depth + 1);
   }
+}
+
+function boundedJson(value, path, issues, depth = 0) {
+  if (depth > 12) { issue(issues, path, "exceeds governed record depth 12"); return; }
+  if (value === null || typeof value === "boolean") return;
+  if (typeof value === "number") {
+    if (!Number.isFinite(value) || Object.is(value, -0)) issue(issues, path, "must be a finite JSON number other than negative zero");
+    return;
+  }
+  if (typeof value === "string") { boundedString(value, path, issues, 20_000, 0); return; }
+  if (Array.isArray(value)) {
+    if (value.length > 10_000) issue(issues, path, "must contain at most 10000 items");
+    value.forEach((entry, index) => boundedJson(entry, `${path}/${index}`, issues, depth + 1));
+    return;
+  }
+  if (!object(value)) { issue(issues, path, "must contain only JSON values"); return; }
+  if (Object.keys(value).length > 256) issue(issues, path, "must contain at most 256 properties");
+  for (const [key, entry] of Object.entries(value)) {
+    if (key.length < 1 || key.length > 128) issue(issues, `${path}/${key}`, "property name must contain 1..128 characters");
+    boundedJson(entry, `${path}/${key}`, issues, depth + 1);
+  }
+}
+
+function validateLifecycleHistory(entries, path, issues) {
+  if (!Array.isArray(entries) || entries.length > 4096) { issue(issues, path, "must be a bounded array"); return; }
+  entries.forEach((entry, index) => {
+    const child = `${path}/${index}`;
+    if (!object(entry)) { issue(issues, child, "must be an object"); return; }
+    for (const field of ["action", "at", "by", "accountablePrincipal", "from", "to", "reason", "policyVersion"]) {
+      if (!(field in entry)) issue(issues, `${child}/${field}`, "is required");
+      else if (field === "at") timestamp(entry[field], `${child}/${field}`, issues);
+      else boundedString(entry[field], `${child}/${field}`, issues, field === "reason" ? 4000 : 256);
+    }
+    boundedJson(entry, child, issues);
+  });
+}
+
+function validateChangeControl(value, path, issues) {
+  if (!object(value)) { issue(issues, path, "must be an object"); return; }
+  const allowed = new Set(["schemaVersion", "nextChangeNumber", "nextOutboxNumber", "changes", "outbox", "baselineMemberships"]);
+  for (const field of Object.keys(value)) if (!allowed.has(field)) issue(issues, `${path}/${field}`, "is not allowed");
+  required(value, ["schemaVersion", "nextChangeNumber", "nextOutboxNumber", "changes", "outbox", "baselineMemberships"], path, issues);
+  if (value.schemaVersion !== CURRENT_SCHEMA_VERSION) issue(issues, `${path}/schemaVersion`, `must equal ${CURRENT_SCHEMA_VERSION}`);
+  for (const field of ["nextChangeNumber", "nextOutboxNumber"]) positiveVersion(value[field], `${path}/${field}`, issues);
+  if (!Array.isArray(value.changes) || value.changes.length > 100_000) issue(issues, `${path}/changes`, "must be a bounded array");
+  else value.changes.forEach((change, index) => {
+    const child = `${path}/changes/${index}`;
+    if (!object(change)) { issue(issues, child, "must be an object"); return; }
+    required(change, ["id", "version", "status", "title", "rationale", "source", "initiator", "accountableOwner", "createdAt", "updatedAt", "history", "proposedChanges", "impacts"], child, issues);
+    if (!/^CH-(?!000000)[0-9]{6}$/u.test(change.id ?? "")) issue(issues, `${child}/id`, "must be a canonical change ID");
+    positiveVersion(change.version, `${child}/version`, issues);
+    if (!changeStatuses.has(change.status)) issue(issues, `${child}/status`, "is not a governed change status");
+    for (const field of ["title", "rationale", "initiator", "accountableOwner"]) if (field in change) boundedString(change[field], `${child}/${field}`, issues, field === "rationale" ? 4000 : 256);
+    for (const field of ["createdAt", "updatedAt"]) if (field in change) timestamp(change[field], `${child}/${field}`, issues);
+    if (!Array.isArray(change.history) || change.history.length < 1 || change.history.length > 4096) issue(issues, `${child}/history`, "must be a non-empty bounded array");
+    if (!Array.isArray(change.proposedChanges) || change.proposedChanges.length < 1 || change.proposedChanges.length > 500) issue(issues, `${child}/proposedChanges`, "must be a non-empty bounded array");
+    if (!Array.isArray(change.impacts) || change.impacts.length > 10_000) issue(issues, `${child}/impacts`, "must be a bounded array");
+    boundedJson(change, child, issues);
+  });
+  if (!Array.isArray(value.outbox) || value.outbox.length > 200_000) issue(issues, `${path}/outbox`, "must be a bounded array");
+  else value.outbox.forEach((event, index) => {
+    const child = `${path}/outbox/${index}`;
+    if (!object(event)) { issue(issues, child, "must be an object"); return; }
+    required(event, ["id", "eventType", "aggregateId", "recipientRefs", "summary", "createdAt", "status", "attempts"], child, issues);
+    if (!/^OB-(?!000000)[0-9]{6}$/u.test(event.id ?? "")) issue(issues, `${child}/id`, "must be a canonical outbox ID");
+    if (!new Set(["pending", "delivered", "failed", "dead-letter"]).has(event.status)) issue(issues, `${child}/status`, "is not a governed outbox status");
+    boundedJson(event, child, issues);
+  });
+  if (!Array.isArray(value.baselineMemberships) || value.baselineMemberships.length > 1_000_000) issue(issues, `${path}/baselineMemberships`, "must be a bounded array");
+  else value.baselineMemberships.forEach((membership, index) => {
+    const child = `${path}/baselineMemberships/${index}`;
+    if (!object(membership)) { issue(issues, child, "must be an object"); return; }
+    required(membership, ["baselineId", "requirementId", "version"], child, issues);
+    if (!parseRequirementId(membership.requirementId)) issue(issues, `${child}/requirementId`, "must be a canonical requirement ID");
+    positiveVersion(membership.version, `${child}/version`, issues);
+    boundedJson(membership, child, issues);
+  });
 }
 
 function provenance(value, path, issues) {
@@ -163,6 +242,7 @@ function validateRequirement(record, level, path, policy, issues) {
   if (record.status !== "retired" && "retirement" in record) issue(issues, `${path}/retirement`, "is allowed only for retired requirements");
   if ("retirement" in record) retirement(record.retirement, `${path}/retirement`, issues);
   if ("customAttributes" in record) custom(record.customAttributes, `${path}/customAttributes`, issues);
+  if ("lifecycleHistory" in record) validateLifecycleHistory(record.lifecycleHistory, `${path}/lifecycleHistory`, issues);
   for (const rule of policy.requiredMetadata.filter((candidate) => candidate.level === level && candidate.status === record.status)) {
     for (const field of rule.fields) {
       const value = record[field];
@@ -237,7 +317,7 @@ function validateRelationship(record, path, policy, issues) {
 function validateEnvelope(document, level, policy, issues) {
   const path = `/${level}`;
   if (!exactFields(document, envelopeFields, path, issues)) return;
-  required(document, [...envelopeFields], path, issues);
+  required(document, [...envelopeFields].filter((field) => field !== "changeControl"), path, issues);
   if (document.$schema !== `.engine/schemas/v1/${level}-requirements.schema.json`) issue(issues, `${path}/$schema`, "does not name the canonical versioned schema");
   if (document.schemaVersion !== CURRENT_SCHEMA_VERSION) issue(issues, `${path}/schemaVersion`, `must equal ${CURRENT_SCHEMA_VERSION}`);
   if (document.documentType !== level) issue(issues, `${path}/documentType`, `must equal ${level}`);
@@ -247,6 +327,10 @@ function validateEnvelope(document, level, policy, issues) {
   else document.requirements.forEach((record, index) => validateRequirement(record, level, `${path}/requirements/${index}`, policy, issues));
   if (!Array.isArray(document.relationships) || document.relationships.length > DOCUMENT_LIMITS.relationships) issue(issues, `${path}/relationships`, "must be a bounded array");
   else document.relationships.forEach((record, index) => validateRelationship(record, `${path}/relationships/${index}`, policy, issues));
+  if ("changeControl" in document) {
+    if (level !== "business") issue(issues, `${path}/changeControl`, "is stored only in the business canonical document");
+    else validateChangeControl(document.changeControl, `${path}/changeControl`, issues);
+  }
 }
 
 export function validateRepositoryDocuments(business, software, policy) {
@@ -293,6 +377,33 @@ export function validateRepositoryDocuments(business, software, policy) {
         const maximum = policy.relationships.find(({ type }) => type === record.type)?.maxTargets;
         if (maximum && cardinality.get(key) > maximum) issue(issues, path, `exceeds configured maxTargets ${maximum}`);
       }
+    }
+  }
+  const control = business?.changeControl;
+  if (control) {
+    const changeIds = new Set();
+    let largestChange = 0;
+    for (const [index, change] of (control.changes ?? []).entries()) {
+      if (changeIds.has(change.id)) issue(issues, `/business/changeControl/changes/${index}/id`, "is duplicated");
+      changeIds.add(change.id);
+      const number = Number(change.id?.slice(3));
+      if (Number.isInteger(number)) largestChange = Math.max(largestChange, number);
+    }
+    if (Number.isInteger(control.nextChangeNumber) && control.nextChangeNumber <= largestChange) issue(issues, "/business/changeControl/nextChangeNumber", "must be greater than every allocated change number");
+    const outboxIds = new Set();
+    let largestOutbox = 0;
+    for (const [index, event] of (control.outbox ?? []).entries()) {
+      if (outboxIds.has(event.id)) issue(issues, `/business/changeControl/outbox/${index}/id`, "is duplicated");
+      outboxIds.add(event.id);
+      const number = Number(event.id?.slice(3));
+      if (Number.isInteger(number)) largestOutbox = Math.max(largestOutbox, number);
+    }
+    if (Number.isInteger(control.nextOutboxNumber) && control.nextOutboxNumber <= largestOutbox) issue(issues, "/business/changeControl/nextOutboxNumber", "must be greater than every allocated outbox number");
+    const memberships = new Set();
+    for (const [index, membership] of (control.baselineMemberships ?? []).entries()) {
+      const key = `${membership.baselineId}\u0000${membership.requirementId}\u0000${membership.version}`;
+      if (memberships.has(key)) issue(issues, `/business/changeControl/baselineMemberships/${index}`, "is duplicated");
+      memberships.add(key);
     }
   }
   return issues;

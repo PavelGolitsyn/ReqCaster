@@ -14,6 +14,7 @@
       "$ref": "#/$defs/document",
       "properties": {
         "$schema": { "const": ".engine/schemas/v1/business-requirements.schema.json" },
+        "changeControl": { "$ref": "#/$defs/changeControl" },
         "documentType": { "const": "business" },
         "requirements": {
           "items": { "$ref": "#/$defs/businessRequirement" },
@@ -21,6 +22,19 @@
           "type": "array"
         }
       }
+    },
+    "changeControl": {
+      "additionalProperties": false,
+      "properties": {
+        "baselineMemberships": { "items": { "type": "object" }, "maxItems": 1000000, "type": "array" },
+        "changes": { "items": { "type": "object" }, "maxItems": 100000, "type": "array" },
+        "nextChangeNumber": { "minimum": 1, "type": "integer" },
+        "nextOutboxNumber": { "minimum": 1, "type": "integer" },
+        "outbox": { "items": { "type": "object" }, "maxItems": 200000, "type": "array" },
+        "schemaVersion": { "const": "1.0.0" }
+      },
+      "required": ["schemaVersion", "nextChangeNumber", "nextOutboxNumber", "changes", "outbox", "baselineMemberships"],
+      "type": "object"
     },
     "businessRequirement": {
       "$ref": "#/$defs/requirement",
@@ -190,6 +204,7 @@
         "customAttributes": { "$ref": "#/$defs/customAttributes" },
         "id": { "pattern": "^(BR|SR)-[0-9]{6}$", "type": "string" },
         "level": { "enum": ["business", "software"] },
+        "lifecycleHistory": { "items": { "type": "object" }, "maxItems": 4096, "type": "array" },
         "owner": { "maxLength": 256, "minLength": 1, "type": "string" },
         "priority": { "maxLength": 64, "minLength": 1, "type": "string" },
         "provenance": { "$ref": "#/$defs/provenance" },

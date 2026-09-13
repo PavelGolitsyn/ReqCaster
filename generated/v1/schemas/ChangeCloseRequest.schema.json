@@ -1,8 +1,17 @@
 {
-  "$id": "https://spec-speaker.local/schemas/v1/TransitionRequest.schema.json",
+  "$id": "https://spec-speaker.local/schemas/v1/ChangeCloseRequest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "authority": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "changeId": {
+      "pattern": "^CH-[0-9]{6}$",
+      "type": "string"
+    },
     "correlationId": {
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
       "type": "string"
@@ -42,55 +51,8 @@
         ],
         "type": "object"
       },
-      "maxItems": 128,
+      "maxItems": 256,
       "type": "array"
-    },
-    "exception": {
-      "additionalProperties": false,
-      "properties": {
-        "approver": {
-          "maxLength": 256,
-          "minLength": 1,
-          "type": "string"
-        },
-        "expiresAt": {
-          "maxLength": 32,
-          "minLength": 20,
-          "type": "string"
-        },
-        "rationale": {
-          "maxLength": 4000,
-          "minLength": 1,
-          "type": "string"
-        },
-        "reviewAt": {
-          "maxLength": 32,
-          "minLength": 20,
-          "type": "string"
-        },
-        "scope": {
-          "items": {
-            "maxLength": 128,
-            "minLength": 1,
-            "type": "string"
-          },
-          "maxItems": 32,
-          "minItems": 1,
-          "type": "array",
-          "uniqueItems": true
-        }
-      },
-      "required": [
-        "scope",
-        "rationale",
-        "approver"
-      ],
-      "type": "object"
-    },
-    "expectedPolicyVersion": {
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
     },
     "expectedRepositoryRevision": {
       "minimum": 0,
@@ -99,10 +61,6 @@
     "expectedVersion": {
       "minimum": 1,
       "type": "integer"
-    },
-    "id": {
-      "pattern": "^(BR|SR)-[0-9]{6}$",
-      "type": "string"
     },
     "idempotencyKey": {
       "maxLength": 128,
@@ -114,13 +72,54 @@
       "minLength": 1,
       "type": "string"
     },
+    "residualExceptions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "approver": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "expiresAt": {
+            "maxLength": 32,
+            "minLength": 20,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "reviewAt": {
+            "maxLength": 32,
+            "minLength": 20,
+            "type": "string"
+          },
+          "scope": {
+            "items": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "scope",
+          "rationale",
+          "approver"
+        ],
+        "type": "object"
+      },
+      "maxItems": 64,
+      "type": "array"
+    },
     "schemaVersion": {
       "const": "1.0.0"
-    },
-    "toStatus": {
-      "maxLength": 64,
-      "minLength": 1,
-      "type": "string"
     }
   },
   "required": [
@@ -128,12 +127,12 @@
     "correlationId",
     "idempotencyKey",
     "expectedRepositoryRevision",
-    "id",
+    "changeId",
     "expectedVersion",
-    "expectedPolicyVersion",
-    "toStatus",
-    "rationale"
+    "authority",
+    "rationale",
+    "evidenceReferences"
   ],
-  "title": "TransitionRequest",
+  "title": "ChangeCloseRequest",
   "type": "object"
 }

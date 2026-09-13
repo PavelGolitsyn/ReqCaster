@@ -5,6 +5,7 @@ import { canonicalBytes, parseStrictJson } from "./canonical-json.js";
 import { RepositoryBusyError } from "./errors.js";
 
 const DEFAULT_LEASE_MS = 30_000;
+const DEFAULT_TIMEOUT_MS = 30_000;
 
 async function processExists(pid) {
   if (!Number.isInteger(pid) || pid < 1) return false;
@@ -30,7 +31,7 @@ async function release(lockPath) {
 }
 
 export async function acquireProjectLock(lockPath, options = {}) {
-  const timeoutMilliseconds = options.timeoutMilliseconds ?? 5_000;
+  const timeoutMilliseconds = options.timeoutMilliseconds ?? DEFAULT_TIMEOUT_MS;
   const leaseMilliseconds = options.leaseMilliseconds ?? DEFAULT_LEASE_MS;
   const started = Date.now();
   await mkdir(dirname(lockPath), { recursive: true });

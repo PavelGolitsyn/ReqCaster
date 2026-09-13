@@ -10,7 +10,12 @@ strict, transactional two-file canonical JSON repository under
 `src/adapters/repository`. Stage 2 adds authenticated, permission-aware exact
 reads and deterministic bounded search with a rebuildable derived index. Stage
 3 adds manager-only controlled authoring, advisory quality validation, durable
-idempotency, tombstone retirement, and exact two-step bulk commits.
+idempotency, tombstone retirement, and exact two-step bulk commits. Stage 4 adds
+bounded traceability, coverage, impact analysis, suspect-link propagation, and
+external artifact identities. Stage 5 adds policy-versioned lifecycle
+transitions, exact-version controlled changes, impact dispositions, atomic
+implementation, closure gates, ownership dashboards, and a transactional
+notification outbox.
 
 ```sh
 npm run contracts:generate
@@ -29,3 +34,5 @@ recommended two-step agent pattern, is documented in
 [`docs/engine/search-and-read-semantics.md`](docs/engine/search-and-read-semantics.md).
 Controlled authoring examples and quality-rule behavior are documented in
 [`docs/engine/controlled-authoring-guide.md`](docs/engine/controlled-authoring-guide.md).
+Lifecycle and controlled-change usage is documented in
+[`docs/engine/workflow-and-change-control-guide.md`](docs/engine/workflow-and-change-control-guide.md).
