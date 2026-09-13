@@ -254,6 +254,10 @@ Search is designed for agents rather than as a raw JSON dump:
 | [7 — Reviews, V&V, and reports](07-reviews-verification-and-reporting.md) | Review evidence, verification status, RTM/coverage outputs, and release-readiness reports. | Stage 6 |
 | [8 — Import, exchange, reuse, and AI governance](08-import-exchange-reuse-and-ai-governance.md) | Safe adoption paths, integration contracts, reuse semantics, and AI provenance controls. | Stage 7 |
 | [9 — Hardening and production release](09-hardening-and-production-release.md) | Measured performance, reliability, security, observability, backup/recovery, and rollout. | Stages 0–8 |
+| [10 — Deployment readiness and independent assurance](10-deployment-readiness-and-independent-assurance.md) | Hardened target environment, independent review, production-path recovery proof, and pilot authorization. | Stage 9 |
+| [11 — Controlled pilot](11-controlled-pilot.md) | Representative human and operational validation on one non-critical repository. | Stage 10 |
+| [12 — Production release and progressive rollout](12-production-release-and-progressive-rollout.md) | Signed go/no-go, immutable release artifact, and controlled 10/25/50/100% rollout. | Stage 11 |
+| [13 — Post-release stabilization and operations](13-post-release-stabilization-and-operations.md) | Healthy stabilization period and accountable transfer to recurring operations. | Stage 12 |
 
 Stages are cumulative. A stage is complete only when its exit criteria pass and earlier invariants remain green.
 
@@ -300,6 +304,10 @@ Stages are cumulative. A stage is complete only when its exit criteria pass and 
 - **Traceable beta (Stages 4–6):** auditable traceability, controlled changes, and baselines suitable for governed pilot use.
 - **Production candidate (Stages 7–8):** evidence, reporting, migration, and integration workflows exercised end to end.
 - **Production release (Stage 9):** security, recovery, scale, and operational gates passed with a representative repository.
+- **Pilot-ready candidate (Stage 10):** the target environment and independent deployment controls are approved for non-critical pilot use.
+- **Pilot acceptance (Stage 11):** representative workflows, operators, backups, restores, and service objectives pass the controlled observation period.
+- **Production release (Stage 12):** signed artifact advances through the 10/25/50/100% rollout with a hold and rollback checkpoint at each cohort.
+- **Operational acceptance (Stage 13):** stabilization passes and accountable owners accept recurring service operation.
 
 ## 13. End-to-end definition of done
 
