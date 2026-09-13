@@ -5,6 +5,7 @@ import { canonicalHash } from "../../adapters/repository/canonical-json.js";
 import { parseRequirementId } from "../../domain/identifiers.js";
 import { blockingFindings, QUALITY_RULE_CATALOG, QUALITY_RULE_VERSION, validateRequirementDraft } from "../../domain/quality.js";
 import { ApplicationError } from "../errors.js";
+import { markRelationshipsSuspect } from "./traceability.js";
 
 const MATERIAL_FIELDS = new Set(["statement", "category", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences"]);
 const FIELD_CLASSIFICATION = Object.freeze({
@@ -172,7 +173,7 @@ function updateCandidate(documents, request, context, policy) {
   if (item.status === "retired") throw new ApplicationError("INVALID_ARGUMENT", "Retired requirements cannot be updated");
   const unknown = Object.keys(request.patch ?? {}).filter((field) => !PATCH_FIELDS.has(field));
   if (unknown.length) throw new ApplicationError("SCHEMA_VIOLATION", "Patch contains unsupported fields", { details: unknown.map((field) => ({ path: `/patch/${field}`, reason: "is not a mutable requirement field" })) });
-  const material = Object.keys(request.patch ?? {}).filter((field) => MATERIAL_FIELDS.has(field));
+  const material = Object.entries(request.patch ?? {}).filter(([field, value]) => MATERIAL_FIELDS.has(field) && !sameField(item, field, value)).map(([field]) => field);
   if (material.length && !request.reason) throw new ApplicationError("SCHEMA_VIOLATION", "A reason is required for material changes", { details: [{ path: "/reason", reason: `is required for material fields: ${material.join(", ")}` }] });
   const diff = [];
   for (const [field, value] of Object.entries(request.patch ?? {})) {
@@ -187,7 +188,8 @@ function updateCandidate(documents, request, context, policy) {
   item.provenance = { ...item.provenance, updatedAt: timestamp(context.now), updatedBy: actor(context) };
   const findings = validateRequirementDraft(candidateDraft(item), policy, { excludeId: item.id, existingRequirements: visibleRequirements(documents, context), forCommit: true });
   assertFindings(findings);
-  return { changed: true, diff, item: clone(item), ...(request.reason ? { reason: request.reason } : {}), warnings: warnings(findings) };
+  const suspectRelationships = material.length ? markRelationshipsSuspect(documents, item.id, material, context, policy) : [];
+  return { changed: true, diff, item: clone(item), ...(request.reason ? { reason: request.reason } : {}), suspectRelationships, warnings: warnings(findings) };
 }
 
 function retirementImpact(documents, id, context) {
@@ -224,26 +226,6 @@ function retireCandidate(documents, allocation, request, context, policy) {
     const details = blockingCritical.filter(({ id }) => visibleIds.has(id)).map(({ id }) => ({ path: `/relationships/${id}`, reason: "critical suspect dependency must be resolved" }));
     throw new ApplicationError("INVALID_ARGUMENT", "Retirement is blocked by unresolved critical dependencies", { details: details.length ? details : [{ path: "/id", reason: "a critical dependency outside the caller scope must be resolved" }] });
   }
-  if (request.replacementId) {
-    if (request.replacementId === request.id) throw new ApplicationError("INVALID_ARGUMENT", "A requirement cannot supersede itself");
-    const replacement = requirement(documents, request.replacementId);
-    if (!replacement || replacement.status === "retired") throw new ApplicationError("NOT_FOUND", "Replacement requirement was not found");
-    const duplicate = allRelationships(documents).some((link) => activeRelationship(link) && link.type === "supersedes" && link.source?.id === request.replacementId && link.target?.id === request.id);
-    if (!duplicate) {
-      const relationship = {
-        id: allocation.allocateRelationshipId(),
-        provenance: provenance({ source: `retirement:${request.id}`, aiAssistance: { assisted: false } }, context),
-        rationale: request.reason,
-        source: { id: request.replacementId, kind: "requirement" },
-        suspect: false,
-        target: { id: request.id, kind: "requirement" },
-        type: "supersedes",
-        version: 1,
-      };
-      documentForId(documents, request.replacementId).relationships.push(relationship);
-      impact.supersession = { relationshipId: relationship.id, replacementId: request.replacementId };
-    }
-  }
   item.status = "retired";
   item.retirement = {
     ...(request.decisionReference ? { decisionReference: request.decisionReference } : {}),
@@ -253,6 +235,29 @@ function retireCandidate(documents, allocation, request, context, policy) {
   };
   item.provenance = { ...item.provenance, updatedAt: timestamp(context.now), updatedBy: actor(context) };
   item.version += 1;
+  impact.suspectRelationships = markRelationshipsSuspect(documents, item.id, ["retirement"], context, policy, "retirement");
+  if (request.replacementId) {
+    if (request.replacementId === request.id) throw new ApplicationError("INVALID_ARGUMENT", "A requirement cannot supersede itself");
+    const replacement = requirement(documents, request.replacementId);
+    if (!replacement || replacement.status === "retired") throw new ApplicationError("NOT_FOUND", "Replacement requirement was not found");
+    const duplicate = allRelationships(documents).some((link) => activeRelationship(link) && link.type === "supersedes" && link.source?.id === request.replacementId && link.target?.id === request.id);
+    if (!duplicate) {
+      const relationship = {
+        history: [{ action: "created", at: timestamp(context.now), by: actor(context), rationale: request.reason, status: "valid" }],
+        id: allocation.allocateRelationshipId(),
+        provenance: provenance({ source: `retirement:${request.id}`, aiAssistance: { assisted: false } }, context),
+        rationale: request.reason,
+        source: { id: request.replacementId, kind: "requirement", version: replacement.version },
+        status: "valid",
+        suspect: false,
+        target: { id: request.id, kind: "requirement", version: item.version },
+        type: "supersedes",
+        version: 1,
+      };
+      documentForId(documents, request.replacementId).relationships.push(relationship);
+      impact.supersession = { relationshipId: relationship.id, replacementId: request.replacementId };
+    }
+  }
   return { impact, item: clone(item), warnings: [] };
 }
 

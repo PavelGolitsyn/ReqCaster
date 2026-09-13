@@ -1,5 +1,5 @@
 {
-  "$id": "https://spec-speaker.local/schemas/v1/CoverageRequest.schema.json",
+  "$id": "https://spec-speaker.local/schemas/v1/OrphanRequest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -16,20 +16,6 @@
       "maxLength": 2048,
       "minLength": 1,
       "type": "string"
-    },
-    "gap": {
-      "enum": [
-        "missing",
-        "planned",
-        "present",
-        "present-but-suspect",
-        "stale",
-        "failed",
-        "waived",
-        "deferred",
-        "accepted-passing",
-        "not-applicable"
-      ]
     },
     "includeRetired": {
       "type": "boolean"
@@ -56,21 +42,12 @@
     },
     "schemaVersion": {
       "const": "1.0.0"
-    },
-    "statuses": {
-      "items": {
-        "maxLength": 64,
-        "type": "string"
-      },
-      "maxItems": 32,
-      "type": "array",
-      "uniqueItems": true
     }
   },
   "required": [
     "schemaVersion",
     "correlationId"
   ],
-  "title": "CoverageRequest",
+  "title": "OrphanRequest",
   "type": "object"
 }

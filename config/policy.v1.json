@@ -2,6 +2,7 @@
   "$schema": "../schemas/v1/policy.schema.json",
   "schemaVersion": "1.0.0",
   "configurationVersion": "1",
+  "traceabilityModelVersion": "1.0.0",
   "requirements": {
     "categories": ["functional", "quality", "interface", "constraint", "safety", "regulatory"],
     "statuses": ["proposed", "draft", "in-review", "approved", "implemented", "verified", "retired"],
@@ -29,18 +30,24 @@
     { "from": "approved", "to": "retired", "permission": "requirements:decide" }
   ],
   "relationships": [
-    { "type": "derives_from", "direction": "source-to-target", "sourceKinds": ["software"], "targetKinds": ["business"], "maxTargets": 64, "suspectOn": ["target-content-change", "target-retirement"] },
-    { "type": "verifies", "direction": "source-to-target", "sourceKinds": ["external:test"], "targetKinds": ["business", "software"], "maxTargets": 1000, "suspectOn": ["target-content-change", "target-retirement"] },
-    { "type": "allocated_to", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:component"], "maxTargets": 64, "suspectOn": ["target-version-change"] },
-    { "type": "supersedes", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 1, "suspectOn": ["source-content-change", "target-content-change"] }
+    { "type": "derives_from", "direction": "source-to-target", "sourceKinds": ["software"], "targetKinds": ["business"], "maxTargets": 64, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "decomposes", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "downstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "depends_on", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software", "external:component", "external:interface", "external:system"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "conflicts_with", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "horizontal", "symmetric": true, "allowCycles": true, "rationaleRequired": true },
+    { "type": "implements", "direction": "source-to-target", "sourceKinds": ["external:implementation", "external:component", "external:design"], "targetKinds": ["business", "software"], "maxTargets": 1000, "suspectOn": ["target-content-change", "target-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "verified_by", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:test", "external:evidence"], "maxTargets": 1000, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "downstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "validated_by", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:evidence"], "maxTargets": 1000, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "downstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "mitigates", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:risk", "external:hazard"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "constrained_by", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["external:regulation", "external:interface", "external:decision", "external:document"], "maxTargets": 256, "suspectOn": ["source-content-change", "source-retirement"], "traversal": "upstream", "allowCycles": false, "rationaleRequired": true },
+    { "type": "supersedes", "direction": "source-to-target", "sourceKinds": ["business", "software"], "targetKinds": ["business", "software"], "maxTargets": 1, "suspectOn": ["source-content-change", "source-retirement", "target-content-change", "target-retirement"], "traversal": "horizontal", "allowCycles": false, "rationaleRequired": true }
   ],
   "requiredMetadata": [
     { "level": "business", "status": "approved", "fields": ["rationale", "owner", "sourceReferences", "acceptanceCriteria"] },
     { "level": "software", "status": "approved", "fields": ["rationale", "owner", "sourceReferences", "acceptanceCriteria", "verificationMethods"] }
   ],
   "coverageRules": [
-    { "level": "business", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["derives_from"] },
-    { "level": "software", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["verifies"] }
+    { "level": "business", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["verified_by"] },
+    { "level": "software", "statuses": ["approved", "implemented", "verified"], "requiredRelationshipTypes": ["derives_from", "verified_by"] }
   ],
   "baselineReadiness": { "allowedStatuses": ["approved", "implemented", "verified"], "blockSuspectLinks": true, "blockMissingRequiredMetadata": true },
   "retirementRules": { "decisionReferenceStatuses": ["approved", "implemented", "verified"], "blockUnresolvedCriticalDependencies": true },

@@ -1,3 +1,5 @@
+import { buildTraceabilityIndex } from "./traceability-index.js";
+
 export const SEARCH_INDEX_VERSION = "1.0.0";
 
 const TEXT_FIELDS = Object.freeze(["id", "statement", "shortLabel", "rationale", "sourceReferences", "customAttributes", "relationships"]);
@@ -89,7 +91,7 @@ export function buildSearchIndex(documents, options = {}) {
         missingSource: (requirement.sourceReferences?.length ?? 0) === 0 && !hasSourceLink,
         missingVerification: (requirement.verificationMethods?.length ?? 0) === 0
           && !(requirement.acceptanceCriteria ?? []).some(({ verificationMethod }) => verificationMethod)
-          && !related.some(({ type }) => type === "verifies"),
+          && !related.some(({ type }) => new Set(["verified_by", "validated_by", "verifies"]).has(type)),
       },
       relationships: related,
       retired: Boolean(requirement.retirement) || requirement.status === "retired",
@@ -105,6 +107,7 @@ export function buildSearchIndex(documents, options = {}) {
     normalization: { caseFolding: "Unicode locale-independent lowercase", form: "NFKC", stemming: "none", tokenization: "Unicode letters/numbers with internal -_.:/" },
     repositoryRevision: documents.business.repositoryRevision,
     schemaVersion: documents.business.schemaVersion,
+    traceability: buildTraceabilityIndex(documents, options),
   };
 }
 

@@ -319,7 +319,7 @@ export class CanonicalJsonRepository {
       const index = buildSearchIndex(documents, { configurationVersion: this.policy.configurationVersion });
       await replaceDurable(enginePath(this.root, "indexes", "repository.json"), canonicalBytes(index));
       await this.searchIndex?.rebuild?.(documents, { configurationVersion: this.policy.configurationVersion });
-      return { repositoryRevision: index.repositoryRevision, requirements: index.entries.length, relationships: [...documents.business.relationships, ...documents.software.relationships].length };
+      return { repositoryRevision: index.repositoryRevision, requirements: index.entries.length, relationships: index.traceability.edges.length, traceabilityNodes: index.traceability.nodes.length };
     });
   }
 

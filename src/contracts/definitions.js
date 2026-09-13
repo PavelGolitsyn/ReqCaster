@@ -20,6 +20,18 @@ const projection = array(string({ pattern: "^[A-Za-z][A-Za-z0-9.]{0,63}$" }), { 
 const expectedRepositoryRevision = integer({ minimum: 0 });
 const expectedVersion = integer({ minimum: 1 });
 const requirementIds = array(requirementId, { minItems: 1, maxItems: 50, uniqueItems: true });
+const relationshipId = string({ pattern: "^RL-[0-9]{6}$" });
+const endpoint = object({
+  kind: string({ minLength: 1, maxLength: 64 }),
+  id: string({ minLength: 1, maxLength: 256 }),
+  version: expectedVersion,
+  system: string({ minLength: 1, maxLength: 128 }),
+  artifactType: string({ minLength: 1, maxLength: 64 }),
+  externalId: string({ minLength: 1, maxLength: 256 }),
+  externalVersion: string({ minLength: 1, maxLength: 128 }),
+  uri: string({ minLength: 1, maxLength: 2048 }),
+  systemOfRecord: string({ minLength: 1, maxLength: 128 }),
+}, ["kind"]);
 
 const query = (payload, required = []) => object(
   { schemaVersion: { const: "1.0.0" }, correlationId, ...payload },
@@ -90,6 +102,7 @@ const bulkOperation = object({
 }, ["operation"]);
 
 export const POLICY_BODY_SCHEMA = object({
+  traceabilityModelVersion: string({ pattern: "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" }),
   requirements: object({
     categories: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 64, uniqueItems: true }),
     statuses: array(string({ minLength: 1, maxLength: 64 }), { minItems: 1, maxItems: 64, uniqueItems: true }),
@@ -118,6 +131,10 @@ export const POLICY_BODY_SCHEMA = object({
     targetKinds: array(string({ maxLength: 64 }), { minItems: 1, maxItems: 32, uniqueItems: true }),
     maxTargets: integer({ minimum: 1 }),
     suspectOn: array(string({ maxLength: 64 }), { maxItems: 16, uniqueItems: true }),
+    traversal: { enum: ["upstream", "downstream", "horizontal"] },
+    symmetric: { type: "boolean" },
+    allowCycles: { type: "boolean" },
+    rationaleRequired: { type: "boolean" },
   }, ["type", "direction", "sourceKinds", "targetKinds", "maxTargets", "suspectOn"]), { maxItems: 256 }),
   requiredMetadata: array(object({
     level: { enum: ["business", "software"] },
@@ -155,7 +172,7 @@ export const POLICY_BODY_SCHEMA = object({
     advisorySeverities: array({ enum: ["info", "warning"] }, { minItems: 1, maxItems: 2, uniqueItems: true }),
     promotedRuleIds: array(string({ pattern: "^REQ-[A-Z]+-[0-9]{3}$" }), { maxItems: 64, uniqueItems: true }),
   }, ["structuralValidation", "languageQuality", "advisorySeverities"]),
-}, ["requirements", "authoringRules", "transitions", "relationships", "requiredMetadata", "coverageRules", "baselineReadiness", "retirementRules", "authorizedDecisionTypes", "limits", "qualityRules"]);
+}, ["traceabilityModelVersion", "requirements", "authoringRules", "transitions", "relationships", "requiredMetadata", "coverageRules", "baselineReadiness", "retirementRules", "authorizedDecisionTypes", "limits", "qualityRules"]);
 
 export const POLICY_DOCUMENT_SCHEMA = object({
   $schema: string({ minLength: 1, maxLength: 512 }),
@@ -207,8 +224,56 @@ export const SCHEMAS = Object.freeze({
     ...readSelection,
   }),
   ListRequest: query({ filters: readFilters, sort: fieldSort, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }), ...readSelection }, ["sort"]),
-  TraceRequest: query({ id: requirementId, direction: { enum: ["upstream", "downstream", "both"] }, relationshipTypes: array(string({ maxLength: 64 }), { uniqueItems: true, maxItems: 32 }), depth: integer({ minimum: 1, maximum: 5 }), cursor: opaqueCursor }, ["id", "direction"]),
-  CoverageRequest: query({ gap: { enum: ["missing", "stale", "failed", "waived", "not-applicable"] }, level: { enum: ["business", "software"] }, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }, ["gap"]),
+  TraceRequest: query({
+    id: requirementId,
+    ids: requirementIds,
+    starts: array(endpoint, { minItems: 1, maxItems: 50 }),
+    direction: { enum: ["upstream", "downstream", "both"] },
+    relationshipTypes: array(string({ maxLength: 64 }), { uniqueItems: true, maxItems: 32 }),
+    baselineId: string({ minLength: 1, maxLength: 128 }),
+    depth: integer({ minimum: 1, maximum: 5 }),
+    nodeLimit: integer({ minimum: 1, maximum: 1000 }),
+    projection: { enum: ["compact", "expanded"] },
+    includeRetired: { type: "boolean" },
+    includeSuspect: { type: "boolean" },
+    includeInvalid: { type: "boolean" },
+    includeWaived: { type: "boolean" },
+    includeExternal: { type: "boolean" },
+  }, ["direction"]),
+  CoverageRequest: query({
+    gap: { enum: ["missing", "planned", "present", "present-but-suspect", "stale", "failed", "waived", "deferred", "accepted-passing", "not-applicable"] },
+    level: { enum: ["business", "software"] },
+    statuses: array(string({ maxLength: 64 }), { uniqueItems: true, maxItems: 32 }),
+    relationshipTypes: array(string({ maxLength: 64 }), { uniqueItems: true, maxItems: 32 }),
+    baselineId: string({ minLength: 1, maxLength: 128 }),
+    includeRetired: { type: "boolean" },
+    cursor: opaqueCursor,
+    limit: integer({ minimum: 1, maximum: 100 }),
+  }),
+  OrphanRequest: query({
+    level: { enum: ["business", "software"] },
+    relationshipTypes: array(string({ maxLength: 64 }), { uniqueItems: true, maxItems: 32 }),
+    baselineId: string({ minLength: 1, maxLength: 128 }),
+    includeRetired: { type: "boolean" },
+    cursor: opaqueCursor,
+    limit: integer({ minimum: 1, maximum: 100 }),
+  }),
+  ImpactRequest: query({
+    id: requirementId,
+    ids: requirementIds,
+    starts: array(endpoint, { minItems: 1, maxItems: 50 }),
+    direction: { enum: ["upstream", "downstream", "both"] },
+    relationshipTypes: array(string({ maxLength: 64 }), { uniqueItems: true, maxItems: 32 }),
+    baselineId: string({ minLength: 1, maxLength: 128 }),
+    depth: integer({ minimum: 1, maximum: 5 }),
+    nodeLimit: integer({ minimum: 1, maximum: 1000 }),
+    includeRetired: { type: "boolean" },
+    includeSuspect: { type: "boolean" },
+    includeInvalid: { type: "boolean" },
+    includeWaived: { type: "boolean" },
+    includeExternal: { type: "boolean" },
+    manuallyAddedIds: requirementIds,
+  }, ["direction"]),
   CompareRequest: query({ left: string({ minLength: 1, maxLength: 128 }), right: string({ minLength: 1, maxLength: 128 }), projection }, ["left", "right"]),
   HistoryRequest: query({ id: requirementId, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }, ["id"]),
   ReportRequest: query({ reportType: { enum: ["traceability", "coverage", "history", "readiness"] }, baselineId: string({ maxLength: 128 }), reportId: string({ maxLength: 128 }) }, ["reportType"]),
@@ -217,7 +282,23 @@ export const SCHEMAS = Object.freeze({
   UpdateRequest: command({ id: requirementId, expectedVersion, patch, reason: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "patch"]),
   RetireRequest: command({ id: requirementId, expectedVersion, reason: string({ minLength: 1, maxLength: 4000 }), decisionReference: string({ minLength: 1, maxLength: 256 }), replacementId: requirementId }, ["id", "expectedVersion", "reason"]),
   VersionedItemCommand: command({ id: string({ minLength: 1, maxLength: 128 }), expectedVersion, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "rationale"]),
-  LinkRequest: command({ sourceId: requirementId, targetId: string({ minLength: 1, maxLength: 256 }), relationshipType: string({ minLength: 1, maxLength: 64 }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["sourceId", "targetId", "relationshipType", "rationale"]),
+  LinkRequest: command({
+    sourceId: requirementId,
+    targetId: string({ minLength: 1, maxLength: 256 }),
+    sourceExpectedVersion: expectedVersion,
+    targetExpectedVersion: expectedVersion,
+    source: endpoint,
+    target: endpoint,
+    relationshipType: string({ minLength: 1, maxLength: 64 }),
+    rationale: string({ minLength: 1, maxLength: 4000 }),
+  }, ["relationshipType"]),
+  UnlinkRequest: command({ id: relationshipId, expectedVersion, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["id", "expectedVersion", "rationale"]),
+  ReassessLinkRequest: command({
+    id: relationshipId,
+    expectedVersion,
+    assessment: { enum: ["valid", "updated", "not_affected", "waived", "removed"] },
+    rationale: string({ minLength: 1, maxLength: 4000 }),
+  }, ["id", "expectedVersion", "assessment", "rationale"]),
   BulkPreviewRequest: command({ operations: array(bulkOperation, { minItems: 1, maxItems: 500 }) }, ["operations"]),
   BulkCommitRequest: object({ schemaVersion: { const: "1.0.0" }, correlationId, idempotencyKey, previewToken: string({ minLength: 32, maxLength: 2048 }) }, ["schemaVersion", "correlationId", "idempotencyKey", "previewToken"]),
   ImportCommitRequest: command({ previewToken: string({ minLength: 32, maxLength: 2048 }), diffHash: string({ pattern: "^[a-f0-9]{64}$" }) }, ["previewToken", "diffHash"]),

@@ -1,5 +1,5 @@
 {
-  "$id": "https://spec-speaker.local/schemas/v1/TraceRequest.schema.json",
+  "$id": "https://spec-speaker.local/schemas/v1/ImpactRequest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -53,16 +53,20 @@
     "includeWaived": {
       "type": "boolean"
     },
+    "manuallyAddedIds": {
+      "items": {
+        "pattern": "^(BR|SR)-[0-9]{6}$",
+        "type": "string"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
     "nodeLimit": {
       "maximum": 1000,
       "minimum": 1,
       "type": "integer"
-    },
-    "projection": {
-      "enum": [
-        "compact",
-        "expanded"
-      ]
     },
     "relationshipTypes": {
       "items": {
@@ -140,6 +144,6 @@
     "correlationId",
     "direction"
   ],
-  "title": "TraceRequest",
+  "title": "ImpactRequest",
   "type": "object"
 }

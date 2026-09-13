@@ -1,4 +1,4 @@
-# spec-speaker
+# speccaster
 
 Tooling for spec-driven development and a contract-first requirements management
 engine intended primarily for AI-agent access.

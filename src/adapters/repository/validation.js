@@ -18,14 +18,15 @@ export const DOCUMENT_LIMITS = Object.freeze({
 
 const envelopeFields = new Set(["$schema", "schemaVersion", "documentType", "repositoryRevision", "nextRequirementNumber", "nextRelationshipNumber", "requirements", "relationships"]);
 const requirementFields = new Set(["id", "level", "version", "statement", "shortLabel", "category", "status", "priority", "criticality", "owner", "rationale", "verificationMethods", "acceptanceCriteria", "sourceReferences", "provenance", "retirement", "customAttributes"]);
-const relationshipFields = new Set(["id", "version", "type", "source", "target", "suspect", "rationale", "provenance", "retirement", "customAttributes"]);
-const endpointFields = new Set(["kind", "id", "version"]);
+const relationshipFields = new Set(["id", "version", "type", "source", "target", "status", "suspect", "rationale", "provenance", "retirement", "history", "customAttributes"]);
+const endpointFields = new Set(["kind", "id", "version", "system", "artifactType", "externalId", "externalVersion", "uri", "systemOfRecord"]);
+const relationshipHistoryFields = new Set(["action", "at", "by", "status", "assessment", "rationale", "triggeringItemVersion", "changedFields", "rule", "reason"]);
 const acceptanceFields = new Set(["id", "text", "verificationMethod"]);
 const referenceFields = new Set(["type", "uri", "title"]);
 const provenanceFields = new Set(["createdAt", "createdBy", "updatedAt", "updatedBy", "source", "accountablePrincipal", "aiAssistance"]);
 const assistanceFields = new Set(["assisted", "provider", "model", "suggestionId"]);
 const retirementFields = new Set(["retiredAt", "retiredBy", "rationale", "decisionReference"]);
-const externalKinds = new Set(["external:test", "external:component"]);
+const relationshipStatuses = new Set(["valid", "suspect", "invalid", "waived"]);
 
 function issue(issues, path, reason) {
   issues.push({ path, reason });
@@ -176,10 +177,35 @@ function validateEndpoint(endpoint, path, issues) {
   if (endpoint.kind === "requirement") {
     if (!parseRequirementId(endpoint.id)) issue(issues, `${path}/id`, "must be a canonical requirement ID");
     if ("version" in endpoint) positiveVersion(endpoint.version, `${path}/version`, issues);
-  } else if (externalKinds.has(endpoint.kind)) {
+  } else if (typeof endpoint.kind === "string" && /^external:[a-z][a-z0-9_-]{0,62}$/u.test(endpoint.kind)) {
     boundedString(endpoint.id, `${path}/id`, issues, 256);
     if ("version" in endpoint) issue(issues, `${path}/version`, "is allowed only for requirement endpoints");
-  } else issue(issues, `${path}/kind`, "must be requirement, external:test, or external:component");
+    for (const [name, maximum] of [["system", 128], ["artifactType", 64], ["externalId", 256], ["externalVersion", 128], ["systemOfRecord", 128], ["uri", 2048]]) {
+      if (name in endpoint) boundedString(endpoint[name], `${path}/${name}`, issues, maximum);
+    }
+    const metadata = ["system", "artifactType", "externalId", "systemOfRecord"];
+    const present = metadata.filter((name) => name in endpoint);
+    if (present.length && present.length !== metadata.length) issue(issues, path, "external system-of-record metadata must be complete");
+    if (endpoint.artifactType && endpoint.kind !== `external:${endpoint.artifactType}`) issue(issues, `${path}/artifactType`, "must agree with the external endpoint kind");
+  } else issue(issues, `${path}/kind`, "must be requirement or a configured external artifact kind");
+}
+
+function validateRelationshipHistory(entries, path, issues) {
+  if (!Array.isArray(entries) || entries.length > 4096) { issue(issues, path, "must be a bounded array"); return; }
+  entries.forEach((entry, index) => {
+    const child = `${path}/${index}`;
+    if (!exactFields(entry, relationshipHistoryFields, child, issues)) return;
+    required(entry, ["action", "at", "by", "status"], child, issues);
+    if (!new Set(["created", "suspect-marked", "reassessed", "retired"]).has(entry.action)) issue(issues, `${child}/action`, "is not a governed relationship history action");
+    if (!relationshipStatuses.has(entry.status)) issue(issues, `${child}/status`, "is not a governed relationship status");
+    if ("at" in entry) timestamp(entry.at, `${child}/at`, issues);
+    for (const [name, maximum] of [["by", 256], ["assessment", 64], ["rationale", 4000], ["rule", 128], ["reason", 1000]]) if (name in entry) boundedString(entry[name], `${child}/${name}`, issues, maximum);
+    if ("triggeringItemVersion" in entry) positiveVersion(entry.triggeringItemVersion, `${child}/triggeringItemVersion`, issues);
+    if ("changedFields" in entry) {
+      if (!Array.isArray(entry.changedFields) || entry.changedFields.length > 64 || new Set(entry.changedFields).size !== entry.changedFields.length) issue(issues, `${child}/changedFields`, "must be a bounded unique array");
+      else entry.changedFields.forEach((field, fieldIndex) => boundedString(field, `${child}/changedFields/${fieldIndex}`, issues, 64));
+    }
+  });
 }
 
 function validateRelationship(record, path, policy, issues) {
@@ -189,12 +215,16 @@ function validateRelationship(record, path, policy, issues) {
   positiveVersion(record.version, `${path}/version`, issues);
   boundedString(record.type, `${path}/type`, issues, 64);
   if (typeof record.suspect !== "boolean") issue(issues, `${path}/suspect`, "must be a boolean");
+  if ("status" in record && !relationshipStatuses.has(record.status)) issue(issues, `${path}/status`, "is not a governed relationship status");
+  if (record.status === "suspect" && record.suspect !== true) issue(issues, `${path}/suspect`, "must be true when status is suspect");
+  if (record.status && record.status !== "suspect" && record.suspect !== false) issue(issues, `${path}/suspect`, "must be false when status is not suspect");
   validateEndpoint(record.source, `${path}/source`, issues);
   validateEndpoint(record.target, `${path}/target`, issues);
   if ("rationale" in record) boundedString(record.rationale, `${path}/rationale`, issues, 4000);
   if ("provenance" in record) provenance(record.provenance, `${path}/provenance`, issues);
   if ("retirement" in record) retirement(record.retirement, `${path}/retirement`, issues);
   if ("customAttributes" in record) custom(record.customAttributes, `${path}/customAttributes`, issues);
+  if ("history" in record) validateRelationshipHistory(record.history, `${path}/history`, issues);
   const rule = policy.relationships.find(({ type }) => type === record.type);
   if (!rule) issue(issues, `${path}/type`, "is not a configured relationship type");
   else {
@@ -257,10 +287,12 @@ export function validateRepositoryDocuments(business, software, policy) {
       const placementId = record.source?.kind === "requirement" ? record.source.id : record.target?.kind === "requirement" ? record.target.id : null;
       const placement = parseRequirementId(placementId)?.level;
       if (placement && placement !== level) issue(issues, path, `must be stored in the ${placement} document`);
-      const key = `${record.type}\u0000${record.source?.kind}\u0000${record.source?.id}`;
-      cardinality.set(key, (cardinality.get(key) ?? 0) + 1);
-      const maximum = policy.relationships.find(({ type }) => type === record.type)?.maxTargets;
-      if (maximum && cardinality.get(key) > maximum) issue(issues, path, `exceeds configured maxTargets ${maximum}`);
+      if (!record.retirement) {
+        const key = `${record.type}\u0000${record.source?.kind}\u0000${record.source?.id}`;
+        cardinality.set(key, (cardinality.get(key) ?? 0) + 1);
+        const maximum = policy.relationships.find(({ type }) => type === record.type)?.maxTargets;
+        if (maximum && cardinality.get(key) > maximum) issue(issues, path, `exceeds configured maxTargets ${maximum}`);
+      }
     }
   }
   return issues;

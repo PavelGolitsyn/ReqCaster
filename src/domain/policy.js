@@ -1,12 +1,13 @@
 import { QUALITY_RULE_CATALOG } from "./quality.js";
 
-const knownKinds = new Set(["business", "software", "external:test", "external:component"]);
+const internalKinds = new Set(["business", "software"]);
 const knownPermissions = new Set(["requirements:read", "requirements:validate-draft", "requirements:mutate", "requirements:decide", "requirements:baseline", "requirements:import", "requirements:configure"]);
 const knownQualityRules = new Set(QUALITY_RULE_CATALOG.map(({ id }) => id));
 const authoringFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria"]);
 
 export function validatePolicy(policy) {
   const issues = [];
+  if (!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/u.test(policy?.traceabilityModelVersion ?? "")) issues.push("traceability model version must be semantic version syntax");
   const statuses = new Set(policy?.requirements?.statuses ?? []);
   if (!statuses.has(policy?.authoringRules?.defaultStatus)) issues.push(`authoring default status is unknown: ${policy?.authoringRules?.defaultStatus}`);
   const authoringLevels = new Set();
@@ -30,10 +31,13 @@ export function validatePolicy(policy) {
     if (relationshipTypes.has(relationship.type)) issues.push(`duplicate relationship rule: ${relationship.type}`);
     relationshipTypes.add(relationship.type);
     if (relationship.direction !== "source-to-target") issues.push(`relationship direction is invalid: ${relationship.type}`);
-    if (![...(relationship.sourceKinds ?? []), ...(relationship.targetKinds ?? [])].every((kind) => knownKinds.has(kind))) {
+    if (![...(relationship.sourceKinds ?? []), ...(relationship.targetKinds ?? [])].every((kind) => internalKinds.has(kind) || /^external:[a-z][a-z0-9_-]{0,62}$/u.test(kind))) {
       issues.push(`relationship has unknown endpoint kind: ${relationship.type}`);
     }
     if (!Number.isInteger(relationship.maxTargets) || relationship.maxTargets < 1) issues.push(`relationship limit must be positive: ${relationship.type}`);
+    if (relationship.traversal !== undefined && !new Set(["upstream", "downstream", "horizontal"]).has(relationship.traversal)) issues.push(`relationship traversal is invalid: ${relationship.type}`);
+    if (relationship.symmetric && relationship.traversal !== "horizontal") issues.push(`symmetric relationship must use horizontal traversal: ${relationship.type}`);
+    if (![...(relationship.sourceKinds ?? []), ...(relationship.targetKinds ?? [])].some((kind) => internalKinds.has(kind))) issues.push(`relationship has no possible internal storage owner: ${relationship.type}`);
   }
   for (const coverage of policy?.coverageRules ?? []) {
     if (!new Set(["business", "software"]).has(coverage.level)) issues.push(`coverage level is unknown: ${coverage.level}`);

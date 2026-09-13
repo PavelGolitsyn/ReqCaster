@@ -29,9 +29,123 @@
     "schemaVersion": {
       "const": "1.0.0"
     },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "artifactType": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "externalId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "externalVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "system": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "systemOfRecord": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "uri": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "sourceExpectedVersion": {
+      "minimum": 1,
+      "type": "integer"
+    },
     "sourceId": {
       "pattern": "^(BR|SR)-[0-9]{6}$",
       "type": "string"
+    },
+    "target": {
+      "additionalProperties": false,
+      "properties": {
+        "artifactType": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "externalId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "externalVersion": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "system": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "systemOfRecord": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "uri": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "targetExpectedVersion": {
+      "minimum": 1,
+      "type": "integer"
     },
     "targetId": {
       "maxLength": 256,
@@ -44,10 +158,7 @@
     "correlationId",
     "idempotencyKey",
     "expectedRepositoryRevision",
-    "sourceId",
-    "targetId",
-    "relationshipType",
-    "rationale"
+    "relationshipType"
   ],
   "title": "LinkRequest",
   "type": "object"

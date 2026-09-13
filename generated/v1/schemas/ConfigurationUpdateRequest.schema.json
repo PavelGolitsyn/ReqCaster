@@ -267,12 +267,18 @@
           "items": {
             "additionalProperties": false,
             "properties": {
+              "allowCycles": {
+                "type": "boolean"
+              },
               "direction": {
                 "const": "source-to-target"
               },
               "maxTargets": {
                 "minimum": 1,
                 "type": "integer"
+              },
+              "rationaleRequired": {
+                "type": "boolean"
               },
               "sourceKinds": {
                 "items": {
@@ -293,6 +299,9 @@
                 "type": "array",
                 "uniqueItems": true
               },
+              "symmetric": {
+                "type": "boolean"
+              },
               "targetKinds": {
                 "items": {
                   "maxLength": 64,
@@ -302,6 +311,13 @@
                 "minItems": 1,
                 "type": "array",
                 "uniqueItems": true
+              },
+              "traversal": {
+                "enum": [
+                  "upstream",
+                  "downstream",
+                  "horizontal"
+                ]
               },
               "type": {
                 "maxLength": 64,
@@ -450,6 +466,10 @@
           ],
           "type": "object"
         },
+        "traceabilityModelVersion": {
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+          "type": "string"
+        },
         "transitions": {
           "items": {
             "additionalProperties": false,
@@ -482,6 +502,7 @@
         }
       },
       "required": [
+        "traceabilityModelVersion",
         "requirements",
         "authoringRules",
         "transitions",

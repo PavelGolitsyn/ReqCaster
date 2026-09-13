@@ -98,8 +98,14 @@
     "endpoint": {
       "additionalProperties": false,
       "properties": {
+        "artifactType": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "externalId": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "externalVersion": { "maxLength": 128, "minLength": 1, "type": "string" },
         "id": { "maxLength": 256, "minLength": 1, "type": "string" },
-        "kind": { "enum": ["requirement", "external:test", "external:component"] },
+        "kind": { "pattern": "^(requirement|external:[a-z][a-z0-9_-]{0,62})$", "type": "string" },
+        "system": { "maxLength": 128, "minLength": 1, "type": "string" },
+        "systemOfRecord": { "maxLength": 128, "minLength": 1, "type": "string" },
+        "uri": { "maxLength": 2048, "minLength": 1, "type": "string" },
         "version": { "minimum": 1, "type": "integer" }
       },
       "required": ["kind", "id"],
@@ -143,17 +149,36 @@
       "additionalProperties": false,
       "properties": {
         "customAttributes": { "$ref": "#/$defs/customAttributes" },
+        "history": { "items": { "$ref": "#/$defs/relationshipHistory" }, "maxItems": 4096, "type": "array" },
         "id": { "pattern": "^RL-[0-9]{6}$", "type": "string" },
         "provenance": { "$ref": "#/$defs/provenance" },
         "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
         "retirement": { "$ref": "#/$defs/retirement" },
         "source": { "$ref": "#/$defs/endpoint" },
+        "status": { "enum": ["valid", "suspect", "invalid", "waived"] },
         "suspect": { "type": "boolean" },
         "target": { "$ref": "#/$defs/endpoint" },
         "type": { "maxLength": 64, "minLength": 1, "type": "string" },
         "version": { "minimum": 1, "type": "integer" }
       },
       "required": ["id", "version", "type", "source", "target", "suspect"],
+      "type": "object"
+    },
+    "relationshipHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "action": { "enum": ["created", "suspect-marked", "reassessed", "retired"] },
+        "assessment": { "maxLength": 64, "minLength": 1, "type": "string" },
+        "at": { "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$", "type": "string" },
+        "by": { "maxLength": 256, "minLength": 1, "type": "string" },
+        "changedFields": { "items": { "maxLength": 64, "minLength": 1, "type": "string" }, "maxItems": 64, "type": "array", "uniqueItems": true },
+        "rationale": { "maxLength": 4000, "minLength": 1, "type": "string" },
+        "reason": { "maxLength": 1000, "minLength": 1, "type": "string" },
+        "rule": { "maxLength": 128, "minLength": 1, "type": "string" },
+        "status": { "enum": ["valid", "suspect", "invalid", "waived"] },
+        "triggeringItemVersion": { "minimum": 1, "type": "integer" }
+      },
+      "required": ["action", "at", "by", "status"],
       "type": "object"
     },
     "requirement": {
