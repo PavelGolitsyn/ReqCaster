@@ -1,7 +1,7 @@
 import { QUALITY_RULE_CATALOG } from "./quality.js";
 
 const internalKinds = new Set(["business", "software"]);
-const knownPermissions = new Set(["requirements:read", "requirements:validate-draft", "requirements:mutate", "requirements:decide", "requirements:baseline", "requirements:import", "requirements:configure"]);
+const knownPermissions = new Set(["requirements:read", "requirements:validate-draft", "requirements:mutate", "requirements:decide", "requirements:baseline", "requirements:import", "requirements:configure", "requirements:audit"]);
 const knownQualityRules = new Set(QUALITY_RULE_CATALOG.map(({ id }) => id));
 const authoringFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria"]);
 const transitionFields = new Set(["owner", "priority", "criticality", "rationale", "source", "sourceReferences", "verificationMethods", "acceptanceCriteria", "statement", "category"]);

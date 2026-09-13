@@ -22,6 +22,15 @@ const expectedVersion = integer({ minimum: 1 });
 const requirementIds = array(requirementId, { minItems: 1, maxItems: 50, uniqueItems: true });
 const relationshipId = string({ pattern: "^RL-[0-9]{6}$" });
 const changeId = string({ pattern: "^CH-[0-9]{6}$" });
+const baselineException = object({
+  code: string({ minLength: 1, maxLength: 64 }),
+  requirementId,
+  relationshipId,
+  rationale: string({ minLength: 1, maxLength: 4000 }),
+  authority: string({ minLength: 1, maxLength: 256 }),
+  expiresAt: string({ minLength: 1, maxLength: 32 }),
+  reviewAt: string({ minLength: 1, maxLength: 32 }),
+}, ["code", "rationale", "authority"]);
 const evidenceReference = object({
   id: string({ minLength: 1, maxLength: 256 }),
   type: string({ minLength: 1, maxLength: 64 }),
@@ -312,7 +321,7 @@ export const SCHEMAS = Object.freeze({
     includeExternal: { type: "boolean" },
     manuallyAddedIds: requirementIds,
   }, ["direction"]),
-  CompareRequest: query({ left: string({ minLength: 1, maxLength: 128 }), right: string({ minLength: 1, maxLength: 128 }), projection }, ["left", "right"]),
+  CompareRequest: query({ left: string({ minLength: 1, maxLength: 128 }), right: string({ minLength: 1, maxLength: 128 }), projection, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }, ["left", "right"]),
   HistoryRequest: query({ id: requirementId, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }, ["id"]),
   ReportRequest: query({ reportType: { enum: ["traceability", "coverage", "history", "readiness"] }, baselineId: string({ maxLength: 128 }), reportId: string({ maxLength: 128 }) }, ["reportType"]),
   ValidateDraftRequest: query({ draft: requirementDraft }, ["draft"]),
@@ -374,9 +383,12 @@ export const SCHEMAS = Object.freeze({
   ChangeGetRequest: query({ changeId }, ["changeId"]),
   WorkflowDashboardRequest: query({ owner: string({ minLength: 1, maxLength: 256 }), includeClosed: { type: "boolean" } }),
   ReviewCreateRequest: command({ title: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), reviewType: { enum: ["informal", "formal"] } }, ["title", "requirementIds", "reviewType"]),
-  BaselineReadinessRequest: query({ requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }) }, ["requirementIds"]),
-  BaselineCreateRequest: command({ name: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), rationale: string({ minLength: 1, maxLength: 4000 }) }, ["name", "requirementIds", "rationale"]),
+  BaselineReadinessRequest: query({ requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), scope: object({}, [], { additionalProperties: true, maxProperties: 32 }), exclusions: array(string({ minLength: 1, maxLength: 512 }), { maxItems: 128 }), exceptions: array(baselineException, { maxItems: 128 }) }, ["requirementIds"]),
+  BaselineCreateRequest: command({ name: string({ minLength: 1, maxLength: 200 }), requirementIds: array(requirementId, { minItems: 1, maxItems: 500, uniqueItems: true }), rationale: string({ minLength: 1, maxLength: 4000 }), purpose: string({ minLength: 1, maxLength: 4000 }), readinessToken: string({ minLength: 32, maxLength: 4096 }), approvalReferences: array({}, { minItems: 1, maxItems: 128 }), exclusions: array(string({ minLength: 1, maxLength: 512 }), { maxItems: 128 }), project: string({ minLength: 1, maxLength: 256 }), release: string({ minLength: 1, maxLength: 160 }), variant: string({ minLength: 1, maxLength: 160 }), configuration: object({}, [], { additionalProperties: true, maxProperties: 64 }), sourceRepositoryRevision: string({ minLength: 1, maxLength: 256 }), reportTemplateVersions: array(string({ minLength: 1, maxLength: 64 }), { maxItems: 32, uniqueItems: true }) }, ["name", "requirementIds", "readinessToken", "approvalReferences"]),
   BaselineGetRequest: query({ baselineId: string({ minLength: 1, maxLength: 128 }), projection }, ["baselineId"]),
+  BaselineListRequest: query({ limit: integer({ minimum: 1, maximum: 100 }), cursor: opaqueCursor }),
+  AuditListRequest: query({ limit: integer({ minimum: 1, maximum: 100 }), cursor: opaqueCursor }),
+  AuditVerifyRequest: query({}),
   ImportPreviewRequest: command({ format: { enum: ["json", "csv", "reqif"] }, content: string({ minLength: 1, maxLength: 5000000 }), mappingVersion: string({ minLength: 1, maxLength: 64 }) }, ["format", "content", "mappingVersion"]),
   ConfigurationGetRequest: query({ configurationVersion: string({ minLength: 1, maxLength: 64 }) }),
   ConfigurationUpdateRequest: command({ currentConfigurationVersion: string({ minLength: 1, maxLength: 64 }), policy: POLICY_BODY_SCHEMA, rationale: string({ minLength: 1, maxLength: 4000 }) }, ["currentConfigurationVersion", "policy", "rationale"]),

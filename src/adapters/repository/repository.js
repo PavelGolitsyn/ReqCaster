@@ -11,12 +11,17 @@ import { IntegrityError, RepositoryError, ValidationError } from "./errors.js";
 import { acquireProjectLock } from "./lock.js";
 import { CANONICAL_FILENAMES, canonicalDocumentPath, ENGINE_DIRECTORIES, enginePath, normalizeRequirementsRoot } from "./paths.js";
 import { assertValidRepositoryDocuments, createEmptyDocument, CURRENT_SCHEMA_VERSION, DOCUMENT_LIMITS } from "./validation.js";
+import { TamperEvidentAuditLog } from "./audit-log.js";
 
 const defaultPolicyUrl = new URL("../../../config/policy.v1.json", import.meta.url);
 const schemaDirectoryUrl = new URL("../../../schemas/v1/", import.meta.url);
 
 function clone(value) {
   return structuredClone(value);
+}
+
+function defined(value) {
+  return Object.fromEntries(Object.entries(value).filter(([, entry]) => entry !== undefined));
 }
 
 async function syncDirectory(path) {
@@ -83,7 +88,7 @@ function assertIntegrityRecord(value) {
 }
 
 function assertManifest(value, directoryName) {
-  const allowed = new Set(["actor", "after", "afterRevision", "before", "beforeRevision", "committedAt", "createdAt", "idempotency", "recoveredAt", "recoveryReason", "schemaVersion", "status", "transactionId"]);
+  const allowed = new Set(["actor", "after", "afterRevision", "before", "beforeRevision", "committedAt", "createdAt", "idempotency", "provenance", "recoveredAt", "recoveryReason", "schemaVersion", "status", "transactionId"]);
   if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some((key) => !allowed.has(key))) throw new IntegrityError("Transaction manifest has an invalid shape");
   if (value.schemaVersion !== CURRENT_SCHEMA_VERSION || value.transactionId !== directoryName || !/^[0-9]{12}-[a-f0-9-]{36}$/u.test(value.transactionId)) throw new IntegrityError("Transaction manifest identity is invalid");
   if (!new Set(["prepared", "committed", "rolled-back"]).has(value.status) || !Number.isInteger(value.beforeRevision) || value.beforeRevision < 0 || value.afterRevision !== value.beforeRevision + 1) throw new IntegrityError("Transaction manifest revision metadata is invalid");
@@ -99,6 +104,32 @@ function assertManifest(value, directoryName) {
     if (!receipt || typeof receipt !== "object" || Array.isArray(receipt) || Object.keys(receipt).sort().join(",") !== "correlationId,key,requestHash,result,scope") throw new IntegrityError("Transaction idempotency receipt has an invalid shape");
     if (typeof receipt.correlationId !== "string" || receipt.correlationId.length < 1 || receipt.correlationId.length > 128 || typeof receipt.key !== "string" || receipt.key.length < 8 || receipt.key.length > 128 || typeof receipt.scope !== "string" || receipt.scope.length < 1 || receipt.scope.length > 512 || !/^[a-f0-9]{64}$/u.test(receipt.requestHash ?? "")) throw new IntegrityError("Transaction idempotency receipt is invalid");
   }
+  if ("provenance" in value && (!value.provenance || typeof value.provenance !== "object" || Array.isArray(value.provenance))) throw new IntegrityError("Transaction provenance is invalid");
+}
+
+function records(documents) {
+  return [...documents.business.requirements, ...documents.software.requirements, ...documents.business.relationships, ...documents.software.relationships];
+}
+
+function recordMap(documents) {
+  return new Map(records(documents).map((record) => [record.id, record]));
+}
+
+function pointerToken(value) {
+  return String(value).replaceAll("~", "~0").replaceAll("/", "~1");
+}
+
+function fieldChanges(before, after, path = "") {
+  const comparable = (value) => ({ present: value !== undefined, value: value ?? null });
+  if (canonicalHash(comparable(before)) === canonicalHash(comparable(after))) return [];
+  if (!before || !after || typeof before !== "object" || typeof after !== "object" || Array.isArray(before) || Array.isArray(after)) {
+    return [{ path: path || "/", before: before ?? null, after: after ?? null, beforePresent: before !== undefined, afterPresent: after !== undefined }];
+  }
+  const output = [];
+  for (const key of [...new Set([...Object.keys(before), ...Object.keys(after)])].sort()) {
+    output.push(...fieldChanges(before[key], after[key], `${path}/${pointerToken(key)}`));
+  }
+  return output;
 }
 
 function compareVersions(left, right) {
@@ -207,6 +238,7 @@ export class CanonicalJsonRepository {
     this.lockOptions = options.lock ?? {};
     this.faultInjector = options.faultInjector ?? null;
     this.searchIndex = options.searchIndex ?? null;
+    this.audit = options.audit === false ? null : options.audit ?? new TamperEvidentAuditLog(this.root, options.auditOptions);
   }
 
   async initialize(options = {}) {
@@ -219,6 +251,7 @@ export class CanonicalJsonRepository {
       await mkdir(path, { recursive: true });
       await assertNotSymlink(path);
     }
+    await this.audit?.initialize?.();
     const release = await acquireProjectLock(enginePath(this.root, "locks", "repository.lock"), this.lockOptions);
     try {
       for (const filename of CANONICAL_FILENAMES) await assertNotSymlink(canonicalDocumentPath(this.root, filename));
@@ -255,6 +288,7 @@ export class CanonicalJsonRepository {
     await assertNotSymlink(enginePath(this.root));
     for (const directory of ENGINE_DIRECTORIES) await assertNotSymlink(enginePath(this.root, directory));
     for (const filename of CANONICAL_FILENAMES) await assertNotSymlink(canonicalDocumentPath(this.root, filename));
+    await this.audit?.initialize?.();
     await this.#loadPolicy();
     const release = await acquireProjectLock(enginePath(this.root, "locks", "repository.lock"), this.lockOptions);
     try { await this.#recoverLocked(); await this.#loadLocked(); }
@@ -284,6 +318,7 @@ export class CanonicalJsonRepository {
     return this.#withLock(async () => {
       await this.#recoverLocked();
       const state = await this.#loadLocked();
+      await this.audit?.verify?.();
       if (options.idempotency) {
         const replay = await this.#idempotencyReplay(options.idempotency);
         if (replay) return replay;
@@ -302,7 +337,7 @@ export class CanonicalJsonRepository {
       software.repositoryRevision = revision;
       assertValidRepositoryDocuments(business, software, this.policy);
       assertMonotonicTransition(state, { business, software }, allocation.allocated);
-      await this.#commitLocked(state, { business, software }, { actor: options.actor ?? "internal", faultInjector: options.faultInjector ?? this.faultInjector, idempotency: options.idempotency ? { ...options.idempotency, result: clone(result) } : undefined });
+      await this.#commitLocked(state, { business, software }, { actor: options.actor ?? "internal", faultInjector: options.faultInjector ?? this.faultInjector, idempotency: options.idempotency ? { ...options.idempotency, result: clone(result) } : undefined, provenance: options.provenance });
       return { committed: true, repositoryRevision: revision, result };
     });
   }
@@ -316,6 +351,87 @@ export class CanonicalJsonRepository {
       await this.#recoverLocked();
       const state = await this.#loadLocked();
       return { valid: true, repositoryRevision: state.business.value.repositoryRevision, checksums: { business: state.business.hash, software: state.software.hash } };
+    });
+  }
+
+  async withConsistencyPoint(operation) {
+    if (typeof operation !== "function") throw new TypeError("Consistency-point operation must be a function");
+    return this.#withLock(async () => {
+      await this.#recoverLocked();
+      const state = await this.#loadLocked();
+      return operation({
+        checksums: { business: state.business.hash, software: state.software.hash },
+        repositoryRevision: state.business.value.repositoryRevision,
+        root: this.root,
+      });
+    });
+  }
+
+  async readRevision(revision) {
+    if (!Number.isInteger(revision) || revision < 0) throw new TypeError("Repository revision must be a non-negative integer");
+    return this.#withLock(async () => {
+      await this.#recoverLocked();
+      const current = await this.#loadLocked();
+      if (current.business.value.repositoryRevision === revision) return { business: clone(current.business.value), software: clone(current.software.value) };
+      for (const { directory, manifest } of await this.#manifests()) {
+        if (manifest.status === "committed" && manifest.afterRevision === revision) return this.#readTransactionPair(directory, "after", manifest.after);
+        if (manifest.beforeRevision === revision) return this.#readTransactionPair(directory, "before", manifest.before);
+      }
+      throw new RepositoryError("NOT_FOUND", `Repository revision ${revision} was not found`);
+    });
+  }
+
+  async readVersion(id, version) {
+    if (typeof id !== "string" || !Number.isInteger(version) || version < 1) throw new TypeError("A governed record ID and positive version are required");
+    return this.#withLock(async () => {
+      await this.#recoverLocked();
+      const manifests = await this.#manifests();
+      const snapshots = [];
+      if (manifests[0]) snapshots.push({ directory: manifests[0].directory, manifest: manifests[0].manifest, side: "before" });
+      snapshots.push(...manifests.filter(({ manifest }) => manifest.status === "committed").map((entry) => ({ ...entry, side: "after" })));
+      if (!snapshots.length) {
+        const current = await this.#loadLocked();
+        const found = records({ business: current.business.value, software: current.software.value }).find((record) => record.id === id && record.version === version);
+        if (found) return { record: clone(found), repositoryRevision: current.business.value.repositoryRevision };
+      }
+      for (const snapshot of snapshots) {
+        const documents = await this.#readTransactionPair(snapshot.directory, snapshot.side, snapshot.manifest[snapshot.side]);
+        const found = records(documents).find((record) => record.id === id && record.version === version);
+        if (found) return { record: clone(found), repositoryRevision: documents.business.repositoryRevision };
+      }
+      throw new RepositoryError("NOT_FOUND", `Version ${version} of ${id} was not found`);
+    });
+  }
+
+  async history(id) {
+    if (typeof id !== "string" || !id.length) throw new TypeError("A governed record ID is required");
+    return this.#withLock(async () => {
+      await this.#recoverLocked();
+      const entries = [];
+      for (const { directory, manifest } of await this.#manifests()) {
+        if (manifest.status !== "committed") continue;
+        const [before, after] = await Promise.all([
+          this.#readTransactionPair(directory, "before", manifest.before),
+          this.#readTransactionPair(directory, "after", manifest.after),
+        ]);
+        const oldRecord = recordMap(before).get(id);
+        const newRecord = recordMap(after).get(id);
+        if (!newRecord || (oldRecord && canonicalHash(oldRecord) === canonicalHash(newRecord))) continue;
+        entries.push({
+          actor: manifest.actor,
+          afterHash: canonicalHash(newRecord),
+          beforeHash: oldRecord ? canonicalHash(oldRecord) : null,
+          changes: fieldChanges(oldRecord, newRecord),
+          correlationId: manifest.provenance?.correlationId ?? manifest.idempotency?.correlationId,
+          event: oldRecord ? (newRecord.retirement && !oldRecord.retirement ? "retired" : "updated") : "created",
+          provenance: clone(manifest.provenance ?? {}),
+          repositoryRevision: manifest.afterRevision,
+          timestamp: manifest.committedAt ?? manifest.createdAt,
+          transactionId: manifest.transactionId,
+          version: newRecord.version,
+        });
+      }
+      return entries;
     });
   }
 
@@ -356,6 +472,7 @@ export class CanonicalJsonRepository {
     return this.#withLock(async () => {
       await this.#recoverLocked();
       const state = await this.#loadRawLocked();
+      await this.audit?.verify?.();
       const preview = this.#prepareMigration(state, migrations);
       if (!preview.required) return { committed: false, ...preview };
       const migrationRevision = (state.business.value.repositoryRevision ?? state.business.value.revision) + 1;
@@ -619,6 +736,7 @@ export class CanonicalJsonRepository {
       beforeRevision: before.business.value.repositoryRevision ?? before.business.value.revision,
       createdAt: new Date().toISOString(),
       ...(options.idempotency ? { idempotency: options.idempotency } : {}),
+      ...(options.provenance ? { provenance: defined(clone(options.provenance)) } : {}),
       schemaVersion: CURRENT_SCHEMA_VERSION,
       status: "prepared",
       transactionId,
@@ -635,6 +753,20 @@ export class CanonicalJsonRepository {
     manifest.status = "committed";
     manifest.committedAt = new Date().toISOString();
     await replaceDurable(paths.manifest, canonicalBytes(manifest), transactionId);
+    await this.audit?.append?.(defined({
+      actor: manifest.actor,
+      afterHashes: clone(manifest.after),
+      beforeHashes: clone(manifest.before),
+      correlationId: manifest.provenance?.correlationId ?? manifest.idempotency?.correlationId ?? "unavailable",
+      event: "governed-record-transaction",
+      operation: manifest.provenance?.command ?? "repository.execute",
+      principalId: manifest.provenance?.principalId,
+      reason: manifest.provenance?.reason,
+      repositoryRevision: manifest.afterRevision,
+      role: manifest.provenance?.role,
+      timestamp: manifest.committedAt,
+      transactionId: manifest.transactionId,
+    }));
     await options.faultInjector?.("after-committed");
     if (this.searchIndex) {
       try { await this.searchIndex.rebuild(after, { configurationVersion: this.policy.configurationVersion }); }
@@ -650,6 +782,16 @@ export class CanonicalJsonRepository {
     await writeDurable(temporary, bytes, { exclusive: true });
     await rename(temporary, path);
     await syncDirectory(this.root);
+  }
+
+  async #readTransactionPair(directory, side, hashes) {
+    const [business, software] = await Promise.all([
+      readCanonical(join(directory, `${side}-business.json`)),
+      readCanonical(join(directory, `${side}-software.json`)),
+    ]);
+    if (business.hash !== hashes.businessHash || software.hash !== hashes.softwareHash) throw new IntegrityError(`Transaction ${side} snapshot checksum mismatch`);
+    assertConsistentPair(business, software);
+    return { business: clone(business.value), software: clone(software.value) };
   }
 
   async #manifests() {
@@ -696,6 +838,7 @@ export class CanonicalJsonRepository {
         manifest.status = "committed";
         manifest.recoveredAt = new Date().toISOString();
         await replaceDurable(path, canonicalBytes(manifest));
+        await this.audit?.append?.(defined({ actor: manifest.actor, afterHashes: clone(manifest.after), beforeHashes: clone(manifest.before), correlationId: manifest.provenance?.correlationId ?? manifest.idempotency?.correlationId ?? "unavailable", event: "governed-record-transaction", operation: manifest.provenance?.command ?? "repository.execute", principalId: manifest.provenance?.principalId, reason: manifest.provenance?.reason, repositoryRevision: manifest.afterRevision, role: manifest.provenance?.role, timestamp: manifest.recoveredAt, transactionId: manifest.transactionId }));
         actions.push({ action: "rolled-forward", transactionId: manifest.transactionId, revision: manifest.afterRevision });
       } catch (candidateError) {
         await this.#quarantineFiles(afterPaths, `transaction-${manifest.transactionId}`);

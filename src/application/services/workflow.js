@@ -177,6 +177,7 @@ class WorkflowService {
         actor: actor(context),
         expectedRepositoryRevision,
         idempotency: idempotency(request, context, operation),
+        provenance: { agentRole: context.identity?.role, changeRequestId: request.changeId, command: operation, correlationId: request.correlationId, principalId: principal(context), reason: request.rationale, role: context.identity?.role },
       });
       if (result.committed && this.audit?.append) await this.audit.append({
         agentId: actor(context), correlationId: request.correlationId, event: "workflow-mutation", operation,

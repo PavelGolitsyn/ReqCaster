@@ -17,6 +17,10 @@ transitions, exact-version controlled changes, impact dispositions, atomic
 implementation, closure gates, ownership dashboards, and a transactional
 notification outbox.
 
+Stage 6 adds reconstructable item and relationship history, hash-chained audit
+events, revision-pinned readiness checks, immutable checksummed baselines,
+field-level comparisons, and verified consistency-group backup and restore.
+
 ```sh
 npm run contracts:generate
 npm test
@@ -36,3 +40,7 @@ Controlled authoring examples and quality-rule behavior are documented in
 [`docs/engine/controlled-authoring-guide.md`](docs/engine/controlled-authoring-guide.md).
 Lifecycle and controlled-change usage is documented in
 [`docs/engine/workflow-and-change-control-guide.md`](docs/engine/workflow-and-change-control-guide.md).
+History, baseline, comparison, and audit behavior is documented in
+[`docs/engine/history-baselines-and-audit-guide.md`](docs/engine/history-baselines-and-audit-guide.md),
+with recovery procedures in
+[`docs/operators/backup-and-recovery.md`](docs/operators/backup-and-recovery.md).

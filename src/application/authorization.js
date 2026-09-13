@@ -15,6 +15,7 @@ export const PERMISSIONS = Object.freeze({
   BASELINE: "requirements:baseline",
   IMPORT: "requirements:import",
   CONFIGURE: "requirements:configure",
+  AUDIT: "requirements:audit",
 });
 
 const readOnly = Object.freeze([PERMISSIONS.READ, PERMISSIONS.VALIDATE_DRAFT]);
@@ -26,6 +27,7 @@ export const ROLE_PERMISSIONS = Object.freeze({
     PERMISSIONS.BASELINE,
     PERMISSIONS.IMPORT,
     PERMISSIONS.CONFIGURE,
+    PERMISSIONS.AUDIT,
   ]),
   tester: readOnly,
   implementer: readOnly,

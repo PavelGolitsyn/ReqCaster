@@ -3,9 +3,31 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "approvalReferences": {
+      "items": {},
+      "maxItems": 128,
+      "minItems": 1,
+      "type": "array"
+    },
+    "configuration": {
+      "additionalProperties": true,
+      "maxProperties": 64,
+      "properties": {},
+      "required": [],
+      "type": "object"
+    },
     "correlationId": {
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
       "type": "string"
+    },
+    "exclusions": {
+      "items": {
+        "maxLength": 512,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 128,
+      "type": "array"
     },
     "expectedRepositoryRevision": {
       "minimum": 0,
@@ -21,10 +43,40 @@
       "minLength": 1,
       "type": "string"
     },
+    "project": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "purpose": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "type": "string"
+    },
     "rationale": {
       "maxLength": 4000,
       "minLength": 1,
       "type": "string"
+    },
+    "readinessToken": {
+      "maxLength": 4096,
+      "minLength": 32,
+      "type": "string"
+    },
+    "release": {
+      "maxLength": 160,
+      "minLength": 1,
+      "type": "string"
+    },
+    "reportTemplateVersions": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "type": "array",
+      "uniqueItems": true
     },
     "requirementIds": {
       "items": {
@@ -38,6 +90,16 @@
     },
     "schemaVersion": {
       "const": "1.0.0"
+    },
+    "sourceRepositoryRevision": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "variant": {
+      "maxLength": 160,
+      "minLength": 1,
+      "type": "string"
     }
   },
   "required": [
@@ -47,7 +109,8 @@
     "expectedRepositoryRevision",
     "name",
     "requirementIds",
-    "rationale"
+    "readinessToken",
+    "approvalReferences"
   ],
   "title": "BaselineCreateRequest",
   "type": "object"

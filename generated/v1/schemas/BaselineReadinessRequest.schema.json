@@ -7,6 +7,63 @@
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
       "type": "string"
     },
+    "exceptions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "authority": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "code": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "expiresAt": {
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "relationshipId": {
+            "pattern": "^RL-[0-9]{6}$",
+            "type": "string"
+          },
+          "requirementId": {
+            "pattern": "^(BR|SR)-[0-9]{6}$",
+            "type": "string"
+          },
+          "reviewAt": {
+            "maxLength": 32,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "rationale",
+          "authority"
+        ],
+        "type": "object"
+      },
+      "maxItems": 128,
+      "type": "array"
+    },
+    "exclusions": {
+      "items": {
+        "maxLength": 512,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 128,
+      "type": "array"
+    },
     "requirementIds": {
       "items": {
         "pattern": "^(BR|SR)-[0-9]{6}$",
@@ -19,6 +76,13 @@
     },
     "schemaVersion": {
       "const": "1.0.0"
+    },
+    "scope": {
+      "additionalProperties": true,
+      "maxProperties": 32,
+      "properties": {},
+      "required": [],
+      "type": "object"
     }
   },
   "required": [

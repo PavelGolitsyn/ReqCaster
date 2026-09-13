@@ -20,22 +20,28 @@ export class ApplicationDispatcher {
     try {
       decision = authorize(identity, contract.permission, { evaluator: this.authorization, now });
     } catch (error) {
-      await this.#auditSecurity(toolName, envelope, error.securityDecision, identity, "denied", now);
+      await this.#auditSecurity(toolName, envelope, error.securityDecision, identity, "denied", now, error.code ?? "FORBIDDEN");
       throw error;
     }
-    await this.#auditSecurity(toolName, envelope, decision, identity, "allowed", now);
-    // Legacy in-process callers may omit an envelope. Every transport request
-    // carries schemaVersion and is validated here after authorization.
-    if (execution.validateRequest || envelope?.schemaVersion !== undefined || envelope?.correlationId !== undefined) {
-      const issues = validate(SCHEMAS[contract.input], envelope);
-      if (issues.length) throw new ApplicationError("SCHEMA_VIOLATION", "Request does not match the operation contract", { details: issues });
+    try {
+      // Legacy in-process callers may omit an envelope. Every transport request
+      // carries schemaVersion and is validated here after authorization.
+      if (execution.validateRequest || envelope?.schemaVersion !== undefined || envelope?.correlationId !== undefined) {
+        const issues = validate(SCHEMAS[contract.input], envelope);
+        if (issues.length) throw new ApplicationError("SCHEMA_VIOLATION", "Request does not match the operation contract", { details: issues });
+      }
+      const service = this.services[contract.service];
+      if (!service?.execute) throw new ApplicationError("INTERNAL_ERROR", "Operation is not implemented");
+      const result = await service.execute(envelope, { authorization: this.authorization, identity, now, security: decision });
+      await this.#auditSecurity(toolName, envelope, decision, identity, "allowed", now);
+      return result;
+    } catch (error) {
+      await this.#auditSecurity(toolName, envelope, decision, identity, "allowed", now, error.code ?? "INTERNAL_ERROR");
+      throw error;
     }
-    const service = this.services[contract.service];
-    if (!service?.execute) throw new ApplicationError("INTERNAL_ERROR", "Operation is not implemented");
-    return service.execute(envelope, { authorization: this.authorization, identity, now, security: decision });
   }
 
-  async #auditSecurity(toolName, envelope, decision, identity, outcome, now) {
+  async #auditSecurity(toolName, envelope, decision, identity, outcome, now, errorCategory) {
     if (!this.audit?.append) return;
     const correlationId = typeof envelope?.correlationId === "string" && envelope.correlationId.length <= 128
       ? envelope.correlationId
@@ -44,6 +50,7 @@ export class ApplicationDispatcher {
       agentId: identity?.agentId,
       correlationId,
       decision: outcome,
+      ...(errorCategory ? { errorCategory } : {}),
       event: "authorization-decision",
       operation: toolName,
       policyVersion: decision?.policyVersion ?? this.authorization.policyVersion,

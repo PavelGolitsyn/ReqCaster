@@ -3,7 +3,7 @@
   "schemaVersion": "1.0.0",
   "scope": "repository",
   "roles": {
-    "requirements-manager": ["requirements:read", "requirements:validate-draft", "requirements:mutate", "requirements:decide", "requirements:baseline", "requirements:import", "requirements:configure"],
+    "requirements-manager": ["requirements:read", "requirements:validate-draft", "requirements:mutate", "requirements:decide", "requirements:baseline", "requirements:import", "requirements:configure", "requirements:audit"],
     "tester": ["requirements:read", "requirements:validate-draft"],
     "implementer": ["requirements:read", "requirements:validate-draft"],
     "reviewer": ["requirements:read", "requirements:validate-draft"]
