@@ -5,6 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 
 import { CanonicalJsonRepository } from "../../src/adapters/repository/index.js";
+import { EmbeddedSearchIndex } from "../../src/index/search-index.js";
 
 async function repository(options = {}) {
   const root = await mkdtemp(join(tmpdir(), "spec-speaker-repository-"));
@@ -66,6 +67,22 @@ test("optimistic repository revision conflicts fail before mutation", async () =
   let called = false;
   await assert.rejects(instance.execute(() => { called = true; }, { expectedRepositoryRevision: 0 }), (error) => error.code === "VERSION_CONFLICT");
   assert.equal(called, false);
+});
+
+test("the derived index refreshes only after commit and refresh failure leaves canonical data committed", async () => {
+  const index = new EmbeddedSearchIndex();
+  const { instance } = await repository({ searchIndex: index });
+  assert.equal(index.health().stale, true);
+  await instance.execute(addBusiness);
+  assert.deepEqual(index.health(), { available: true, lastError: null, repositoryRevision: 1, stale: false });
+  assert.equal((await index.query({ query: "preserve" }))[0].entry.id, "BR-000001");
+
+  const failedIndex = { markStale(error) { this.error = error; }, rebuild: async () => { throw new Error("index unavailable"); } };
+  const another = await repository({ searchIndex: failedIndex });
+  const committed = await another.instance.execute(addBusiness);
+  assert.equal(committed.committed, true);
+  assert.equal(await another.instance.revision(), 1);
+  assert.match(failedIndex.error.message, /index unavailable/u);
 });
 
 test("concurrent readers observe complete revisions while a writer commits", async () => {

@@ -121,6 +121,10 @@
               "minimum": 1,
               "type": "integer"
             },
+            "responseSizeMaximum": {
+              "minimum": 1024,
+              "type": "integer"
+            },
             "searchDefault": {
               "minimum": 1,
               "type": "integer"
@@ -140,7 +144,8 @@
             "graphDepthMaximum",
             "graphNodeMaximum",
             "bulkMaximum",
-            "timeoutMilliseconds"
+            "timeoutMilliseconds",
+            "responseSizeMaximum"
           ],
           "type": "object"
         },

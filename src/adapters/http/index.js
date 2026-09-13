@@ -1,4 +1,12 @@
-// Stage 0 boundary: map HTTP authentication and envelopes to ApplicationDispatcher only.
-export function createHttpAdapter(dispatcher) {
-  return Object.freeze({ dispatch: (tool, request, identity) => dispatcher.execute(tool, request, identity) });
+// Authentication happens before the request body reaches contract validation.
+export function createHttpAdapter(dispatcher, options = {}) {
+  const identityProvider = options.identity ?? options.identityProvider;
+  return Object.freeze({
+    async dispatch(tool, request, credential) {
+      const identity = identityProvider?.authenticate
+        ? await identityProvider.authenticate(credential, { transport: "http" })
+        : credential;
+      return dispatcher.execute(tool, request, identity, { validateRequest: true });
+    },
+  });
 }

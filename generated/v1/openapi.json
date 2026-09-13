@@ -83,6 +83,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -283,6 +313,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -496,6 +556,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -690,6 +780,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -897,6 +1017,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -1114,6 +1264,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -1326,6 +1506,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -1543,6 +1753,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -1750,6 +1990,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -1934,6 +2204,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -2173,6 +2473,10 @@
                             "minimum": 1,
                             "type": "integer"
                           },
+                          "responseSizeMaximum": {
+                            "minimum": 1024,
+                            "type": "integer"
+                          },
                           "searchDefault": {
                             "minimum": 1,
                             "type": "integer"
@@ -2192,7 +2496,8 @@
                           "graphDepthMaximum",
                           "graphNodeMaximum",
                           "bulkMaximum",
-                          "timeoutMilliseconds"
+                          "timeoutMilliseconds",
+                          "responseSizeMaximum"
                         ],
                         "type": "object"
                       },
@@ -2497,6 +2802,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -2698,6 +3033,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -2908,6 +3273,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -3109,6 +3504,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -3328,6 +3753,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -3528,6 +3983,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -3733,6 +4218,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -3980,6 +4495,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -4114,6 +4659,27 @@
                     "pattern": "^(BR|SR)-[0-9]{6}$",
                     "type": "string"
                   },
+                  "ids": {
+                    "items": {
+                      "pattern": "^(BR|SR)-[0-9]{6}$",
+                      "type": "string"
+                    },
+                    "maxItems": 50,
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "includeRetired": {
+                    "type": "boolean"
+                  },
+                  "preset": {
+                    "enum": [
+                      "summary",
+                      "authoring",
+                      "verification",
+                      "full"
+                    ]
+                  },
                   "projection": {
                     "items": {
                       "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
@@ -4123,14 +4689,24 @@
                     "type": "array",
                     "uniqueItems": true
                   },
+                  "relationships": {
+                    "enum": [
+                      "none",
+                      "counts",
+                      "summary"
+                    ]
+                  },
                   "schemaVersion": {
                     "const": "1.0.0"
+                  },
+                  "version": {
+                    "minimum": 1,
+                    "type": "integer"
                   }
                 },
                 "required": [
                   "schemaVersion",
-                  "correlationId",
-                  "id"
+                  "correlationId"
                 ],
                 "type": "object"
               }
@@ -4178,6 +4754,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -4372,6 +4978,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -4585,6 +5221,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -4706,6 +5372,11 @@
               "schema": {
                 "additionalProperties": false,
                 "properties": {
+                  "baselineId": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
                   "correlationId": {
                     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
                     "type": "string"
@@ -4718,24 +5389,167 @@
                   "filters": {
                     "additionalProperties": false,
                     "properties": {
+                      "allocation": {
+                        "items": {
+                          "maxLength": 160,
+                          "type": "string"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "category": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "criticality": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "document": {
+                        "items": {
+                          "enum": [
+                            "business",
+                            "software"
+                          ]
+                        },
+                        "maxItems": 2,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "hasExternalReference": {
+                        "type": "boolean"
+                      },
+                      "hasSuspectLinks": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "items": {
+                          "pattern": "^(BR|SR)-[0-9]{6}$",
+                          "type": "string"
+                        },
+                        "maxItems": 50,
+                        "minItems": 1,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
                       "level": {
-                        "enum": [
-                          "business",
-                          "software"
-                        ]
+                        "items": {
+                          "enum": [
+                            "business",
+                            "software"
+                          ]
+                        },
+                        "maxItems": 2,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "missingSource": {
+                        "type": "boolean"
+                      },
+                      "missingVerification": {
+                        "type": "boolean"
+                      },
+                      "owner": {
+                        "items": {
+                          "maxLength": 256,
+                          "type": "string"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "priority": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "release": {
+                        "items": {
+                          "maxLength": 160,
+                          "type": "string"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
                       },
                       "status": {
-                        "maxLength": 64,
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "tags": {
+                        "items": {
+                          "maxLength": 160,
+                          "type": "string"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "updatedFrom": {
+                        "maxLength": 32,
                         "type": "string"
+                      },
+                      "updatedTo": {
+                        "maxLength": 32,
+                        "type": "string"
+                      },
+                      "verificationMethod": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "version": {
+                        "items": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
                       }
                     },
                     "required": [],
                     "type": "object"
                   },
+                  "includeRetired": {
+                    "type": "boolean"
+                  },
                   "limit": {
                     "maximum": 100,
                     "minimum": 1,
                     "type": "integer"
+                  },
+                  "preset": {
+                    "enum": [
+                      "summary",
+                      "authoring",
+                      "verification",
+                      "full"
+                    ]
                   },
                   "projection": {
                     "items": {
@@ -4748,11 +5562,43 @@
                   },
                   "schemaVersion": {
                     "const": "1.0.0"
+                  },
+                  "sort": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      },
+                      "field": {
+                        "enum": [
+                          "id",
+                          "level",
+                          "category",
+                          "status",
+                          "priority",
+                          "criticality",
+                          "owner",
+                          "release",
+                          "updatedAt",
+                          "version",
+                          "relevance"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
                   }
                 },
                 "required": [
                   "schemaVersion",
-                  "correlationId"
+                  "correlationId",
+                  "sort"
                 ],
                 "type": "object"
               }
@@ -4800,6 +5646,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -4996,6 +5872,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -5203,6 +6109,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -5324,6 +6260,11 @@
               "schema": {
                 "additionalProperties": false,
                 "properties": {
+                  "baselineId": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
                   "correlationId": {
                     "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
                     "type": "string"
@@ -5345,6 +6286,51 @@
                         "type": "array",
                         "uniqueItems": true
                       },
+                      "category": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "criticality": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "document": {
+                        "items": {
+                          "enum": [
+                            "business",
+                            "software"
+                          ]
+                        },
+                        "maxItems": 2,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "hasExternalReference": {
+                        "type": "boolean"
+                      },
+                      "hasSuspectLinks": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "items": {
+                          "pattern": "^(BR|SR)-[0-9]{6}$",
+                          "type": "string"
+                        },
+                        "maxItems": 50,
+                        "minItems": 1,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
                       "level": {
                         "items": {
                           "enum": [
@@ -5356,6 +6342,39 @@
                         "type": "array",
                         "uniqueItems": true
                       },
+                      "missingSource": {
+                        "type": "boolean"
+                      },
+                      "missingVerification": {
+                        "type": "boolean"
+                      },
+                      "owner": {
+                        "items": {
+                          "maxLength": 256,
+                          "type": "string"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "priority": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "release": {
+                        "items": {
+                          "maxLength": 160,
+                          "type": "string"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
                       "status": {
                         "items": {
                           "maxLength": 64,
@@ -5364,15 +6383,61 @@
                         "maxItems": 32,
                         "type": "array",
                         "uniqueItems": true
+                      },
+                      "tags": {
+                        "items": {
+                          "maxLength": 160,
+                          "type": "string"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "updatedFrom": {
+                        "maxLength": 32,
+                        "type": "string"
+                      },
+                      "updatedTo": {
+                        "maxLength": 32,
+                        "type": "string"
+                      },
+                      "verificationMethod": {
+                        "items": {
+                          "maxLength": 64,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "version": {
+                        "items": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "maxItems": 64,
+                        "type": "array",
+                        "uniqueItems": true
                       }
                     },
                     "required": [],
                     "type": "object"
                   },
+                  "includeRetired": {
+                    "type": "boolean"
+                  },
                   "limit": {
                     "maximum": 100,
                     "minimum": 1,
                     "type": "integer"
+                  },
+                  "preset": {
+                    "enum": [
+                      "summary",
+                      "authoring",
+                      "verification",
+                      "full"
+                    ]
                   },
                   "projection": {
                     "items": {
@@ -5389,6 +6454,37 @@
                   },
                   "schemaVersion": {
                     "const": "1.0.0"
+                  },
+                  "sort": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      },
+                      "field": {
+                        "enum": [
+                          "id",
+                          "level",
+                          "category",
+                          "status",
+                          "priority",
+                          "criticality",
+                          "owner",
+                          "release",
+                          "updatedAt",
+                          "version",
+                          "relevance"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
                   }
                 },
                 "required": [
@@ -5441,6 +6537,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -5652,6 +6778,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -5864,6 +7020,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -6071,6 +7257,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -6293,6 +7509,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -6529,6 +7775,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -6743,6 +8019,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -6960,6 +8266,36 @@
                     },
                     "schemaVersion": {
                       "const": "1.0.0"
+                    },
+                    "source": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "baselineId": {
+                          "maxLength": 128,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "itemVersion": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "kind": {
+                          "enum": [
+                            "current",
+                            "baseline",
+                            "version"
+                          ]
+                        },
+                        "repositoryRevision": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "repositoryRevision"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [

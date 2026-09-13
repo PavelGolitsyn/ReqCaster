@@ -34,6 +34,6 @@
   ],
   "baselineReadiness": { "allowedStatuses": ["approved", "implemented", "verified"], "blockSuspectLinks": true, "blockMissingRequiredMetadata": true },
   "authorizedDecisionTypes": ["approve", "reject", "waive", "close"],
-  "limits": { "searchDefault": 20, "searchMaximum": 100, "graphDepthMaximum": 5, "graphNodeMaximum": 1000, "bulkMaximum": 500, "timeoutMilliseconds": 30000 },
+  "limits": { "searchDefault": 20, "searchMaximum": 100, "graphDepthMaximum": 5, "graphNodeMaximum": 1000, "bulkMaximum": 500, "timeoutMilliseconds": 30000, "responseSizeMaximum": 256000 },
   "qualityRules": { "structuralValidation": "blocking", "languageQuality": "advisory", "advisorySeverities": ["info", "warning"] }
 }

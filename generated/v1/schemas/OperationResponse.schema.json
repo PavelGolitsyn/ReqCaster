@@ -36,6 +36,36 @@
     },
     "schemaVersion": {
       "const": "1.0.0"
+    },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "baselineId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "itemVersion": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "current",
+            "baseline",
+            "version"
+          ]
+        },
+        "repositoryRevision": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "repositoryRevision"
+      ],
+      "type": "object"
     }
   },
   "required": [

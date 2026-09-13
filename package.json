@@ -7,6 +7,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "benchmark:search": "node scripts/benchmark-search.js",
     "build": "node scripts/generate-contracts.js --check",
     "contracts:generate": "node scripts/generate-contracts.js",
     "contracts:check": "node scripts/generate-contracts.js --check",

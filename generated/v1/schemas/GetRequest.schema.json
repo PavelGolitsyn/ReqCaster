@@ -16,6 +16,27 @@
       "pattern": "^(BR|SR)-[0-9]{6}$",
       "type": "string"
     },
+    "ids": {
+      "items": {
+        "pattern": "^(BR|SR)-[0-9]{6}$",
+        "type": "string"
+      },
+      "maxItems": 50,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "includeRetired": {
+      "type": "boolean"
+    },
+    "preset": {
+      "enum": [
+        "summary",
+        "authoring",
+        "verification",
+        "full"
+      ]
+    },
     "projection": {
       "items": {
         "pattern": "^[A-Za-z][A-Za-z0-9.]{0,63}$",
@@ -25,14 +46,24 @@
       "type": "array",
       "uniqueItems": true
     },
+    "relationships": {
+      "enum": [
+        "none",
+        "counts",
+        "summary"
+      ]
+    },
     "schemaVersion": {
       "const": "1.0.0"
+    },
+    "version": {
+      "minimum": 1,
+      "type": "integer"
     }
   },
   "required": [
     "schemaVersion",
-    "correlationId",
-    "id"
+    "correlationId"
   ],
   "title": "GetRequest",
   "type": "object"

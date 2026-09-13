@@ -20,6 +20,7 @@ export class ApplicationError extends Error {
     this.details = options.details ?? [];
     this.current = options.current;
     this.cause = options.cause;
+    this.securityDecision = options.securityDecision;
   }
 
   toEnvelope(correlationId) {

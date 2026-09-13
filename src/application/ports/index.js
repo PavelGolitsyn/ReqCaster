@@ -9,6 +9,7 @@ const methods = Object.freeze({
   Identity: ["authenticate"],
   Audit: ["append", "verify"],
   Search: ["query", "rebuild"],
+  Snapshot: ["readBaseline", "readVersion"],
   ReportStorage: ["put", "get"],
 });
 

@@ -39,6 +39,18 @@ test("agent and accountable principal are distinct required values", () => {
   assert.doesNotThrow(() => authorize(caller, "requirements:decide"));
 });
 
+test("unknown and expired identities are denied by default", () => {
+  assert.throws(() => authorize(identity("unknown"), "requirements:read"), { code: "FORBIDDEN" });
+  const expired = identity("tester");
+  expired.authentication.expiresAt = "2020-01-01T00:00:00.000Z";
+  assert.throws(() => authorize(expired, "requirements:read", { now: "2026-01-01T00:00:00.000Z" }), { code: "FORBIDDEN" });
+});
+
+test("malformed and empty explicit authorization scopes fail closed", () => {
+  assert.throws(() => authorize({ ...identity("tester"), authorization: { repositories: "default" } }, "requirements:read"), { code: "FORBIDDEN" });
+  assert.throws(() => authorize({ ...identity("tester"), authorization: { repositories: [] } }, "requirements:read"), { code: "FORBIDDEN" });
+});
+
 test("authorization denial occurs before a mutation service can run", async () => {
   let serviceCalls = 0;
   const dispatcher = new ApplicationDispatcher({

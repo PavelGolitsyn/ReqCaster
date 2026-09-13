@@ -5,6 +5,7 @@ import { basename, dirname, join } from "node:path";
 
 import { formatRelationshipId, formatRequirementId, MAX_IDENTIFIER_NUMBER } from "../../domain/identifiers.js";
 import { validatePolicy } from "../../domain/policy.js";
+import { buildSearchIndex } from "../../index/search-index.js";
 import { canonicalBytes, canonicalHash, parseStrictJson, sha256 } from "./canonical-json.js";
 import { IntegrityError, RepositoryError, ValidationError } from "./errors.js";
 import { acquireProjectLock } from "./lock.js";
@@ -179,6 +180,7 @@ export class CanonicalJsonRepository {
     this.policyValidated = false;
     this.lockOptions = options.lock ?? {};
     this.faultInjector = options.faultInjector ?? null;
+    this.searchIndex = options.searchIndex ?? null;
   }
 
   async initialize(options = {}) {
@@ -300,14 +302,11 @@ export class CanonicalJsonRepository {
     return this.#withLock(async () => {
       await this.#recoverLocked();
       const state = await this.#loadLocked();
-      const index = {
-        repositoryRevision: state.business.value.repositoryRevision,
-        requirementIds: [...state.business.value.requirements, ...state.software.value.requirements].map(({ id }) => id).sort(),
-        relationshipIds: [...state.business.value.relationships, ...state.software.value.relationships].map(({ id }) => id).sort(),
-        schemaVersion: CURRENT_SCHEMA_VERSION,
-      };
+      const documents = { business: state.business.value, software: state.software.value };
+      const index = buildSearchIndex(documents, { configurationVersion: this.policy.configurationVersion });
       await replaceDurable(enginePath(this.root, "indexes", "repository.json"), canonicalBytes(index));
-      return { repositoryRevision: index.repositoryRevision, requirements: index.requirementIds.length, relationships: index.relationshipIds.length };
+      await this.searchIndex?.rebuild?.(documents, { configurationVersion: this.policy.configurationVersion });
+      return { repositoryRevision: index.repositoryRevision, requirements: index.entries.length, relationships: [...documents.business.relationships, ...documents.software.relationships].length };
     });
   }
 
@@ -602,6 +601,10 @@ export class CanonicalJsonRepository {
     manifest.committedAt = new Date().toISOString();
     await replaceDurable(paths.manifest, canonicalBytes(manifest), transactionId);
     await options.faultInjector?.("after-committed");
+    if (this.searchIndex) {
+      try { await this.searchIndex.rebuild(after, { configurationVersion: this.policy.configurationVersion }); }
+      catch (error) { this.searchIndex.markStale?.(error); }
+    }
   }
 
   async #installCanonical(bytes, filename, token) {

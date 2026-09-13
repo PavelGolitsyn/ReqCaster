@@ -1,4 +1,12 @@
-// Stage 0 boundary: MCP role claims are ignored; identity comes from the trusted host mapping.
-export function createMcpAdapter(dispatcher) {
-  return Object.freeze({ callTool: (tool, request, trustedIdentity) => dispatcher.execute(tool, request, trustedIdentity) });
+// MCP payload role claims are ignored; identity comes from the trusted host mapping.
+export function createMcpAdapter(dispatcher, options = {}) {
+  const identityProvider = options.identity ?? options.identityProvider;
+  return Object.freeze({
+    async callTool(tool, request, credential) {
+      const identity = identityProvider?.authenticate
+        ? await identityProvider.authenticate(credential, { transport: "mcp" })
+        : credential;
+      return dispatcher.execute(tool, request, identity, { validateRequest: true });
+    },
+  });
 }

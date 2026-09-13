@@ -19,6 +19,7 @@ const opaqueCursor = string({ minLength: 1, maxLength: 2048 });
 const projection = array(string({ pattern: "^[A-Za-z][A-Za-z0-9.]{0,63}$" }), { uniqueItems: true, maxItems: 32 });
 const expectedRepositoryRevision = integer({ minimum: 0 });
 const expectedVersion = integer({ minimum: 1 });
+const requirementIds = array(requirementId, { minItems: 1, maxItems: 50, uniqueItems: true });
 
 const query = (payload, required = []) => object(
   { schemaVersion: { const: "1.0.0" }, correlationId, ...payload },
@@ -83,7 +84,8 @@ export const POLICY_BODY_SCHEMA = object({
     graphNodeMaximum: integer({ minimum: 1 }),
     bulkMaximum: integer({ minimum: 1 }),
     timeoutMilliseconds: integer({ minimum: 1 }),
-  }, ["searchDefault", "searchMaximum", "graphDepthMaximum", "graphNodeMaximum", "bulkMaximum", "timeoutMilliseconds"]),
+    responseSizeMaximum: integer({ minimum: 1024 }),
+  }, ["searchDefault", "searchMaximum", "graphDepthMaximum", "graphNodeMaximum", "bulkMaximum", "timeoutMilliseconds", "responseSizeMaximum"]),
   qualityRules: object({
     structuralValidation: { const: "blocking" },
     languageQuality: { const: "advisory" },
@@ -98,20 +100,49 @@ export const POLICY_DOCUMENT_SCHEMA = object({
   ...POLICY_BODY_SCHEMA.properties,
 }, ["$schema", "schemaVersion", "configurationVersion", ...POLICY_BODY_SCHEMA.required]);
 
+const readFilters = object({
+  id: requirementIds,
+  level: array({ enum: ["business", "software"] }, { maxItems: 2, uniqueItems: true }),
+  document: array({ enum: ["business", "software"] }, { maxItems: 2, uniqueItems: true }),
+  category: array(string({ maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
+  status: array(string({ maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
+  priority: array(string({ maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
+  criticality: array(string({ maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
+  owner: array(string({ maxLength: 256 }), { maxItems: 64, uniqueItems: true }),
+  allocation: array(string({ maxLength: 160 }), { maxItems: 64, uniqueItems: true }),
+  release: array(string({ maxLength: 160 }), { maxItems: 64, uniqueItems: true }),
+  tags: array(string({ maxLength: 160 }), { maxItems: 64, uniqueItems: true }),
+  verificationMethod: array(string({ maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
+  version: array(integer({ minimum: 1 }), { maxItems: 64, uniqueItems: true }),
+  updatedFrom: string({ maxLength: 32 }),
+  updatedTo: string({ maxLength: 32 }),
+  missingSource: { type: "boolean" },
+  missingVerification: { type: "boolean" },
+  hasSuspectLinks: { type: "boolean" },
+  hasExternalReference: { type: "boolean" },
+});
+const fieldSort = object({
+  field: { enum: ["id", "level", "category", "status", "priority", "criticality", "owner", "release", "updatedAt", "version", "relevance"] },
+  direction: { enum: ["asc", "desc"] },
+}, ["field", "direction"]);
+const readSelection = {
+  baselineId: string({ minLength: 1, maxLength: 128 }),
+  includeRetired: { type: "boolean" },
+  preset: { enum: ["summary", "authoring", "verification", "full"] },
+  projection,
+};
+
 export const SCHEMAS = Object.freeze({
-  GetRequest: query({ id: requirementId, baselineId: string({ minLength: 1, maxLength: 128 }), projection }, ["id"]),
+  GetRequest: query({ id: requirementId, ids: requirementIds, version: expectedVersion, relationships: { enum: ["none", "counts", "summary"] }, ...readSelection }),
   SearchRequest: query({
     query: string({ maxLength: 1000 }),
-    filters: object({
-      level: array({ enum: ["business", "software"] }, { maxItems: 2, uniqueItems: true }),
-      status: array(string({ maxLength: 64 }), { maxItems: 32, uniqueItems: true }),
-      allocation: array(string({ maxLength: 160 }), { maxItems: 64, uniqueItems: true }),
-    }),
-    projection,
+    filters: readFilters,
+    sort: fieldSort,
     cursor: opaqueCursor,
     limit: integer({ minimum: 1, maximum: 100 }),
+    ...readSelection,
   }),
-  ListRequest: query({ filters: object({ level: { enum: ["business", "software"] }, status: string({ maxLength: 64 }) }), projection, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }),
+  ListRequest: query({ filters: readFilters, sort: fieldSort, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }), ...readSelection }, ["sort"]),
   TraceRequest: query({ id: requirementId, direction: { enum: ["upstream", "downstream", "both"] }, relationshipTypes: array(string({ maxLength: 64 }), { uniqueItems: true, maxItems: 32 }), depth: integer({ minimum: 1, maximum: 5 }), cursor: opaqueCursor }, ["id", "direction"]),
   CoverageRequest: query({ gap: { enum: ["missing", "stale", "failed", "waived", "not-applicable"] }, level: { enum: ["business", "software"] }, cursor: opaqueCursor, limit: integer({ minimum: 1, maximum: 100 }) }, ["gap"]),
   CompareRequest: query({ left: string({ minLength: 1, maxLength: 128 }), right: string({ minLength: 1, maxLength: 128 }), projection }, ["left", "right"]),
@@ -140,6 +171,7 @@ export const SCHEMAS = Object.freeze({
     correlationId,
     data: {},
     page: object({ returnedCount: integer({ minimum: 0 }), truncated: { type: "boolean" }, nextCursor: opaqueCursor }, ["returnedCount", "truncated"]),
+    source: object({ kind: { enum: ["current", "baseline", "version"] }, baselineId: string({ minLength: 1, maxLength: 128 }), itemVersion: integer({ minimum: 1 }), repositoryRevision: integer({ minimum: 0 }) }, ["kind", "repositoryRevision"]),
   }, ["schemaVersion", "repositoryRevision", "correlationId", "data"]),
   ErrorResponse: object({
     schemaVersion: { const: "1.0.0" },
