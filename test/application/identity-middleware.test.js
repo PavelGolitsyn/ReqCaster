@@ -8,14 +8,14 @@ import { ApplicationDispatcher } from "../../src/application/services/dispatcher
 const mappedIdentity = {
   agentId: "agent:reader",
   authentication: { audience: "spec-speaker", expiresAt: "2030-01-01T00:00:00.000Z", issuer: "trusted-issuer" },
-  principal: { id: "human:ownerspeccaster
+  principal: { id: "human:owner" },
   role: "tester",
 };
 
 test("transport authentication precedes request validation and body role claims are ignored", async () => {
   const identity = new TrustedIdentityResolver({
     audience: "spec-speaker",
-    issuers: ["speccasterer"],
+    issuers: ["trusted-issuer"],
     lookup: staticIdentityLookup([["opaque-good", mappedIdentity]]),
   });
   let calls = 0;
