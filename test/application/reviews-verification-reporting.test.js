@@ -16,7 +16,7 @@ const tester = { agentId: "agent:tester", authentication: { issuer: "test" }, pr
 const envelope = (correlationId, idempotencyKey, expectedRepositoryRevision) => ({ correlationId, expectedRepositoryRevision, idempotencyKey, schemaVersion: "1.0.0" });
 
 async function harness() {
-  const root = await mkdtemp(join(tmpdir(), "spec-speaker-stage7-"));
+  const root = await mkdtemp(join(tmpdir(), "speccaster-stage7-"));
   const repository = new CanonicalJsonRepository(root);
   await repository.initialize();
   const authorization = new AuthorizationPolicyEvaluator();

@@ -298,6 +298,6 @@
       }
     }
   },
-  "$id": "https://spec-speaker.local/schemas/v1/repository-common.schema.json",
+  "$id": "https://speccaster.local/schemas/v1/repository-common.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

@@ -6,7 +6,7 @@ import test from "node:test";
 import { ApplicationDispatcher } from "../src/application/services/dispatcher.js";
 
 test("a semantic no-op command produces no repository or audit changes", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "spec-speaker-noop-"));
+  const directory = await mkdtemp(join(tmpdir(), "speccaster-noop-"));
   const canonical = join(directory, "business-requirements.json");
   const audit = join(directory, "audit.jsonl");
   await writeFile(canonical, "{\"repositoryRevision\":7}\n");

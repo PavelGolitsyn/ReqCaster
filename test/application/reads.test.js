@@ -226,7 +226,7 @@ test("one-hop relationship summaries obey the configured graph-node ceiling", as
 });
 
 test("the persistent index detects corruption and rebuilds entirely from canonical documents", async () => {
-  const root = await mkdtemp(join(tmpdir(), "spec-speaker-index-"));
+  const root = await mkdtemp(join(tmpdir(), "speccaster-index-"));
   const index = new PersistentSearchIndex(root);
   await index.rebuild(documents());
   assert.deepEqual((await index.query({ query: "display" })).map(({ entry }) => entry.id), ["SR-000002"]);

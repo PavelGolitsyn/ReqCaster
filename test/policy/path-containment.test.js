@@ -3,7 +3,7 @@ import test from "node:test";
 import { canonicalDocumentPath, normalizeRequirementsRoot } from "../../src/adapters/repository/paths.js";
 
 test("requirements root is operator-configured and absolute", () => {
-  assert.equal(normalizeRequirementsRoot("/srv/spec-speaker/project-a"), "/srv/spec-speaker/project-a");
+  assert.equal(normalizeRequirementsRoot("/srv/speccaster/project-a"), "/srv/speccaster/project-a");
   for (const value of [".", "../project", "project", "", null]) {
     assert.throws(() => normalizeRequirementsRoot(value), TypeError);
   }

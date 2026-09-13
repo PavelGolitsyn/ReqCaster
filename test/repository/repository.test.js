@@ -8,7 +8,7 @@ import { CanonicalJsonRepository } from "../../src/adapters/repository/index.js"
 import { EmbeddedSearchIndex } from "../../src/index/search-index.js";
 
 async function repository(options = {}) {
-  const root = await mkdtemp(join(tmpdir(), "spec-speaker-repository-"));
+  const root = await mkdtemp(join(tmpdir(), "speccaster-repository-"));
   const instance = new CanonicalJsonRepository(root, options);
   await instance.initialize();
   return { instance, root };

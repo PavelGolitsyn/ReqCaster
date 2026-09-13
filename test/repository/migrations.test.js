@@ -7,7 +7,7 @@ import test from "node:test";
 import { canonicalBytes, canonicalHash, CanonicalJsonRepository, MIGRATIONS, MigrationRunner, parseStrictJson, sha256 } from "../../src/adapters/repository/index.js";
 
 async function legacyRepository(version = "0.9.0") {
-  const root = await mkdtemp(join(tmpdir(), "spec-speaker-migration-"));
+  const root = await mkdtemp(join(tmpdir(), "speccaster-migration-"));
   const repository = new CanonicalJsonRepository(root);
   await repository.initialize();
   const paths = [join(root, "business-requirements.json"), join(root, "software-requirements.json")];

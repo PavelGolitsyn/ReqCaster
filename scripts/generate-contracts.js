@@ -13,7 +13,7 @@ function stable(value) {
 const json = (value) => `${JSON.stringify(stable(value), null, 2)}\n`;
 const schemaDocument = (name, schema) => ({
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  $id: `https://spec-speaker.local/schemas/v1/${name}.schema.json`,
+  $id: `https://speccaster.local/schemas/v1/${name}.schema.json`,
   title: name,
   ...schema,
 });

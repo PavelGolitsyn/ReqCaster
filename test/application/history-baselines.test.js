@@ -12,7 +12,7 @@ import { createHistoryBaselineServices, readiness } from "../../src/application/
 const manager = { agentId: "agent:manager", authentication: { issuer: "test" }, principal: { id: "human:manager" }, role: "requirements-manager" };
 
 async function harness(options = {}) {
-  const root = await mkdtemp(join(tmpdir(), "spec-speaker-stage6-"));
+  const root = await mkdtemp(join(tmpdir(), "speccaster-stage6-"));
   const audit = new TamperEvidentAuditLog(root, { segmentSize: options.segmentSize ?? 2 });
   const repository = new CanonicalJsonRepository(root, { audit });
   await repository.initialize();
@@ -62,7 +62,7 @@ test("audit verification crosses rotation boundaries and detects modification", 
 
 test("audit verification detects deletion and reordering, including tail deletion", async () => {
   for (const mode of ["delete", "reorder"]) {
-    const root = await mkdtemp(join(tmpdir(), `spec-speaker-audit-${mode}-`));
+    const root = await mkdtemp(join(tmpdir(), `speccaster-audit-${mode}-`));
     const audit = new TamperEvidentAuditLog(root, { segmentSize: 2 });
     for (let index = 0; index < 4; index += 1) await audit.append({ event: "attempt", operation: `${mode}-${index}` });
     const directory = join(root, ".engine", "audit", "events");

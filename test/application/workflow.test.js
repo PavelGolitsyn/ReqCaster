@@ -30,7 +30,7 @@ function draft(statement = "The product shall retain governed settings for 30 da
 }
 
 async function harness() {
-  const root = await mkdtemp(join(tmpdir(), "spec-speaker-workflow-"));
+  const root = await mkdtemp(join(tmpdir(), "speccaster-workflow-"));
   const repository = new CanonicalJsonRepository(root);
   await repository.initialize();
   const authorization = new AuthorizationPolicyEvaluator();

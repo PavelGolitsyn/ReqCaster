@@ -1,5 +1,5 @@
 {
-  "$id": "https://spec-speaker.local/schemas/v1/AuditListRequest.schema.json",
+  "$id": "https://speccaster.local/schemas/v1/AuditListRequest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {

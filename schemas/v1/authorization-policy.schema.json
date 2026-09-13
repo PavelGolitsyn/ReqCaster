@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://spec-speaker.local/schemas/v1/authorization-policy.schema.json",
+  "$id": "https://speccaster.local/schemas/v1/authorization-policy.schema.json",
   "title": "Requirements engine authorization policy",
   "type": "object",
   "required": ["schemaVersion", "scope", "roles"],

@@ -33,7 +33,7 @@ function businessDraft(statement = "The service shall retain governed records fo
 }
 
 async function harness(options = {}) {
-  const root = await mkdtemp(join(tmpdir(), "spec-speaker-authoring-"));
+  const root = await mkdtemp(join(tmpdir(), "speccaster-authoring-"));
   const repository = new CanonicalJsonRepository(root, options.policy ? { policy: options.policy } : {});
   await repository.initialize();
   const previewStore = options.previewStore ?? new PreviewTokenStore();
