@@ -9,6 +9,10 @@ const issues = validatePolicy(policy);
 if (issues.length) throw new Error(`Policy fixture invalid: ${issues.join("; ")}`);
 const structuralIssues = validate(POLICY_DOCUMENT_SCHEMA, policy);
 if (structuralIssues.length) throw new Error(`Policy schema violation: ${JSON.stringify(structuralIssues)}`);
+const production = JSON.parse(await readFile("config/production.v1.json", "utf8"));
+const productionSchema = JSON.parse(await readFile("schemas/v1/production.schema.json", "utf8"));
+const productionIssues = validate(productionSchema, production);
+if (productionIssues.length) throw new Error(`Production schema violation: ${JSON.stringify(productionIssues)}`);
 
 for (const file of ["config/policy.v1.json", "config/authorization.v1.json", "test/fixtures/repositories/empty/repository.json", "test/fixtures/repositories/valid/repository.json", "test/fixtures/repositories/legacy/repository.json"]) {
   JSON.parse(await readFile(file, "utf8"));

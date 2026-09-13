@@ -511,7 +511,7 @@ export class CanonicalJsonRepository {
         schemaVersion: CURRENT_SCHEMA_VERSION,
         sourceSchemaVersion: preview.sourceSchemaVersion,
         targetSchemaVersion: preview.targetSchemaVersion,
-        toolVersion: options.toolVersion ?? "0.1.0",
+        toolVersion: options.toolVersion ?? "1.0.0",
         warnings: preview.warnings,
       };
       await writeDurable(join(backupDirectory, "migration.json"), canonicalBytes(record), { exclusive: true });

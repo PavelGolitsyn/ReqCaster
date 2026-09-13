@@ -9,6 +9,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -166,6 +169,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -492,6 +498,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -815,6 +824,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -1047,6 +1059,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -1210,6 +1225,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -1350,6 +1368,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -1586,6 +1607,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -1724,6 +1748,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -1846,6 +1873,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -1995,6 +2025,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -2447,6 +2480,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -2910,6 +2946,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -3162,6 +3201,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -3306,6 +3348,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -3559,6 +3604,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -3694,6 +3742,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -3839,6 +3890,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -4462,6 +4516,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR",
         "PREVIEW_EXPIRED"
       ],
@@ -4582,6 +4639,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -4742,6 +4802,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -4969,6 +5032,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -5651,6 +5717,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -5799,6 +5868,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -5981,6 +6053,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -6195,6 +6270,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -6353,6 +6431,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -6482,6 +6563,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR",
         "PREVIEW_EXPIRED"
       ],
@@ -6603,6 +6687,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR",
         "PREVIEW_EXPIRED"
       ],
@@ -6724,6 +6811,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -6949,6 +7039,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -7061,6 +7154,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -7177,6 +7273,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -7351,6 +7450,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -7464,6 +7566,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -7686,6 +7791,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -7874,6 +7982,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -8050,6 +8161,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -8185,6 +8299,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -8435,6 +8552,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -8780,6 +8900,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -8916,6 +9039,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -9050,6 +9176,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -9233,6 +9362,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -9437,6 +9569,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -9559,6 +9694,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -9676,6 +9814,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -9814,6 +9955,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -9931,6 +10075,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -10039,6 +10186,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -10178,6 +10328,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR",
         "PREVIEW_EXPIRED"
       ],
@@ -10308,6 +10461,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -10428,6 +10584,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -10589,6 +10748,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -10749,6 +10911,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR",
         "PREVIEW_EXPIRED"
       ],
@@ -10880,6 +11045,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -11418,6 +11586,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -11674,6 +11845,9 @@
         "FORBIDDEN",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {
@@ -11787,6 +11961,9 @@
         "VERSION_CONFLICT",
         "REPOSITORY_BUSY",
         "INTEGRITY_FAILURE",
+        "SERVICE_UNAVAILABLE",
+        "TIMEOUT",
+        "CANCELLED",
         "INTERNAL_ERROR"
       ],
       "inputSchema": {

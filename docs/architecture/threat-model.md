@@ -44,7 +44,14 @@ untrusted as applicable.
 | Secret/confidential data leakage | Structured safe errors; redacted logs; body logging disabled | Logging tests in Stage 9 |
 | Replay | Idempotency key scoped to authenticated agent and operation | Stage 1 command tests |
 | Malicious import/config | Preview, strict schema, manager-only commit, audit | Policy and import tests |
+| Stale authorization or clock skew | Re-evaluate policy and credential expiry at action time; use deployment UTC time | Revocation and skew tests |
+| Operational content leakage | Allowlisted telemetry and metadata-only support bundle; safe error contracts | Hardening redaction tests |
+| Queue and parser exhaustion | FIFO admission ceiling, deadlines, cooperative cancellation, byte/depth/node limits | Load, overload, and fuzz tests |
+| Downstream failure or replay | Transactional outbox, stable delivery key, retry/dead-letter state | Integration failure tests |
+| Supply-chain compromise | No third-party runtime packages, lockfile review, secret/dynamic-code scan, signed artifact | Release security check |
 
 Residual risks are documented by the stage that implements each deferred control.
-Break-glass access and host filesystem compromise remain operator/environment
-risks and must be addressed in deployment procedures.
+Break-glass access, host filesystem compromise, TLS/volume configuration, backup
+key custody, and malicious authorized managers remain operator/environment
+risks. The production hardening guide assigns organizational controls and
+requires explicit residual-risk acceptance before rollout.

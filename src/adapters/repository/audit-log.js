@@ -119,6 +119,25 @@ export class TamperEvidentAuditLog {
     return { algorithm: "sha256", eventCount: records.length, healthy: true, segmentCount: records.length ? previousSegment : 0, tailHash: previousHash };
   }
 
+  /** Records a verified chain checkpoint; size-bounded segments rotate automatically. */
+  async checkpoint(options = {}) {
+    const before = await this.verify();
+    const record = await this.append({
+      actor: options.actor ?? "operator",
+      correlationId: options.correlationId ?? "operator-audit-checkpoint",
+      event: "audit-rotation-checkpoint",
+      operation: "audit.rotate",
+      reason: options.reason ?? "scheduled operational rotation checkpoint",
+      timestamp: options.timestamp ?? new Date().toISOString(),
+    });
+    return {
+      eventCount: record.sequence,
+      eventHash: record.eventHash,
+      previousTailHash: before.tailHash,
+      segment: record.segment,
+    };
+  }
+
   async #head() {
     return parseStrictJson(await readFile(enginePath(this.root, "audit", "head.json")), { maximumBytes: 64_000 });
   }

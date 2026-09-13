@@ -27,14 +27,31 @@ function permittedCustomAttributes(attributes, policy) {
   )));
 }
 
-function relationshipMetadata(requirementId, relationships) {
-  return relationships.filter(({ source, target, retirement }) => !retirement && (source.id === requirementId || target.id === requirementId)).map((relationship) => ({
-    direction: relationship.source.id === requirementId ? "outgoing" : "incoming",
-    endpointId: relationship.source.id === requirementId ? relationship.target.id : relationship.source.id,
-    endpointKind: relationship.source.id === requirementId ? relationship.target.kind : relationship.source.kind,
-    suspect: relationship.suspect,
-    type: relationship.type,
-  }));
+function relationshipMetadata(relationships) {
+  const byRequirement = new Map();
+  const add = (id, value) => {
+    const entries = byRequirement.get(id) ?? [];
+    entries.push(value);
+    byRequirement.set(id, entries);
+  };
+  for (const relationship of relationships) {
+    if (relationship.retirement) continue;
+    add(relationship.source.id, {
+      direction: "outgoing",
+      endpointId: relationship.target.id,
+      endpointKind: relationship.target.kind,
+      suspect: relationship.suspect,
+      type: relationship.type,
+    });
+    if (relationship.target.id !== relationship.source.id) add(relationship.target.id, {
+      direction: "incoming",
+      endpointId: relationship.source.id,
+      endpointKind: relationship.source.kind,
+      suspect: relationship.suspect,
+      type: relationship.type,
+    });
+  }
+  return byRequirement;
 }
 
 function searchableReference(reference, policy) {
@@ -50,9 +67,10 @@ export function buildSearchIndex(documents, options = {}) {
   const policy = options.indexPolicy ?? {};
   const requirements = [...documents.business.requirements, ...documents.software.requirements];
   const relationships = [...documents.business.relationships, ...documents.software.relationships];
+  const relatedByRequirement = relationshipMetadata(relationships);
   const entries = requirements.map((requirement, index) => {
     if (index % 256 === 0 && options.deadline !== undefined && Date.now() > options.deadline) throw new Error("Search timeout exceeded");
-    const related = relationshipMetadata(requirement.id, relationships);
+    const related = relatedByRequirement.get(requirement.id) ?? [];
     const sourceReferences = (requirement.sourceReferences ?? []).map((reference) => searchableReference(reference, policy));
     const customAttributes = permittedCustomAttributes(requirement.customAttributes, policy);
     const hasSourceLink = related.some(({ direction, type }) => direction === "outgoing" && ["derives_from", "supersedes"].includes(type));

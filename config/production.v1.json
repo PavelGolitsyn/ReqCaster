@@ -1,0 +1,19 @@
+{
+  "$schema": "../schemas/v1/production.schema.json",
+  "admission": {
+    "maximumConcurrent": 32,
+    "maximumQueue": 128,
+    "timeoutMilliseconds": 30000
+  },
+  "backup": {
+    "maximumAgeHours": 24,
+    "recoveryPointObjectiveHours": 24,
+    "recoveryTimeObjectiveMinutes": 60
+  },
+  "schemaVersion": "1.0.0",
+  "telemetry": {
+    "eventBufferMaximum": 1000,
+    "requireCorrelationId": true,
+    "safeMetadataOnly": true
+  }
+}

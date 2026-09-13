@@ -31,10 +31,16 @@ versioned integration contracts, explicit reference/clone reuse with protected
 divergence, and attributable AI proposals that require accountable human
 acceptance.
 
+Stage 9 adds bounded admission, queueing, deadlines and cancellation; safe
+structured telemetry; component-level health; metadata-only support bundles;
+production backup, restore, integrity and audit commands; security/fuzz checks;
+capacity benchmarks; and the release, incident, recovery and rollout package.
+
 ```sh
 npm run contracts:generate
 npm test
 npm run ci
+npm run benchmark:production -- 100000 15
 ```
 
 Start with the [architecture contract](docs/architecture/README.md), the
@@ -60,3 +66,5 @@ Import, export, integration, reuse, and AI controls are documented in
 [`docs/engine/import-exchange-reuse-ai-governance-guide.md`](docs/engine/import-exchange-reuse-ai-governance-guide.md),
 with the representative migration procedure in
 [`docs/operators/migration-pilot-runbook.md`](docs/operators/migration-pilot-runbook.md).
+Production limits and objectives, deployment hardening, incident response, and
+go/no-go ownership are under [`docs/production/`](docs/production/).

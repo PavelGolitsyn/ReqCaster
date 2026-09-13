@@ -20,6 +20,9 @@
             "REPOSITORY_BUSY",
             "INTEGRITY_FAILURE",
             "PREVIEW_EXPIRED",
+            "SERVICE_UNAVAILABLE",
+            "TIMEOUT",
+            "CANCELLED",
             "INTERNAL_ERROR"
           ]
         },

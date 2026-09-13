@@ -8,5 +8,9 @@ export function createMcpAdapter(dispatcher, options = {}) {
         : credential;
       return dispatcher.execute(tool, request, identity, { validateRequest: true });
     },
+    async health() {
+      if (!options.health?.check) return { schemaVersion: "1.0.0", status: "unavailable" };
+      return options.health.check();
+    },
   });
 }

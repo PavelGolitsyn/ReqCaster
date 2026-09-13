@@ -288,6 +288,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -357,7 +360,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -927,6 +930,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -996,7 +1002,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -1146,6 +1152,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -1215,7 +1224,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:audit"
@@ -1355,6 +1364,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -1424,7 +1436,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:audit"
@@ -1639,6 +1651,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -1708,7 +1723,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -1879,6 +1894,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -1948,7 +1966,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -2185,6 +2203,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -2254,7 +2275,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:baseline"
@@ -2409,6 +2430,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -2478,7 +2502,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -2628,6 +2652,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -2697,7 +2724,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -2911,6 +2938,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -2980,7 +3010,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -3238,6 +3268,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -3307,7 +3340,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -3459,6 +3492,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -3528,7 +3564,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR, PREVIEW_EXPIRED"
           }
         },
         "x-permission": "requirements:mutate"
@@ -4242,6 +4278,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -4311,7 +4350,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -4501,6 +4540,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -4570,7 +4612,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -4816,6 +4858,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -4885,7 +4930,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -5030,6 +5075,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -5099,7 +5147,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -5251,6 +5299,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -5320,7 +5371,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR, PREVIEW_EXPIRED"
           }
         },
         "x-permission": "requirements:mutate"
@@ -5481,6 +5532,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -5550,7 +5604,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -5730,6 +5784,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -5799,7 +5856,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -5944,6 +6001,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -6013,7 +6073,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -6801,6 +6861,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -6870,7 +6933,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:configure"
@@ -7022,6 +7085,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -7091,7 +7157,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -7253,6 +7319,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -7322,7 +7391,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR, PREVIEW_EXPIRED"
           }
         },
         "x-permission": "requirements:import"
@@ -7493,6 +7562,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -7562,7 +7634,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:import"
@@ -7729,6 +7801,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -7798,7 +7873,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -7950,6 +8025,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -8019,7 +8097,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR, PREVIEW_EXPIRED"
           }
         },
         "x-permission": "requirements:mutate"
@@ -8674,6 +8752,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -8743,7 +8824,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -8914,6 +8995,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -8983,7 +9067,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -9179,6 +9263,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -9248,7 +9335,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -9743,6 +9830,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -9812,7 +9902,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -10002,6 +10092,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -10071,7 +10164,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -10226,6 +10319,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -10295,7 +10391,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -10564,6 +10660,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -10633,7 +10732,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -10918,6 +11017,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -10987,7 +11089,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -11343,6 +11445,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -11412,7 +11517,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -11585,6 +11690,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -11654,7 +11762,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -11846,6 +11954,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -11915,7 +12026,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -12092,6 +12203,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -12161,7 +12275,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -12343,6 +12457,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -12412,7 +12529,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -12588,6 +12705,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -12657,7 +12777,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -13016,6 +13136,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -13085,7 +13208,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -13350,6 +13473,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -13419,7 +13545,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -13678,6 +13804,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -13747,7 +13876,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -13914,6 +14043,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -13983,7 +14115,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -14267,6 +14399,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -14336,7 +14471,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -14820,6 +14955,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -14889,7 +15027,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:validate-draft"
@@ -15082,6 +15220,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -15151,7 +15292,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -15313,6 +15454,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -15382,7 +15526,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR, PREVIEW_EXPIRED"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR, PREVIEW_EXPIRED"
           }
         },
         "x-permission": "requirements:mutate"
@@ -15574,6 +15718,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -15643,7 +15790,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -15850,6 +15997,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -15919,7 +16069,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -16139,6 +16289,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -16208,7 +16361,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -16353,6 +16506,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -16422,7 +16578,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -16630,6 +16786,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -16699,7 +16858,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -16953,6 +17112,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -17022,7 +17184,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -17189,6 +17351,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -17258,7 +17423,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:decide"
@@ -17636,6 +17801,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -17705,7 +17873,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -17987,6 +18155,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -18056,7 +18227,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, VERSION_CONFLICT, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:mutate"
@@ -18225,6 +18396,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -18294,7 +18468,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"
@@ -18442,6 +18616,9 @@
                             "REPOSITORY_BUSY",
                             "INTEGRITY_FAILURE",
                             "PREVIEW_EXPIRED",
+                            "SERVICE_UNAVAILABLE",
+                            "TIMEOUT",
+                            "CANCELLED",
                             "INTERNAL_ERROR"
                           ]
                         },
@@ -18511,7 +18688,7 @@
                 }
               }
             },
-            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, INTERNAL_ERROR"
+            "description": "Errors: INVALID_ARGUMENT, SCHEMA_VIOLATION, NOT_FOUND, FORBIDDEN, REPOSITORY_BUSY, INTEGRITY_FAILURE, SERVICE_UNAVAILABLE, TIMEOUT, CANCELLED, INTERNAL_ERROR"
           }
         },
         "x-permission": "requirements:read"

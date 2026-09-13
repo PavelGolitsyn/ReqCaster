@@ -1,7 +1,8 @@
 import { PERMISSIONS } from "../authorization.js";
 
-const queryErrors = ["INVALID_ARGUMENT", "SCHEMA_VIOLATION", "NOT_FOUND", "FORBIDDEN", "REPOSITORY_BUSY", "INTEGRITY_FAILURE", "INTERNAL_ERROR"];
-const commandErrors = ["INVALID_ARGUMENT", "SCHEMA_VIOLATION", "NOT_FOUND", "FORBIDDEN", "VERSION_CONFLICT", "REPOSITORY_BUSY", "INTEGRITY_FAILURE", "INTERNAL_ERROR"];
+const operationalErrors = ["SERVICE_UNAVAILABLE", "TIMEOUT", "CANCELLED"];
+const queryErrors = ["INVALID_ARGUMENT", "SCHEMA_VIOLATION", "NOT_FOUND", "FORBIDDEN", "REPOSITORY_BUSY", "INTEGRITY_FAILURE", ...operationalErrors, "INTERNAL_ERROR"];
+const commandErrors = ["INVALID_ARGUMENT", "SCHEMA_VIOLATION", "NOT_FOUND", "FORBIDDEN", "VERSION_CONFLICT", "REPOSITORY_BUSY", "INTEGRITY_FAILURE", ...operationalErrors, "INTERNAL_ERROR"];
 
 function tool(name, service, permission, kind, input, errors = kind === "query" ? queryErrors : commandErrors) {
   return Object.freeze({ name, service, permission, kind, input, output: "OperationResponse", errors: Object.freeze(errors) });
